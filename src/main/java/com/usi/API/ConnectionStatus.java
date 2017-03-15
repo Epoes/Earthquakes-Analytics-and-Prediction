@@ -1,10 +1,6 @@
 package com.usi.API;
 
-/**
- * Created by mcalzana on 10/03/2017.
- */
+
 public enum ConnectionStatus {
-    OK, FORBIDDEN, OFFLINE
-
-
+    OK, FORBIDDEN, OFFLINE, UNKNOWN, UNCONNECTED, RATELIMITEXCEEDED,
 }
