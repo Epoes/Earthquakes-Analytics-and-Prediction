@@ -129,17 +129,6 @@ public class TwitterServicesImpl implements TwitterServices {
                 it.remove();
             }
         }
-
-
-        int idx = 0;
-
-
-        for(Tweet tweet : tweets){
-            if(!isValid(tweet)){
-                tweets.remove(idx);
-            }
-            idx++;
-        }
     }
 
     private boolean isValid(Tweet tweet){

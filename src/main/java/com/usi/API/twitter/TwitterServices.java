@@ -7,5 +7,4 @@ public interface TwitterServices {
     Response connectToTwitter();
     Response getSearchLimit();
     Response getUsrTimeLineLimit();
-
 }
