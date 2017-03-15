@@ -1,11 +1,13 @@
 package com.usi.API.google_maps;
 
+import com.google.maps.model.LatLng;
 
-import com.mashape.unirest.http.JsonNode;
-import com.mashape.unirest.http.exceptions.UnirestException;
+import com.usi.model.Elevation;
+import com.usi.model.Location;
 
-import org.json.JSONObject;
+import java.util.ArrayList;
 
 public interface MapsServices {
-    public Location getLocation(Double latitude, Double longitude) throws UnirestException;
+    Location getLocation(Double latitude, Double longitude) throws Exception;
+    ArrayList<Elevation> getElevation(LatLng start, LatLng end, int samples) throws Exception;
 }

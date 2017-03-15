@@ -1,6 +1,6 @@
 package com.usi.API.controllers;
 
-import com.usi.API.google_maps.Location;
+import com.usi.model.Location;
 import com.usi.BaseIntegration;
 
 import org.junit.Test;

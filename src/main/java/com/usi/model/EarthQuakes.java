@@ -1,4 +1,4 @@
-package com.usi.models;
+package com.usi.model;
 
 
 import java.util.Calendar;

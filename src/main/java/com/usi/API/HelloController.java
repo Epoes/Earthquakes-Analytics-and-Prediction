@@ -1,20 +1,19 @@
 package com.usi.API;
 
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.ModelAndView;
 
-/**
- * Created by mcalzana on 08/03/2017.
- */
-@RestController
-@RequestMapping("/hello")
+@Controller
 public class HelloController {
+//    @RequestMapping(value = "/{name}", method = RequestMethod.GET)
+//    public ResponseEntity<?> handleHello(@PathVariable String name) {
+//        return ResponseEntity.ok("Hello " + name);
+//    }
 
-    @RequestMapping(value = "/{name}", method = RequestMethod.GET)
-    public ResponseEntity<?> handleHello(@PathVariable String name) {
-        return ResponseEntity.ok("Hello " + name);
+    @RequestMapping(value = "/", method = RequestMethod.GET)
+    public ModelAndView home() {
+        return new ModelAndView("index");
     }
 }

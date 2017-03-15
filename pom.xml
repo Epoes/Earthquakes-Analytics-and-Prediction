@@ -91,6 +91,13 @@
 			<artifactId>spring-social-twitter</artifactId>
 			<version>1.1.2.RELEASE</version>
 		</dependency>
+
+		<dependency>
+			<groupId>com.google.maps</groupId>
+			<artifactId>google-maps-services</artifactId>
+			<version>LATEST</version>
+		</dependency>
+
 	</dependencies>
 
 	<build>

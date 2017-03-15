@@ -1,4 +1,4 @@
-package com.usi.API.google_maps;
+package com.usi.model;
 
 public class Location {
 
