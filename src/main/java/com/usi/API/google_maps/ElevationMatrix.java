@@ -8,14 +8,14 @@ import java.util.ArrayList;
 
 public class ElevationMatrix {
 
-    private LatLng nW = new LatLng(44.601352, 3.224855);
-    private LatLng nE = new LatLng(48.006245, 13.711211);
-    private LatLng SE = new LatLng(39.050091, 20.571935);
-    private LatLng sW = new LatLng(34.626415, 11.374308);
-    private double m1 = -8149453D/9974937D;
-    private double c1 = 395644347319591D/9974937000000D;
-    private double m2 = -3430362D/4478077D;
-    private double c2 =  226078657231937D/4478077000000D;
+    private LatLng nW = new LatLng(47.243913, 6.366221);
+    private LatLng nE = new LatLng(47.243913, 18.742255);
+    private LatLng SE = new LatLng(36.170137, 18.742255);
+    private LatLng sW = new LatLng(36.170137, 6.366221);
+//    private double m1 = -8149453D/9974937D;
+//    private double c1 = 395644347319591D/9974937000000D;
+//    private double m2 = -3430362D/4478077D;
+//    private double c2 =  226078657231937D/4478077000000D;
     private MapsServices mapsServices;
     private ArrayList<Elevation> elevations;
 
@@ -24,20 +24,67 @@ public class ElevationMatrix {
         this.elevations = new ArrayList<>();
     }
 
-    private LatLng pointOnLine(double x, double m, double c){
-        double y =  m * x + c;
-        return new LatLng(x, y);
-    }
+//    private LatLng pointOnLine(double x, double m, double c){
+//        double y =  m * x + c;
+//        return new LatLng(x, y);
+//    }
 
     public ArrayList<Elevation> createElevationMatrix() throws Exception{
-        this.elevations.addAll(this.mapsServices.getElevation(this.nW, this.nE, 512));
-        for(double i = this.nW.lat, j = this.nE.lat; i >= this.sW.lat; i -= 0.1, j -= 0.1) {
-            LatLng start = this.pointOnLine(i, m1, c1);
-            LatLng end = this.pointOnLine(j, m2, c2);
-            this.elevations.addAll(this.mapsServices.getElevation(start, end, 512));
+//        for(double i = this.nW.lat, j = this.nE.lat; i >= this.sW.lat; i -= 0.1, j -= 0.1) {
+        for(double i = this.nW.lat, j = this.nE.lat, z = 0; z <3; i -= 0.007, j -= 0.007,  z++) {
+            LatLng start = new LatLng(i,this.nW.lng);
+            LatLng end = new LatLng(j,this.nW.lng + (this.nE.lng - this.nW.lng)/2);
+            this.elevations.addAll(this.mapsServices.getElevation(start, end, 512).getContent());
+            start.lng = end.lng;
+            end.lng = this.nE.lng;
+            this.elevations.addAll(this.mapsServices.getElevation(start, end, 512).getContent());
         }
         return this.elevations;
     }
+
+    public ArrayList<Double> getLatitudes(){
+        ArrayList<Double> latitudes = new ArrayList<>();
+        for(int i = 0; i < this.elevations.size(); ++i){
+            latitudes.add(this.elevations.get(i).getLatLng().lat);
+        }
+        return latitudes;
+    }
+
+    public ArrayList<Double> getLongitudes(){
+        ArrayList<Double> longitudes = new ArrayList<>();
+        for(int i = 0; i < this.elevations.size(); ++i){
+            longitudes.add(this.elevations.get(i).getLatLng().lng);
+        }
+        return longitudes;
+    }
+
+    public ArrayList<Integer> getElevations(){
+        ArrayList<Integer> elevations = new ArrayList<>();
+        for (int i = 0; i< this.elevations.size(); ++i){
+            elevations.add(this.elevations.get(i).getElevation());
+        }
+        return elevations;
+    }
+
+//    public void writeToFile() throws Exception{
+//        this.createElevationMatrix();
+//        ArrayList<Double> latitudes = this.getLatitudes();
+//        ArrayList<Double> longitudes = this.getLongitudes();
+//        ArrayList<Integer> elevations = this.getElevations();
+//        try{
+//            PrintWriter writer = new PrintWriter("Elevation-Matrix.txt", "UTF-8");
+//            for(int i = 0; i < this.elevations.size(); ++i) {
+//                writer.print(latitudes.get(i).toString() + " ");
+//            }
+//            writer.println();
+//            for(int i = 0; i < this.elevations.size(); ++i) {
+//                writer.print(longitudes.get(i).toString() + " ");
+//            }
+//            writer.close();
+//        } catch (IOException e) {
+//            System.out.println(e.getMessage());
+//        }
+//    }
 
 }
 

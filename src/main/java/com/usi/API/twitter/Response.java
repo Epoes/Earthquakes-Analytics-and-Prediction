@@ -22,4 +22,27 @@ public class Response {
         this.status = status;
     }
 
+    public ConnectionStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(ConnectionStatus status) {
+        this.status = status;
+    }
+
+    public List getContent() {
+        return content;
+    }
+
+    public void setContent(List content) {
+        this.content = content;
+    }
+
+    public String getErrorMessage() {
+        return errorMessage;
+    }
+
+    public void setErrorMessage(String errorMessage) {
+        this.errorMessage = errorMessage;
+    }
 }
