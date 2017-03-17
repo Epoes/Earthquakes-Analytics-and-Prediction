@@ -167,7 +167,6 @@ public class TwitterServicesTest extends BaseIntegration {
 
         Set<Long> idSet = new HashSet<>();
         for(Tweet tweet : tweets){
-
             //Test the source tweet
             assertEquals("INGVterremoti", tweet.getFromUser());
             assertEquals(1, tweet.getEntities().getHashTags().size());
