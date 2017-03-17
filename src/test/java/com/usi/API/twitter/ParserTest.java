@@ -50,14 +50,18 @@ public class ParserTest extends BaseIntegration {
 
     @Test
     public void parseWrongStringTest(){
+
+        //missing #terremoto
         String eqText = "ML:3.1 2017-03-16 04:58:27 UTC Lat=42.90 Lon=13.09 Prof=9Km Zona=Macerata. http://bit.ly/2muIKSY";
         EarthQuake earthQuake = Parser.parse(eqText);
         assertNull(earthQuake);
 
+        //wrong date format
         eqText =  "#terremoto ML:3.1 2017-03-16 04:58:27 Lat=42.90 Lon=13.09 Prof=9Km Zona=Macerata. http://bit.ly/2muIKSY";
         earthQuake = Parser.parse(eqText);
         assertNull(earthQuake);
 
+        //missing km for Prof
         eqText =  "#terremoto ML:3.1 2017-03-16 04:58:27 UTC Lat=42.90 Lon=13.09 Prof=9 Zona=Macerata. http://bit.ly/2muIKSY";
         earthQuake = Parser.parse(eqText);
         assertNull(earthQuake);

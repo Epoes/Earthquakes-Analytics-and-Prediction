@@ -28,14 +28,13 @@ public class Parser {
     }
 
     public static EarthQuake parse(String INGVTweet){
+
+        String s = INGVTweet.substring(INGVTweet.indexOf("Zona="));
         String[] token =  INGVTweet.split(" ");
+        String[] linkToken = s.split(" ");
+        String link = linkToken[linkToken.length - 1];
 
-        //
-
-
-
-
-        if(token.length != 10){
+        if(!token[0].equals("#terremoto")){
             return null;
         }
 
@@ -43,7 +42,7 @@ public class Parser {
             float magnitude = Float.parseFloat(token[1].split(":")[1]);
 
             if(!token[4].equals("UTC")){
-                System.out.println("A new timeZone: " + token[4]);
+                System.err.println("A new timeZone: " + token[4]);
                 return null;
             }
             Calendar cal = Calendar.getInstance();
@@ -54,9 +53,9 @@ public class Parser {
             float lon = Float.parseFloat(token[6].split("=")[1]);
             String StDeep = (token[7].split("=")[1]);
             float deep = Float.parseFloat(StDeep.substring(0, StDeep.length() -2));
-            String compressedLink = token[9];
 
-            return new EarthQuake(magnitude, cal, lat, lon, deep, compressedLink);
+
+            return new EarthQuake(magnitude, cal, lat, lon, deep, link);
 
         }catch (Exception e){
             e.printStackTrace();
