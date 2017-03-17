@@ -15,7 +15,7 @@ import com.usi.API.ConnectionStatus;
 import com.usi.API.twitter.Response;
 import com.usi.model.Elevation;
 import com.usi.model.Location;
-import com.usi.utils.APIKeys;
+import com.usi.util.APIKeys;
 
 import java.util.ArrayList;
 import java.util.List;
