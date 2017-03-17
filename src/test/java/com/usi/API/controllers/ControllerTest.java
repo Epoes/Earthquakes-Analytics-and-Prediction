@@ -13,10 +13,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-
-/**
- * Created by Epoes on 08/03/17.
- */
 public class ControllerTest extends BaseIntegration {
     @Autowired
     private MockMvc mockMvc;

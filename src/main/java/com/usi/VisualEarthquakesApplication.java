@@ -10,5 +10,4 @@ public class VisualEarthquakesApplication {
 		SpringApplication.run(VisualEarthquakesApplication.class, args);
 	}
 
-
 }

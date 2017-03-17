@@ -7,15 +7,10 @@ import com.usi.model.Elevation;
 import java.util.ArrayList;
 
 public class ElevationMatrix {
-
     private LatLng nW = new LatLng(47.243913, 6.366221);
     private LatLng nE = new LatLng(47.243913, 18.742255);
     private LatLng SE = new LatLng(36.170137, 18.742255);
     private LatLng sW = new LatLng(36.170137, 6.366221);
-//    private double m1 = -8149453D/9974937D;
-//    private double c1 = 395644347319591D/9974937000000D;
-//    private double m2 = -3430362D/4478077D;
-//    private double c2 =  226078657231937D/4478077000000D;
     private MapsServices mapsServices;
     private ArrayList<Elevation> elevations;
 
@@ -30,8 +25,8 @@ public class ElevationMatrix {
 //    }
 
     public ArrayList<Elevation> createElevationMatrix() throws Exception{
-//        for(double i = this.nW.lat, j = this.nE.lat; i >= this.sW.lat; i -= 0.1, j -= 0.1) {
-        for(double i = this.nW.lat, j = this.nE.lat, z = 0; z <3; i -= 0.007, j -= 0.007,  z++) {
+        for(double i = this.nW.lat, j = this.nE.lat; i >= this.sW.lat; i -= 0.1, j -= 0.1) {
+//        for(double i = this.nW.lat, j = this.nE.lat, z = 0; z <3; i -= 0.009, j -= 0.009,  z++) {
             LatLng start = new LatLng(i,this.nW.lng);
             LatLng end = new LatLng(j,this.nW.lng + (this.nE.lng - this.nW.lng)/2);
             this.elevations.addAll(this.mapsServices.getElevation(start, end, 512).getContent());
@@ -42,29 +37,29 @@ public class ElevationMatrix {
         return this.elevations;
     }
 
-    public ArrayList<Double> getLatitudes(){
-        ArrayList<Double> latitudes = new ArrayList<>();
-        for(int i = 0; i < this.elevations.size(); ++i){
-            latitudes.add(this.elevations.get(i).getLatLng().lat);
-        }
-        return latitudes;
-    }
-
-    public ArrayList<Double> getLongitudes(){
-        ArrayList<Double> longitudes = new ArrayList<>();
-        for(int i = 0; i < this.elevations.size(); ++i){
-            longitudes.add(this.elevations.get(i).getLatLng().lng);
-        }
-        return longitudes;
-    }
-
-    public ArrayList<Integer> getElevations(){
-        ArrayList<Integer> elevations = new ArrayList<>();
-        for (int i = 0; i< this.elevations.size(); ++i){
-            elevations.add(this.elevations.get(i).getElevation());
-        }
-        return elevations;
-    }
+//    public ArrayList<Double> getLatitudes(){
+//        ArrayList<Double> latitudes = new ArrayList<>();
+//        for(int i = 0; i < this.elevations.size(); ++i){
+//            latitudes.add(this.elevations.get(i).getLatLng().lat);
+//        }
+//        return latitudes;
+//    }
+//
+//    public ArrayList<Double> getLongitudes(){
+//        ArrayList<Double> longitudes = new ArrayList<>();
+//        for(int i = 0; i < this.elevations.size(); ++i){
+//            longitudes.add(this.elevations.get(i).getLatLng().lng);
+//        }
+//        return longitudes;
+//    }
+//
+//    public ArrayList<Integer> getElevations(){
+//        ArrayList<Integer> elevations = new ArrayList<>();
+//        for (int i = 0; i< this.elevations.size(); ++i){
+//            elevations.add(this.elevations.get(i).getElevation());
+//        }
+//        return elevations;
+//    }
 
 //    public void writeToFile() throws Exception{
 //        this.createElevationMatrix();

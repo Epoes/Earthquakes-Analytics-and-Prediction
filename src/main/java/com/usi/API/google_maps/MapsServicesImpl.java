@@ -21,16 +21,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MapsServicesImpl implements MapsServices{
-    private List<Location> location;
     private Parser parser;
     private GeoApiContext context;
-    private ArrayList<Elevation> elevations;
 
 
     public MapsServicesImpl() {
         this.parser = new Parser();
         this.context = new GeoApiContext().setApiKey(APIKeys.GoogleMapsKey);
-        this.location = new ArrayList<>();
     }
 
     private Response errorHandler(Exception e){
@@ -50,10 +47,11 @@ public class MapsServicesImpl implements MapsServices{
 
     public Response getLocation(Double latitude, Double longitude){
         LatLng latlng = new LatLng(latitude, longitude);
+        List<Location> location = new ArrayList<>();
         try {
             GeocodingResult[] results = GeocodingApi.newRequest(this.context).latlng(latlng).await();
-            this.location.add(this.parser.parseGeocode(results[0].addressComponents));
-            return new Response(ConnectionStatus.OK, this.location, null);
+            location.add(this.parser.parseGeocode(results[0].addressComponents));
+            return new Response(ConnectionStatus.OK, location, null);
         } catch (Exception e){
             return this.errorHandler(e);
 
@@ -63,8 +61,8 @@ public class MapsServicesImpl implements MapsServices{
     public Response getElevation(LatLng start, LatLng end, int samples){
         try {
             ElevationResult[] result = ElevationApi.getByPath(this.context, samples, start, end).await();
-            this.elevations = this.parser.parseElevation(result);
-            return new Response(ConnectionStatus.OK, this.elevations, null);
+            ArrayList<Elevation> elevations = this.parser.parseElevation(result);
+            return new Response(ConnectionStatus.OK, elevations, null);
         } catch (Exception e){
             return this.errorHandler(e);
         }
