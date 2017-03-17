@@ -44,7 +44,7 @@ public class ParserTest extends BaseIntegration {
 
         assertEquals(42.90, earthQuake.getLatitude(), 0.001);
         assertEquals(13.09, earthQuake.getLongitude(), 0.001);
-        assertEquals(earthQuake.getDeep(), 9, 0.001);
+        assertEquals(earthQuake.getDepth(), 9, 0.001);
         assertEquals(earthQuake.getLink(), "http://bit.ly/2muIKSY");
     }
 
