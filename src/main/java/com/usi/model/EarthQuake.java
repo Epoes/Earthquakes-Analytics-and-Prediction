@@ -21,6 +21,7 @@ public class EarthQuake {
     private float longitude;
     private float depth;
     private String link;
+    private Location location;
 
     public EarthQuake(float magnitude, Calendar time, float latitude, float longitude, float depth, String link) {
         this.magnitude = magnitude;
@@ -40,7 +41,8 @@ public class EarthQuake {
                 ", latitude=" + latitude +
                 ", longitude=" + longitude +
                 ", deep=" + depth +
-                ", link='" + link + '\'' +
+                ", link='" + link +
+                ", location='" + location + '\'' +
                 '}';
     }
 
@@ -76,6 +78,8 @@ public class EarthQuake {
         return link;
     }
 
+    public Location getLocation(){return this.location;}
+
     public void setId(int id) {
         this.id = id;
 
@@ -104,4 +108,6 @@ public class EarthQuake {
     public void setLink(String link) {
         this.link = link;
     }
+
+    public void setLocation(Location location){this.location = location;}
 }

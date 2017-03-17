@@ -45,4 +45,11 @@ public class Response {
     public void setErrorMessage(String errorMessage) {
         this.errorMessage = errorMessage;
     }
+
+    public boolean isValid(){
+        if (status == ConnectionStatus.OK){
+            return true;
+        }
+        return false;
+    }
 }

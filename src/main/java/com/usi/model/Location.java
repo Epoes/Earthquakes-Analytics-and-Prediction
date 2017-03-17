@@ -16,6 +16,16 @@ public class Location {
 
     public Location(){}
 
+    @Override
+    public String toString() {
+        return "Location{" +
+                "adminLevel3='" + adminLevel3 + '\'' +
+                ", adminLevel2='" + adminLevel2 + '\'' +
+                ", adminLevel1='" + adminLevel1 + '\'' +
+                ", country='" + country + '\'' +
+                '}';
+    }
+
     public String getAdminLevel3() {
         return adminLevel3;
     }

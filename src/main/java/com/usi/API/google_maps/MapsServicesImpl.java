@@ -45,7 +45,7 @@ public class MapsServicesImpl implements MapsServices{
         return new Response(ConnectionStatus.UNKNOWN, null, e.getMessage());
     }
 
-    public Response getLocation(Double latitude, Double longitude){
+    public Response getLocation(double latitude, double longitude){
         LatLng latlng = new LatLng(latitude, longitude);
         List<Location> location = new ArrayList<>();
         try {

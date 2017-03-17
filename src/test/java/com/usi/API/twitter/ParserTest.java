@@ -11,9 +11,11 @@ import org.springframework.social.twitter.api.Tweet;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 public class ParserTest extends BaseIntegration {
     private static TwitterServices twitterServices = new TwitterServicesImpl();
@@ -24,8 +26,11 @@ public class ParserTest extends BaseIntegration {
     }
     @Test
     public void parseToEarthQuakes(){
-        List<Tweet> tweets =  twitterServices.getOldEarthquakesTweet(840544340627869698L, 100).content;
+
+        //get last tweet
+        List<Tweet> tweets =  twitterServices.getOldEarthquakesTweet(0, 100).content;
         List<EarthQuake> earthQuakes = Parser.parseToEarthQuakes(tweets);
+        assertTrue(tweets.size()>0);
         assertEquals(tweets.size(), earthQuakes.size());
     }
 
