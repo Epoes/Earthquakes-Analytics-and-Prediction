@@ -57,7 +57,7 @@ public class ParserTest extends BaseIntegration {
         assertNull(earthQuake);
 
         //wrong date format
-        eqText =  "#terremoto ML:3.1 2017-03-16 04:58:27 Lat=42.90 Lon=13.09 Prof=9Km Zona=Macerata. http://bit.ly/2muIKSY";
+        eqText =  "#terremoto ML:3.1 2017-03-16 04:58:27 GMA Lat=42.90 Lon=13.09 Prof=9Km Zona=Macerata. http://bit.ly/2muIKSY";
         earthQuake = Parser.parse(eqText);
         assertNull(earthQuake);
 
@@ -65,7 +65,6 @@ public class ParserTest extends BaseIntegration {
         eqText =  "#terremoto ML:3.1 2017-03-16 04:58:27 UTC Lat=42.90 Lon=13.09 Prof=9 Zona=Macerata. http://bit.ly/2muIKSY";
         earthQuake = Parser.parse(eqText);
         assertNull(earthQuake);
-
     }
 
 }
