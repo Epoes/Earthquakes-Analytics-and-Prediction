@@ -55,7 +55,7 @@ public class Parser {
             float deep = Float.parseFloat(StDeep.substring(0, StDeep.length() -2));
 
 
-            return new EarthQuake(magnitude, cal, lat, lon, deep, link);
+            return null;
 
         }catch (Exception e){
             e.printStackTrace();

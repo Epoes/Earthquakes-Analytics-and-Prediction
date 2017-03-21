@@ -5,18 +5,18 @@ import com.usi.API.ConnectionStatus;
 import java.util.List;
 
 
-public class Response {
+public class Response <E> {
     ConnectionStatus status;
-    List content;
+    List<E> content;
     String errorMessage;
 
-    public<T> Response(ConnectionStatus status, List<T> content, String errorMessage){
-
-
+    public Response(ConnectionStatus status, List<E> content, String errorMessage){
         this.content = content;
         this.errorMessage = errorMessage;
         this.status = status;
     }
+
+
 
     public Response(ConnectionStatus status){
         this.status = status;

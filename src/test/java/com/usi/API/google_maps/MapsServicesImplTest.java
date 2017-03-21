@@ -13,7 +13,6 @@ import org.junit.Test;
 import java.util.ArrayList;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 
 public class MapsServicesImplTest extends BaseIntegration{
 
@@ -65,7 +64,7 @@ public class MapsServicesImplTest extends BaseIntegration{
         LatLng start = new LatLng(43.103148, 12.399769);
         LatLng end = new LatLng(42.370574, 13.927859);
         Response response = mapsServices.getElevation(start, end, 513);
-        assertEquals(ConnectionStatus.INVALID_REQUEST, response.getStatus());
+        assertEquals(ConnectionStatus.BAD_REQUEST, response.getStatus());
     }
 
     @Test

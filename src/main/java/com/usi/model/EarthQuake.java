@@ -1,113 +1,75 @@
 package com.usi.model;
 
 
-import java.util.Calendar;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
-
-@Entity
-@Table(name = "earthquake")
+//@Entity
+//@Table(name = "earthquake")
 public class EarthQuake {
-    @Id
-    @Column(name = "id", updatable = false, nullable = false)
+//    @Id
+//    @Column(name = "id", updatable = false, nullable = false)
     private int id;
-    @Column(name = "magnitude")
-    private float magnitude;
-    private Calendar time;
-    private float latitude;
-    private float longitude;
-    private float depth;
-    private String link;
+    Origin origin;
+    Magnitude magnitude;
+    String regionName;
     private Location location;
 
-    public EarthQuake(float magnitude, Calendar time, float latitude, float longitude, float depth, String link) {
-        this.magnitude = magnitude;
-        this.time = time;
-        this.latitude = latitude;
-        this.longitude = longitude;
-        this.depth = depth;
-        this.link = link;
+
+
+
+
+    public EarthQuake(int id){
+        this.id = id;
     }
 
-    @Override
-    public String toString() {
-        return "EarthQuake{" +
-                "magnitude=" + magnitude +
-                ", id=" + id +
-                ", time=" + time +
-                ", latitude=" + latitude +
-                ", longitude=" + longitude +
-                ", deep=" + depth +
-                ", link='" + link +
-                ", location='" + location + '\'' +
-                '}';
-    }
-
-    public EarthQuake(){
-
-    }
+    public EarthQuake(){}
 
     public int getId() {
         return id;
     }
 
-    public float getMagnitude() {
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public Origin getOrigin() {
+        return origin;
+    }
+
+    public void setOrigin(Origin origin) {
+        this.origin = origin;
+    }
+
+    public Magnitude getMagnitude() {
         return magnitude;
     }
 
-    public Calendar getTime() {
-        return time;
-    }
-
-    public float getLatitude() {
-        return latitude;
-    }
-
-    public float getLongitude() {
-        return longitude;
-    }
-
-    public float getDepth() {
-        return depth;
-    }
-
-    public String getLink() {
-        return link;
-    }
-
-    public Location getLocation(){return this.location;}
-
-    public void setId(int id) {
-        this.id = id;
-
-    }
-
-    public void setTime(Calendar time) {
-        this.time = time;
-    }
-
-    public void setMagnitude(float magnitude) {
+    public void setMagnitude(Magnitude magnitude) {
         this.magnitude = magnitude;
     }
 
-    public void setLatitude(float latitude) {
-        this.latitude = latitude;
+    public String getRegionName() {
+        return regionName;
     }
 
-    public void setLongitude(float longitude) {
-        this.longitude = longitude;
+    public void setRegionName(String regionName) {
+        this.regionName = regionName;
     }
 
-    public void setDepth(float depth) {
-        this.depth = depth;
+    public Location getLocation() {
+        return location;
     }
 
-    public void setLink(String link) {
-        this.link = link;
+    public void setLocation(Location location) {
+        this.location = location;
     }
 
-    public void setLocation(Location location){this.location = location;}
+    @Override
+    public String toString() {
+        return "EarthQuake{" +
+                "id=" + id +
+                ", origin=" + origin +
+                ", magnitude=" + magnitude +
+                ", regionName='" + regionName + '\'' +
+                ", location=" + location +
+                '}';
+    }
 }

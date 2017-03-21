@@ -39,7 +39,7 @@ public class MapsServicesImpl implements MapsServices{
         } else if (e instanceof OverQueryLimitException) {
             return new Response(ConnectionStatus.OVER_QUERY_LIMIT, null, e.getMessage());
         } else if (e instanceof InvalidRequestException) {
-            return new Response(ConnectionStatus.INVALID_REQUEST, null, e.getMessage());
+            return new Response(ConnectionStatus.BAD_REQUEST, null, e.getMessage());
         }
 
         return new Response(ConnectionStatus.UNKNOWN, null, e.getMessage());
