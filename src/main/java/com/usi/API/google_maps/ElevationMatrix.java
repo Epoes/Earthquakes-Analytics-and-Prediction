@@ -3,7 +3,9 @@ package com.usi.API.google_maps;
 import com.google.maps.model.LatLng;
 
 import com.usi.model.Elevation;
+import com.usi.model.Location;
 
+import java.awt.*;
 import java.util.ArrayList;
 
 public class ElevationMatrix {
@@ -11,12 +13,12 @@ public class ElevationMatrix {
     private LatLng nE = new LatLng(47.243913, 18.742255);
     private LatLng SE = new LatLng(36.170137, 18.742255);
     private LatLng sW = new LatLng(36.170137, 6.366221);
+    private double magicNumber = 0.008996;
+    private double earthRadius = 6.371;
     private MapsServices mapsServices;
-    private ArrayList<Elevation> elevations;
 
     public ElevationMatrix() {
         this.mapsServices = new MapsServicesImpl();
-        this.elevations = new ArrayList<>();
     }
 
 //    private LatLng pointOnLine(double x, double m, double c){
@@ -25,16 +27,27 @@ public class ElevationMatrix {
 //    }
 
     public ArrayList<Elevation> createElevationMatrix() throws Exception{
+        ArrayList<Elevation> elevations = new ArrayList<>();
         for(double i = this.nW.lat, j = this.nE.lat; i >= this.sW.lat; i -= 0.1, j -= 0.1) {
-//        for(double i = this.nW.lat, j = this.nE.lat, z = 0; z <3; i -= 0.009, j -= 0.009,  z++) {
+//        for(double i = this.nW.lat, j = this.nE.lat, z = 0; z <3; i -= this.magicNumber, j -= this.magicNumber,  z++) {
             LatLng start = new LatLng(i,this.nW.lng);
             LatLng end = new LatLng(j,this.nW.lng + (this.nE.lng - this.nW.lng)/2);
-            this.elevations.addAll(this.mapsServices.getElevation(start, end, 512).getContent());
+            elevations.addAll(this.mapsServices.getElevation(start, end, 512).getContent());
             start.lng = end.lng;
             end.lng = this.nE.lng;
-            this.elevations.addAll(this.mapsServices.getElevation(start, end, 512).getContent());
+            elevations.addAll(this.mapsServices.getElevation(start, end, 512).getContent());
         }
-        return this.elevations;
+        return elevations;
+    }
+
+    public double haversine(LatLng start, LatLng end){
+        double lat1 = start.lat;
+        double lat2 = end.lat;
+        double deltaLat = lat2 - lat1;
+        double deltaLng = end.lng - start.lng;
+        double a = Math.pow(Math.sin(deltaLat/2), 2) + Math.cos(lat1) + Math.cos(lat2) + Math.pow(Math.sin(deltaLng/2), 2);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        return this.earthRadius * c;
     }
 
 //    public ArrayList<Double> getLatitudes(){

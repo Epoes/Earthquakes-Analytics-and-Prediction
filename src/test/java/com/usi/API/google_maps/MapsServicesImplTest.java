@@ -12,6 +12,8 @@ import org.junit.Test;
 
 import java.util.ArrayList;
 
+import javax.el.ELException;
+
 import static org.junit.Assert.assertEquals;
 
 public class MapsServicesImplTest extends BaseIntegration{
@@ -77,12 +79,15 @@ public class MapsServicesImplTest extends BaseIntegration{
         assertEquals(407, elevations.get(0).getElevation());
     }
 
-//    @Test
-//    public void testBecero() throws Exception{
-//        ElevationMatrix elevationMatrix = new ElevationMatrix();
+    @Test
+    public void testBecero() throws Exception{
+        ElevationMatrix elevationMatrix = new ElevationMatrix();
 //        ArrayList<Elevation> elevations = elevationMatrix.createElevationMatrix();
-//        assertNotNull(elevations);
-//
-//    }
+        LatLng start = new LatLng(43.103148, 12.399769);
+        LatLng end = new LatLng(42.370574, 13.927859);
+        double d = elevationMatrix.haversine(start, end);
+        assertNotNull(d);
+
+    }
 
 }
