@@ -34,26 +34,26 @@ public class IngvService implements RssService {
     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS z");
 
 
+    //UnknownHostException
 
 
     public Response<EarthQuake> getEarthQuakes(IngvQuery query) throws IOException, SAXException, ParserConfigurationException {
         URL url = query.generateUrlForMultipleEq();
         HttpResponse httpResponse;
+
         httpResponse = simpleHttpRequest.get(url);
 
         int status = httpResponse.getStatusLine().getStatusCode();
         if (status != 200) {
-            return new Response<>(ConnectionStatus.getConnectionStatus(status), null, httpResponse.getStatusLine().getReasonPhrase());
+            return new Response<>(ConnectionStatus.getConnectionStatus(status), null, httpResponse.getStatusLine().getReasonPhrase() +
+            " With query: " + url);
         }
 
-
         String body = EntityUtils.toString(httpResponse.getEntity(), "UTF-8");
-
-
         Document xmlDoc = parseBody(body);
-
         List<EarthQuake> earthQuakes =  parseXml(xmlDoc);
-        return new Response<EarthQuake>(ConnectionStatus.OK, earthQuakes, null);
+
+        return new Response<>(ConnectionStatus.OK, earthQuakes, null);
 
     }
 
@@ -76,6 +76,7 @@ public class IngvService implements RssService {
                     earthQuake.setRegionName(getRegionName(eventElement));
                     try {
                         earthQuake.setOrigin(getOrigin(eventElement));
+                        earthQuake.getOrigin().setEarthQuake(earthQuake);
                     }catch (java.text.ParseException e){
                         e.printStackTrace();
                         continue;
@@ -95,7 +96,12 @@ public class IngvService implements RssService {
         Magnitude magnitude = new Magnitude(getIdFromLink(magnitudeElement.getAttribute("publicID")));
         magnitude.setType(magnitudeElement.getElementsByTagName("type").item(0).getTextContent());
         magnitude.setMagnitude(Float.parseFloat(getValue(magnitudeElement, "mag", "value")));
-        magnitude.setUncertainty(Float.parseFloat(getValue(magnitudeElement, "mag", "uncertainty")));
+
+        try {
+            magnitude.setUncertainty(Float.parseFloat(getValue(magnitudeElement, "mag", "uncertainty")));
+        }catch (NullPointerException e){
+            magnitude.setUncertainty(0.0f);
+        }
         return magnitude;
 
 
@@ -118,12 +124,14 @@ public class IngvService implements RssService {
         origin.setLongitude(Float.parseFloat(getValue(originElement, "longitude", "value")));
         origin.setDepth(Integer.parseInt(getValue(originElement, "depth", "value")));
 
+
         return origin;
     }
 
     private String getValue(Element element, String tagName, String value){
-        Element elementLatitude = (Element) element.getElementsByTagName(tagName).item(0);
-        return elementLatitude.getElementsByTagName(value).item(0).getTextContent();
+
+        Element elementTag = (Element) element.getElementsByTagName(tagName).item(0);
+        return elementTag.getElementsByTagName(value).item(0).getTextContent();
 
     }
 

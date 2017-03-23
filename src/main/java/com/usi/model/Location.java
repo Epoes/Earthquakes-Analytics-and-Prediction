@@ -1,10 +1,17 @@
 package com.usi.model;
 
+//@Entity
+//@Table(name = "location")
 public class Location {
 
+
+//    @Column(name = "adminLevel3", nullable = false, length = 255)
     private String adminLevel3;
+//    @Column(name = "adminLevel2", nullable = false, length = 255)
     private String adminLevel2;
+//    @Column(name = "adminLevel1", nullable = false, length = 255)
     private String adminLevel1;
+//    @Column(name = "country", nullable = false, length = 255)
     private String country;
 
     public Location(String adminLevel3, String adminLevel2, String adminLevel1, String country) {

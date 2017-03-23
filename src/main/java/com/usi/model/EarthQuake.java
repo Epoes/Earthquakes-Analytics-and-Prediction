@@ -1,16 +1,35 @@
 package com.usi.model;
 
 
-//@Entity
-//@Table(name = "earthquake")
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "earthquake")
 public class EarthQuake {
-//    @Id
-//    @Column(name = "id", updatable = false, nullable = false)
+    @Id
+    @Column(name = "id", updatable = false, nullable = false)
     private int id;
+
+    @OneToOne(fetch= FetchType.EAGER, cascade = CascadeType.PERSIST)
+    @JoinColumn(name="id")
     Origin origin;
+
+    @OneToOne(fetch= FetchType.EAGER, cascade = CascadeType.PERSIST)
+    @JoinColumn(name="id")
     Magnitude magnitude;
+
+    @Column(name = "regionName", nullable = false, length = 255)
     String regionName;
-    private Location location;
+
+
+//    private Location location;
 
 
 
@@ -54,13 +73,13 @@ public class EarthQuake {
         this.regionName = regionName;
     }
 
-    public Location getLocation() {
-        return location;
-    }
-
-    public void setLocation(Location location) {
-        this.location = location;
-    }
+//    public Location getLocation() {
+//        return location;
+//    }
+//
+//    public void setLocation(Location location) {
+//        this.location = location;
+//    }
 
     @Override
     public String toString() {
@@ -69,7 +88,7 @@ public class EarthQuake {
                 ", origin=" + origin +
                 ", magnitude=" + magnitude +
                 ", regionName='" + regionName + '\'' +
-                ", location=" + location +
+//                ", location=" + location +
                 '}';
     }
 }

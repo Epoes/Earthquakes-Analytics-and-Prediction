@@ -33,7 +33,7 @@ public class MapsServicesImpl implements MapsServices{
     private Response errorHandler(Exception e){
         e.printStackTrace();
         if (e instanceof RequestDeniedException) {
-            return new Response(ConnectionStatus.REQUESTDENIED, null, e.getMessage());
+            return new Response(ConnectionStatus.FORBIDDEN, null, e.getMessage());
         } else if (e instanceof ZeroResultsException) {
             return new Response(ConnectionStatus.ZERO_RESULTS, null, e.getMessage());
         } else if (e instanceof OverQueryLimitException) {

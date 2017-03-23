@@ -1,67 +1,76 @@
-//package com.usi.API;
-//
-//
-//import com.usi.API.google_maps.MapsServices;
-//import com.usi.API.google_maps.MapsServicesImpl;
-//import com.usi.API.twitter.Parser;
-//import com.usi.API.twitter.Response;
-//import com.usi.API.twitter.TwitterServices;
-//
-//import com.usi.model.EarthQuake;
-//import com.usi.model.Location;
-//
-//import org.springframework.social.twitter.api.Tweet;
-//import org.springframework.stereotype.Component;
-//
-//import java.util.List;
-//
-//@Component
-//public class EarthQuakeHub {
-//
-//    private static MapsServices mapsServices = new MapsServicesImpl();
-//
-//
-////    @Scheduled(fixedRate = 60000)
-//    public void updateEarthQuakes() {
-//        Response res = twitterServices.connectToTwitter();
-//        if(!res.isValid()){
-//            System.err.println(res.getErrorMessage());
-//            return;
-//        }
-//
-//        long lastId = getLastId();
-//        res = twitterServices.getNewEarthquakesTweet(lastId, 100);
-//        if(res.isValid()){
-//            List<Tweet> twitters =  res.getContent();
-//            if(twitters.size() > 0) {
-//                List<EarthQuake> earthquakes = Parser.parseToEarthQuakes(twitters);
-//                for(EarthQuake earthQuakes : earthquakes){
-//                    Response mapsResponse = mapsServices.getLocation(earthQuakes.getLatitude(), earthQuakes.getLongitude());
-//                    if(mapsResponse.isValid()){
-//                        List<Location> locations = mapsResponse.getContent();
-////                        earthQuakes.setLocation(locations.get(0));
-//
-//                    }
-//                }
-//
-//            }
-//
-//        }
-//
-//    }
-//
-//
-//    //TODO: do it.
-//    private long getLastId(){
-//        return 0;
-//    }
-//
-//
-//
+package com.usi.API;
+
+
+import com.usi.API.FeedRSS.IngvQuery;
+import com.usi.API.FeedRSS.IngvService;
+import com.usi.API.FeedRSS.RssService;
+import com.usi.API.google_maps.MapsServices;
+import com.usi.API.google_maps.MapsServicesImpl;
+import com.usi.model.EarthQuake;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.List;
+
+
+public class EarthQuakeHub {
+    private MapsServices mapsServices;
+    private RssService ingvService;
+    private SimpleDateFormat sdf;
+    private String oldestDate;
+
+    boolean isRunning = true;
+
+    public EarthQuakeHub() {
+        mapsServices = new MapsServicesImpl();
+        ingvService = new IngvService();
+        sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z");
+        oldestDate  = "2017-03-18 00:00:00 UTC";
+    }
+
+
+//    @Scheduled(fixedRate = 30000)
+    public List<EarthQuake> updateEarthQuakes() {
+
+        Calendar start = Calendar.getInstance();
+        try {
+            start.setTime(sdf.parse("2015-03-16 00:00:00 UTC"));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        IngvQuery query = new IngvQuery(start, null);
+        query.setOrderBy("time-asc");
+        query.setCount(1);
+        query.setMinMagnitude(2);
+        try {
+            List<EarthQuake> earthquakes = ingvService.getEarthQuakes(query).getContent();
+            if (earthquakes == null) {
+                throw new Exception("EARTHQUAKES NULL");
+            } else {
+                System.err.println(earthquakes);
+            }
+            return earthquakes;
+        }catch (Exception e){
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public void update(){
+
+    }
+
+    public void  pause(){
+        isRunning = false;
+    }
+
+    public void  start(){
+        isRunning = true;
+    }
 
 
 
 
 
-
-//}
+}

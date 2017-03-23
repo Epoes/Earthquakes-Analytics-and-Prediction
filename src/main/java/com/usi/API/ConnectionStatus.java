@@ -7,8 +7,8 @@ public enum ConnectionStatus {
     ZERO_RESULTS(204),
     UNKNOWN(0),
     OVER_QUERY_LIMIT(1),
-    REQUESTDENIED(403),
-    BAD_REQUEST(400);
+    BAD_REQUEST(400),
+    SERVER_ERROR(500);
 
     int status;
 
@@ -17,11 +17,16 @@ public enum ConnectionStatus {
     }
 
     public static ConnectionStatus getConnectionStatus(int status){
+
+        if(status >= 500){
+            return SERVER_ERROR;
+        }
+
         for(ConnectionStatus connectionStatus : ConnectionStatus.values()){
             if(connectionStatus.status == status){
                 return connectionStatus;
             }
         }
-        return null;
+        return UNKNOWN;
     }
 }
