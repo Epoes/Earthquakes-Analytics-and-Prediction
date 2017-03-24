@@ -1,5 +1,5 @@
 #map{
-    height: 700px;
+    height: 600px;
 }
 
 .leaflet-interactive{
@@ -12,4 +12,14 @@
     /*0% {-webkit-transform: scale(0.1, 0.1); opacity: 0.0;}*/
     /*50% {opacity: 1.0;}*/
     /*100% {-webkit-transform: scale(1.2, 1.2); opacity: 0.0;}*/
+}
+
+#page-title{
+    font-family: "Gill Sans";
+    font-weight: lighter;
+    display: inline;
+}
+
+.query-field{
+    display: inline;
 }

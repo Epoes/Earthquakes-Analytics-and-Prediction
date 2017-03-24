@@ -2,16 +2,27 @@ var map = L.map(document.getElementById('map')).setView([43.097003, 12.390278], 
 var italyLayer = L.geoJson(italyNeighbors).addTo(map);
 map.fitBounds(italyLayer.getBounds());
 // var circle = L.circle([43.097003, 12.390278], {radius: 20000, color: "#FF0000", stroke: false}).addTo(map);
-var count = 100;
-$(document).ready(function () {
+
+
+$("#query-button").click(function () {
+    var magnitude = document.getElementById("magnitude-field").value;
+    var count = document.getElementById("count-field").value;
     $.ajax({
-        url: "http://localhost:8080/api/earthquakes/last-update/" + count,
+        url: "http://localhost:8080/api/earthquakes/last-update/" + validateCount(count) + "/" + validateMagnitude(magnitude),
         type: "GET",
         success: function (data, textStatus, jqXHR) {
          drawEarthquakes(data);
         }
     });
 });
+
+function validateMagnitude(magnitude){
+    return magnitude ? magnitude : 2;
+}
+
+function validateCount(count){
+    return count ? count : 100;
+}
 
 function drawEarthquakes(earthquakes) {
     for(var i = 0; i < earthquakes.length; ++i){
