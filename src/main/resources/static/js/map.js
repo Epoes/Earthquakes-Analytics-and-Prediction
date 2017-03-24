@@ -2,9 +2,10 @@ var map = L.map(document.getElementById('map')).setView([43.097003, 12.390278], 
 var italyLayer = L.geoJson(italyNeighbors).addTo(map);
 map.fitBounds(italyLayer.getBounds());
 // var circle = L.circle([43.097003, 12.390278], {radius: 20000, color: "#FF0000", stroke: false}).addTo(map);
+var count = 100;
 $(document).ready(function () {
     $.ajax({
-        url: "http://localhost:8080/api/earthquakes/last-update",
+        url: "http://localhost:8080/api/earthquakes/last-update/" + count,
         type: "GET",
         success: function (data, textStatus, jqXHR) {
          drawEarthquakes(data);

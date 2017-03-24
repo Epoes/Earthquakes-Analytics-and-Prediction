@@ -12,7 +12,6 @@ import com.usi.repository.MagnitudeRepository;
 import com.usi.repository.OriginRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -23,7 +22,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 
-@Service
+//@Service
 public class EarthQuakeHub {
     private MapsServices mapsServices;
 
@@ -99,9 +98,6 @@ public class EarthQuakeHub {
 
         start.add(Calendar.DATE, -2);
         query.setStartTime(start);
-
-
-
 
         for(EarthQuake e : earthQuakes){
             magnitudeRepository.save(e.getMagnitude());
