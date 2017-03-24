@@ -2,7 +2,8 @@
 var map = L.map(document.getElementById('map')).setView([43.097003, 12.390278], 5);
 var italyLayer = L.geoJson(italyNeighbors).addTo(map);
 map.fitBounds(italyLayer.getBounds());
-var markers = new L.featureGroup();
+
+var markers = new L.FeatureGroup();
 
 $("#query-button").click(function () {
     markers.clearLayers();
@@ -30,13 +31,15 @@ function drawEarthquakes(earthquakes) {
         var latitude = earthquakes[i].origin.latitude;
         var longitude = earthquakes[i].origin.longitude;
         var magnitude = earthquakes[i].magnitude.magnitude;
-        var circle = markers.addLayer(L.circle([latitude, longitude], {radius: adjustRadius(magnitude), color: adjustColor(magnitude), stroke: false})) ;
-        var center = markers.addLayer(L.circle([latitude, longitude], {radius: adjustRadius(magnitude)/1000, color: adjustColor(magnitude)}));
+        var circle = (L.circle([latitude, longitude], {radius: adjustRadius(magnitude), color: adjustColor(magnitude), stroke: false}));
+        var center = (L.circle([latitude, longitude], {radius: adjustRadius(magnitude)/1000, color: adjustColor(magnitude)}));
         var popup = L.popup()
             .setLatLng([latitude, longitude])
             .setContent("<b>Magnitude: </b>" + magnitude + "<br> <b>Zone: </b>" + earthquakes[i].regionName + "<br><b>Date: </b>" + dateFormatter(earthquakes[i].origin.time))
             .openOn(map);
         circle.bindPopup(popup).openPopup(center);
+        markers.addLayer(circle);
+        markers.addLayer(center);
     }
     map.addLayer(markers);
 }
