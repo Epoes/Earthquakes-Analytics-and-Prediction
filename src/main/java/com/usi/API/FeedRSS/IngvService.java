@@ -9,6 +9,8 @@ import com.usi.model.Origin;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.util.EntityUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -28,13 +30,18 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+@Service
 public class IngvService implements RssService {
 
-    IngvSimpleHttpRequest simpleHttpRequest = new IngvSimpleHttpRequest();
-    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS z");
+    @Autowired
+    IngvSimpleHttpRequest simpleHttpRequest;
+
+    SimpleDateFormat sdf;
 
 
-    //UnknownHostException
+    public IngvService(){
+        sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS z");
+    }
 
 
     public Response<EarthQuake> getEarthQuakes(IngvQuery query) throws IOException, SAXException, ParserConfigurationException {

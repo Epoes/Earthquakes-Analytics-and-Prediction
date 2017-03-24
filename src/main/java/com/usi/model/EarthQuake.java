@@ -18,11 +18,11 @@ public class EarthQuake {
     private int id;
 
     @OneToOne(fetch= FetchType.EAGER, cascade = CascadeType.PERSIST)
-    @JoinColumn(name="id")
+    @JoinColumn(name="origin_earthquake")
     Origin origin;
 
     @OneToOne(fetch= FetchType.EAGER, cascade = CascadeType.PERSIST)
-    @JoinColumn(name="id")
+    @JoinColumn(name="magnitude_earthquake")
     Magnitude magnitude;
 
     @Column(name = "regionName", nullable = false, length = 255)

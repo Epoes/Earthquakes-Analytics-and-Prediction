@@ -2,64 +2,117 @@ package com.usi.API;
 
 
 import com.usi.API.FeedRSS.IngvQuery;
-import com.usi.API.FeedRSS.IngvService;
 import com.usi.API.FeedRSS.RssService;
 import com.usi.API.google_maps.MapsServices;
 import com.usi.API.google_maps.MapsServicesImpl;
+import com.usi.API.twitter.Response;
 import com.usi.model.EarthQuake;
+import com.usi.repository.EarthquakeRepository;
+import com.usi.repository.MagnitudeRepository;
+import com.usi.repository.OriginRepository;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
+import java.util.Timer;
+import java.util.TimerTask;
 
 
+@Service
 public class EarthQuakeHub {
     private MapsServices mapsServices;
+
+
     private RssService ingvService;
+    private EarthquakeRepository earthquakeRepository;
+    private  MagnitudeRepository magnitudeRepository;
+    private OriginRepository originRepository;
     private SimpleDateFormat sdf;
-    private String oldestDate;
+    private IngvQuery query;
 
     boolean isRunning = true;
 
-    public EarthQuakeHub() {
+    Timer timer;
+
+
+    @Autowired
+    public EarthQuakeHub(EarthquakeRepository earthquakeRepository, MagnitudeRepository magnitudeRepository, OriginRepository originRepository,  RssService ingvService) {
+		this.earthquakeRepository = earthquakeRepository;
+		this.magnitudeRepository = magnitudeRepository;
+		this.originRepository = originRepository;
+        this.ingvService = ingvService;
         mapsServices = new MapsServicesImpl();
-        ingvService = new IngvService();
         sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z");
-        oldestDate  = "2017-03-18 00:00:00 UTC";
-    }
+        query = new IngvQuery();
+
+        updateEarthQuakes();
+	}
 
 
 //    @Scheduled(fixedRate = 30000)
-    public List<EarthQuake> updateEarthQuakes() {
-
+    public void updateEarthQuakes() {
         Calendar start = Calendar.getInstance();
-        try {
-            start.setTime(sdf.parse("2015-03-16 00:00:00 UTC"));
-        }catch (Exception e){
-            e.printStackTrace();
-        }
+        Date maxDate = originRepository.getMaxDate().orElse(new Date());
+        start.setTime(maxDate);
+        start.add(Calendar.DATE, -2);
+        query.setStartTime(start);
+        sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
 
-        IngvQuery query = new IngvQuery(start, null);
-        query.setOrderBy("time-asc");
-        query.setCount(1);
-        query.setMinMagnitude(2);
-        try {
-            List<EarthQuake> earthquakes = ingvService.getEarthQuakes(query).getContent();
-            if (earthquakes == null) {
-                throw new Exception("EARTHQUAKES NULL");
-            } else {
-                System.err.println(earthquakes);
+        query.setStartTime(start);
+        query.setOrderBy("time");
+        query.setCount(300);
+        query.setMinMagnitude(0);
+        timer = new Timer();
+
+        TimerTask myTask = new TimerTask() {
+            @Override
+            public void run() {
+                update();
             }
-            return earthquakes;
-        }catch (Exception e){
-            e.printStackTrace();
-            return null;
-        }
+        };
+        timer.schedule(myTask, 0, 120000);
     }
+
+
 
     public void update(){
+        Response<EarthQuake> response;
+        try {
+            response = ingvService.getEarthQuakes(query);
+        }catch (Exception e){
+            e.printStackTrace();
+            return;
+        }
+
+        if(response.getStatus() != ConnectionStatus.OK){
+            return;
+        }
+
+        List<EarthQuake> earthQuakes = response.getContent();
+        Calendar start = Calendar.getInstance();
+        start.setTime(earthQuakes.get(0).getOrigin().getTime());
+
+        start.add(Calendar.DATE, -2);
+        query.setStartTime(start);
+
+
+
+
+        for(EarthQuake e : earthQuakes){
+            magnitudeRepository.save(e.getMagnitude());
+            originRepository.save(e.getOrigin());
+            earthquakeRepository.save(e);
+        }
+        System.out.println("\n" +sdf.format(start.getTime()) + ": " + earthQuakes.size() + " earthquake updated!");
 
     }
+
+
 
     public void  pause(){
         isRunning = false;
@@ -68,6 +121,8 @@ public class EarthQuakeHub {
     public void  start(){
         isRunning = true;
     }
+
+
 
 
 

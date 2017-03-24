@@ -34,6 +34,7 @@ public class Origin {
     public Origin(int id){
         this.id = id;
     }
+    public Origin(){}
 
     public int getId() {
         return id;

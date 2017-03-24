@@ -14,7 +14,7 @@ public class Magnitude {
     @Column(name = "id", updatable = true, nullable = false)
     private int id;
 
-    @Column(name = "magnitude", nullable = false)
+    @Column(name = "magnitude")
     private float magnitude;
 
     @Column(name = "type", nullable = false, length = 8)

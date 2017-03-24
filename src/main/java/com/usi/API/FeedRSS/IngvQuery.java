@@ -54,6 +54,8 @@ public class IngvQuery {
         }
     }
 
+    public IngvQuery(){};
+
     private boolean isValidInterval(Calendar startTime, Calendar endTime) {
         if(startTime != null && endTime != null){
             if(startTime.getTime().getTime() > endTime.getTime().getTime()){
