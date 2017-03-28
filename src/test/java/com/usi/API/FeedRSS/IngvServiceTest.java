@@ -4,7 +4,7 @@ package com.usi.API.FeedRSS;
 import com.usi.API.ConnectionStatus;
 import com.usi.API.twitter.Response;
 import com.usi.BaseIntegration;
-import com.usi.model.EarthQuake;
+import com.usi.model.Earthquake;
 
 import org.junit.Test;
 
@@ -42,7 +42,7 @@ public class IngvServiceTest extends BaseIntegration {
         query.setCount(count);
         query.setMinMagnitude(3);
         query.setOrderBy("time");
-        Response<EarthQuake> response = null;
+        Response<Earthquake> response = null;
 
         try {
             response = ingvService.getEarthQuakes(query);
@@ -52,21 +52,21 @@ public class IngvServiceTest extends BaseIntegration {
         assertNotNull(response);
         assertEquals(ConnectionStatus.OK, response.getStatus());
         assertNull(response.getErrorMessage());
-        List<EarthQuake> earthQuakes =  response.getContent();
-        assertNotNull(earthQuakes);
-        assertEquals(count, earthQuakes.size());
+        List<Earthquake> earthquakes =  response.getContent();
+        assertNotNull(earthquakes);
+        assertEquals(count, earthquakes.size());
 
-        for(EarthQuake earthQuake : earthQuakes){
-            assertNotEquals(0, earthQuake.getId());
-            assertNotNull(earthQuake.getRegionName());
-            assertNotNull(earthQuake.getMagnitude());
-            assertNotEquals(0, earthQuake.getMagnitude().getId());
-            assertNotNull(earthQuake.getOrigin());
-            assertNotEquals(0, earthQuake.getOrigin().getId());
-            assertTrue("start Time (" + start.getTime().getTime() + ") should be less than eq time (" + earthQuake.getOrigin().getTime().getTime() + ")",
-                    start.getTime().getTime() <= earthQuake.getOrigin().getTime().getTime());
-            assertTrue("end Time (" + end.getTime().getTime() + ") should be grater than eq time (" + earthQuake.getOrigin().getTime().getTime() + ")",
-                    end.getTime().getTime() >= earthQuake.getOrigin().getTime().getTime());
+        for(Earthquake earthquake : earthquakes){
+            assertNotEquals(0, earthquake.getId());
+            assertNotNull(earthquake.getRegionName());
+            assertNotNull(earthquake.getMagnitude());
+            assertNotEquals(0, earthquake.getMagnitude().getId());
+            assertNotNull(earthquake.getOrigin());
+            assertNotEquals(0, earthquake.getOrigin().getId());
+            assertTrue("start Time (" + start.getTime().getTime() + ") should be less than eq time (" + earthquake.getOrigin().getTime().getTime() + ")",
+                    start.getTime().getTime() <= earthquake.getOrigin().getTime().getTime());
+            assertTrue("end Time (" + end.getTime().getTime() + ") should be grater than eq time (" + earthquake.getOrigin().getTime().getTime() + ")",
+                    end.getTime().getTime() >= earthquake.getOrigin().getTime().getTime());
         }
     }
 
@@ -90,7 +90,7 @@ public class IngvServiceTest extends BaseIntegration {
         query.setCount(count);
         query.setMinMagnitude(10);
         query.setOrderBy("time");
-        Response<EarthQuake> response = null;
+        Response<Earthquake> response = null;
 
 
         try {
@@ -121,7 +121,7 @@ public class IngvServiceTest extends BaseIntegration {
 
         //the most update eq
         IngvQuery query = new IngvQuery(start, end);
-        Response<EarthQuake> response = null;
+        Response<Earthquake> response = null;
         try {
             response = ingvService.getEarthQuakes(query);
         } catch (Exception e) {

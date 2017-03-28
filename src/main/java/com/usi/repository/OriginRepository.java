@@ -12,4 +12,7 @@ public interface OriginRepository extends JpaRepository<Origin, Integer> {
 
     @Query(value = "select  max(time) from origin", nativeQuery = true)
     Optional<Date> getMaxDate();
+
+    @Query(value = "select  min(time) from origin", nativeQuery = true)
+    Optional<Date> getMinDate();
 }

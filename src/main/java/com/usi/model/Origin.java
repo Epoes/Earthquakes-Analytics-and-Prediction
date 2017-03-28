@@ -13,7 +13,7 @@ import javax.persistence.Table;
 @Table(name = "origin")
 public class Origin {
     @Id
-    @Column(name = "id", updatable = true, nullable = false)
+    @Column(name = "origin_id", updatable = true, nullable = false)
     private int id;
 
     @Column(name = "time", nullable = false)
@@ -28,8 +28,8 @@ public class Origin {
     @Column(name = "depth", nullable = false)
     private int depth;
 
-    @OneToOne(fetch= FetchType.EAGER, mappedBy="origin")
-    private EarthQuake earthQuake;
+    @OneToOne(fetch = FetchType.LAZY, mappedBy="origin")
+    private Earthquake earthquake;
 
     public Origin(int id){
         this.id = id;
@@ -76,12 +76,12 @@ public class Origin {
         this.depth = depth;
     }
 
-    public EarthQuake getEarthQuake() {
-        return earthQuake;
+    public Earthquake getEarthquake() {
+        return earthquake;
     }
 
-    public void setEarthQuake(EarthQuake earthQuake) {
-        this.earthQuake = earthQuake;
+    public void setEarthquake(Earthquake earthquake) {
+        this.earthquake = earthquake;
     }
 
     @Override

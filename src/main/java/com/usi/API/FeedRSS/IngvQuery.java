@@ -269,4 +269,22 @@ public class IngvQuery {
         }
         return true;
     }
+
+    @Override
+    public String toString() {
+        return "IngvQuery{" +
+                " sdf=" + sdf +
+                ", startTime=" + startTime +
+                ", endTime=" + endTime +
+                ", minMagnitude=" + minMagnitude +
+                ", maxMagnitude=" + maxMagnitude +
+                ", minDepth=" + minDepth +
+                ", maxDepth=" + maxDepth +
+                ", count=" + count +
+                ", minPoint=" + minPoint +
+                ", maxPoint=" + maxPoint +
+                ", orderBy='" + orderBy + '\'' +
+                ", format='" + format + '\'' +
+                '}';
+    }
 }

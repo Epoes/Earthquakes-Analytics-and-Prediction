@@ -12,9 +12,9 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "earthquake")
-public class EarthQuake {
+public class Earthquake {
     @Id
-    @Column(name = "id", updatable = false, nullable = false)
+    @Column(name = "earthquake_id", updatable = false, nullable = false)
     private int id;
 
     @OneToOne(fetch= FetchType.EAGER, cascade = CascadeType.PERSIST)
@@ -35,11 +35,11 @@ public class EarthQuake {
 
 
 
-    public EarthQuake(int id){
+    public Earthquake(int id){
         this.id = id;
     }
 
-    public EarthQuake(){}
+    public Earthquake(){}
 
     public int getId() {
         return id;
@@ -83,7 +83,7 @@ public class EarthQuake {
 
     @Override
     public String toString() {
-        return "EarthQuake{" +
+        return "Earthquake{" +
                 "id=" + id +
                 ", origin=" + origin +
                 ", magnitude=" + magnitude +

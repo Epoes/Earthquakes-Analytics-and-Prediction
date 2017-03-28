@@ -3,7 +3,7 @@ package com.usi.API.FeedRSS;
 
 import com.usi.API.ConnectionStatus;
 import com.usi.API.twitter.Response;
-import com.usi.model.EarthQuake;
+import com.usi.model.Earthquake;
 import com.usi.model.Magnitude;
 import com.usi.model.Origin;
 
@@ -44,7 +44,7 @@ public class IngvService implements RssService {
     }
 
 
-    public Response<EarthQuake> getEarthQuakes(IngvQuery query) throws IOException, SAXException, ParserConfigurationException {
+    public Response<Earthquake> getEarthQuakes(IngvQuery query) throws IOException, SAXException, ParserConfigurationException {
         URL url = query.generateUrlForMultipleEq();
         HttpResponse httpResponse;
 
@@ -58,15 +58,15 @@ public class IngvService implements RssService {
 
         String body = EntityUtils.toString(httpResponse.getEntity(), "UTF-8");
         Document xmlDoc = parseBody(body);
-        List<EarthQuake> earthQuakes =  parseXml(xmlDoc);
+        List<Earthquake> earthquakes =  parseXml(xmlDoc);
 
-        return new Response<>(ConnectionStatus.OK, earthQuakes, null);
+        return new Response<>(ConnectionStatus.OK, earthquakes, null);
 
     }
 
-    private List<EarthQuake> parseXml(Document doc) {
+    private List<Earthquake> parseXml(Document doc) {
 
-        List<EarthQuake> earthQuakes = new ArrayList<>();
+        List<Earthquake> earthquakes = new ArrayList<>();
         NodeList eventsList = doc.getElementsByTagName("event");
             for (int i = 0; i < eventsList.getLength(); i++) {
                 Node eventNode = eventsList.item(i);
@@ -79,21 +79,21 @@ public class IngvService implements RssService {
                         continue;
                     }
 
-                    EarthQuake earthQuake = new EarthQuake(id);
-                    earthQuake.setRegionName(getRegionName(eventElement));
+                    Earthquake earthquake = new Earthquake(id);
+                    earthquake.setRegionName(getRegionName(eventElement));
                     try {
-                        earthQuake.setOrigin(getOrigin(eventElement));
-                        earthQuake.getOrigin().setEarthQuake(earthQuake);
+                        earthquake.setOrigin(getOrigin(eventElement));
+                        earthquake.getOrigin().setEarthquake(earthquake);
                     }catch (java.text.ParseException e){
                         e.printStackTrace();
                         continue;
                     }
 
-                    earthQuake.setMagnitude(getMagnitude(eventElement));
-                    earthQuakes.add(earthQuake);
+                    earthquake.setMagnitude(getMagnitude(eventElement));
+                    earthquakes.add(earthquake);
                 }
             }
-        return earthQuakes;
+        return earthquakes;
     }
 
     private Magnitude getMagnitude(Element eventElement) {

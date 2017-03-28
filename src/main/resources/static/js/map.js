@@ -13,7 +13,7 @@ $("#query-button").click(function () {
         url: "http://localhost:8080/api/earthquakes/last-update/" + validateCount(count) + "/" + validateMagnitude(magnitude),
         type: "GET",
         success: function (data, textStatus, jqXHR) {
-         drawEarthquakes(data);
+         //drawEarthquakes(data);
         }
     });
 });

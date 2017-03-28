@@ -1,7 +1,7 @@
 //package com.usi.API.twitter;
 //
 //import com.usi.BaseIntegration;
-//import com.usi.model.EarthQuake;
+//import com.usi.model.Earthquake;
 //
 //import org.joda.time.DateTimeZone;
 //import org.junit.Test;
@@ -24,7 +24,7 @@
 ////
 ////        //get last tweet
 ////        List<Tweet> tweets =  twitterServices.getOldEarthquakesTweet(0, 100).content;
-////        List<EarthQuake> earthQuakes = Parser.parseToEarthQuakes(tweets);
+////        List<Earthquake> earthQuakes = Parser.parseToEarthQuakes(tweets);
 ////        assertTrue(tweets.size()>0);
 ////        assertEquals(tweets.size(), earthQuakes.size());
 ////    }
@@ -33,7 +33,7 @@
 //    public void parseTest(){
 //        String eqText = "#terremoto ML:3.1 2017-03-16 04:58:27 UTC Lat=42.90 Lon=13.09 Prof=9Km Zona=Macerata. http://bit.ly/2muIKSY";
 //
-//        EarthQuake earthQuake = Parser.parse(eqText);
+//        Earthquake earthQuake = Parser.parse(eqText);
 //        assertNotNull(earthQuake);
 //        assertEquals(3.1, earthQuake.getMagnitude(), 0.001);
 //
@@ -53,7 +53,7 @@
 //
 //        //missing #terremoto
 //        String eqText = "ML:3.1 2017-03-16 04:58:27 UTC Lat=42.90 Lon=13.09 Prof=9Km Zona=Macerata. http://bit.ly/2muIKSY";
-//        EarthQuake earthQuake = Parser.parse(eqText);
+//        Earthquake earthQuake = Parser.parse(eqText);
 //        assertNull(earthQuake);
 //
 //        //wrong date format

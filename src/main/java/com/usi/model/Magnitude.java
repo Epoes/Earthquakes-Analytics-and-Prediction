@@ -11,7 +11,7 @@ import javax.persistence.Table;
 @Table(name = "magnitude")
 public class Magnitude {
     @Id
-    @Column(name = "id", updatable = true, nullable = false)
+    @Column(name = "magnitude_id", updatable = true, nullable = false)
     private int id;
 
     @Column(name = "magnitude")
@@ -23,8 +23,8 @@ public class Magnitude {
     @Column(name = "uncertainty", nullable = false)
     private float uncertainty;
 
-    @OneToOne(fetch= FetchType.EAGER, mappedBy="magnitude")
-    private EarthQuake earthQuake;
+    @OneToOne(fetch = FetchType.LAZY,  mappedBy="magnitude")
+    private Earthquake earthquake;
 
     public Magnitude(int id){
         this.id = id;
@@ -64,12 +64,12 @@ public class Magnitude {
         this.uncertainty = uncertainty;
     }
 
-    public EarthQuake getEarthQuake() {
-        return earthQuake;
+    public Earthquake getEarthquake() {
+        return earthquake;
     }
 
-    public void setEarthQuake(EarthQuake earthQuake) {
-        this.earthQuake = earthQuake;
+    public void setEarthquake(Earthquake earthquake) {
+        this.earthquake = earthquake;
     }
 
     @Override

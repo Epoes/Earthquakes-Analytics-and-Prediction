@@ -1,6 +1,6 @@
 package com.usi.API.twitter;
 
-import com.usi.model.EarthQuake;
+import com.usi.model.Earthquake;
 
 import org.springframework.social.twitter.api.Tweet;
 
@@ -13,21 +13,21 @@ public class Parser {
 
     private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z");
 
-    public static List<EarthQuake> parseToEarthQuakes(List<Tweet> tweets){
-        List<EarthQuake> earthQuakes = new ArrayList<>();
+    public static List<Earthquake> parseToEarthQuakes(List<Tweet> tweets){
+        List<Earthquake> earthquakes = new ArrayList<>();
         for(Tweet tweet : tweets){
-            EarthQuake earthQuake = parse(tweet.getText());
-            if(earthQuake != null){
-                earthQuakes.add(earthQuake);
+            Earthquake earthquake = parse(tweet.getText());
+            if(earthquake != null){
+                earthquakes.add(earthquake);
             }else{
                 System.err.println("err parsing tweet " + tweet.getId() + "with content: " + tweet.getText());
             }
         }
 
-        return earthQuakes;
+        return earthquakes;
     }
 
-    public static EarthQuake parse(String INGVTweet){
+    public static Earthquake parse(String INGVTweet){
 
         String s = INGVTweet.substring(INGVTweet.indexOf("Zona="));
         String[] token =  INGVTweet.split(" ");
