@@ -1,30 +1,140 @@
-#map{
-    height: 600px;
-    /*width: 700px;*/
-    /*display: block;*/
-    /*margin-left: auto;*/
-    /*margin-right: auto;*/
+
+@import url(../Cesium-1.31/Build/Cesium/Widgets/widgets.css);
+
+html, body, #cesiumContainer {
+width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden;
+}
+
+#query-button{
+    float: right;
+    margin-top: 6%;
+    margin-right: 8%;
+}
+
+.input-filter{
+    border: 0;
+    color: #f6931f;
+    font-weight: bold;
+    width: 80%;
+    margin-left: 9%;
+    text-align: center;
+}
+
+#slider-range-date{
+    width: 90%;
+    margin-left: 4%;
+}
+
+#slider-range-magnitude{
+    width: 90%;
+    margin-left: 4%;
+}
+
+.custom-handle {
+    top: 50% !important;
+    margin-top: -.8em;
+    line-height: 1.6em;
+    border-radius: 50% !important;
+}
+
+
+.ui-widget-header{
+    background: #f6931f !important;
+}
+/* The side navigation menu */
+.sidenav {
+    height: 100%; /* 100% Full-height */
+    width: 0; /* 0 width - change this with JavaScript */
+    position: fixed; /* Stay in place */
+    z-index: 1000; /* Stay on top */
+    top: 0;
+    left: 0;
+    background-color: #111; /* Black*/
+    overflow-x: hidden; /* Disable horizontal scroll */
+    padding-top: 60px; /* Place content 60px from the top */
+    transition: 0.5s; /* 0.5 second transition effect to slide in the sidenav */
+}
+
+/* The navigation menu links */
+.sidenav a {
+    padding: 8px 8px 8px 32px;
+    text-decoration: none;
+    font-size: 25px;
+    color: #818181;
+    display: block;
+    transition: 0.3s
+}
+
+/* When you mouse over the navigation links, change their color */
+.sidenav a:hover, .offcanvas a:focus{
+    color: #f1f1f1;
+}
+
+/* Position and style the close button (top right corner) */
+.sidenav .closebtn {
+    position: absolute;
+    top: 0;
+    right: 25px;
+    font-size: 36px;
+    margin-left: 50px;
+}
+
+
+/* On smaller screens, where height is less than 450px, change the style of the sidenav (less padding and a smaller font size) */
+@media screen and (max-height: 450px) {
+    .sidenav {padding-top: 15px;}
+    .sidenav a {font-size: 18px;}
+}
+
+#main {
 
 }
 
-.leaflet-interactive{
-    /*-webkit-animation: pulsate 1s ease-out;*/
-    /*-webkit-animation-iteration-count: infinite;*/
-    /*opacity: 0.0;*/
+.hamburger{
+    background:none;
+    position:absolute;
+    top:0;
+    left:0;
+    line-height:45px;
+    padding:5px 15px 0px 15px;
+    color:#999;
+    border:0;
+    font-size:1.4em;
+    font-weight:bold;
+    cursor:pointer;
+    outline:none;
+    z-index:10;
+    transition: margin-left .5s;
+    padding: 20px;
 }
 
-@-webkit-keyframes pulsate {
-    /*0% {-webkit-transform: scale(0.1, 0.1); opacity: 0.0;}*/
-    /*50% {opacity: 1.0;}*/
-    /*100% {-webkit-transform: scale(1.2, 1.2); opacity: 0.0;}*/
-}
+/*#map{*/
+    /*height: 600px;*/
+    /*!*width: 700px;*!*/
+    /*!*display: block;*!*/
+    /*!*margin-left: auto;*!*/
+    /*!*margin-right: auto;*!*/
 
-#page-title{
-    font-family: "Gill Sans";
-    font-weight: lighter;
-    display: inline;
-}
+/*}*/
 
-.query-field{
-    display: inline;
-}
+/*.leaflet-interactive{*/
+    /*!*-webkit-animation: pulsate 1s ease-out;*!*/
+    /*!*-webkit-animation-iteration-count: infinite;*!*/
+    /*!*opacity: 0.0;*!*/
+/*}*/
+
+/*@-webkit-keyframes pulsate {*/
+    /*!*0% {-webkit-transform: scale(0.1, 0.1); opacity: 0.0;}*!*/
+    /*!*50% {opacity: 1.0;}*!*/
+    /*!*100% {-webkit-transform: scale(1.2, 1.2); opacity: 0.0;}*!*/
+/*}*/
+
+/*#page-title{*/
+    /*font-family: "Gill Sans";*/
+    /*font-weight: lighter;*/
+    /*display: inline;*/
+/*}*/
+
+/*.query-field{*/
+    /*display: inline;*/
+/*}*/

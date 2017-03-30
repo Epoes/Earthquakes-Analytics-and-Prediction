@@ -23,7 +23,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 
-@Service
+//@Service
 public class EarthquakeHub {
     private MapsServices mapsServices;
 

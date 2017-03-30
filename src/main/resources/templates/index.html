@@ -1,25 +1,48 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:th="http://www.thymeleaf.org" lang="en">
-
+<html lang="en">
 <head>
-    <meta charset="UTF-8"/>
-    <title>Thymeleaf example</title>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.3/dist/leaflet.css"/>
+    <!-- Use correct character set. -->
+    <meta charset="utf-8"/>
+    <!-- Tell IE to use the latest, best version. -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <!-- Make the application on mobile take up the full browser screen and disable user scaling. -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no"/>
+    <title>Hello World!</title>
     <link href="css/map.css" rel="stylesheet" type="text/css"/>
-    <script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-</head>
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css"/>
 
+    <script src="Cesium-1.31/Build/Cesium/Cesium.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+</head>
 <body>
-    <h1 id="page-title">My Map</h1>
-    <input class="query-field" id="magnitude-field" type="text" placeholder="Magnitude" />
-    <input class="query-field" id="count-field" type="text" placeholder="Count" />
-    <button class="search-button" id="query-button">Search</button>
-    <div id="map"></div>
+<div id="mySidenav" class="sidenav">
+    <a href="javascript:void(0)" class="closebtn">&times;</a>
+
+    <p>
+        <input type="text" id="amount-date" class="input-filter" size="50" readonly="readonly" />
+    </p>
+    <div id="slider-range-date">
+        <div class="ui-slider-handle custom-handle"></div>
+        <div class="ui-slider-handle custom-handle"></div>
+    </div>
+
+    <p>
+        <input type="text" id="amount-magnitude" class="input-filter" size="50" readonly="readonly" />
+    </p>
+    <div id="slider-range-magnitude">
+        <div class="ui-slider-handle custom-handle"></div>
+        <div class="ui-slider-handle custom-handle"></div>
+    </div>
+    <button type="button" id="query-button">Search!</button>
+</div>
+<button class="hamburger">&#9776;</button>
+
+<div id="cesiumContainer"></div>
+<div id="credit" style="z-index: -30"></div>
 </body>
 
-<script src="js/ItalyNeighbors.js"></script>
 <script src="js/map.js"></script>
 <script src="js/util.js"></script>
+
 </html>

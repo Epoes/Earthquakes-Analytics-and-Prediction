@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org" lang="en">
+
+<head>
+    <meta charset="UTF-8"/>
+    <title>Thymeleaf example</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.3/dist/leaflet.css"/>
+    <link href="css/map.css" rel="stylesheet" type="text/css"/>
+    <script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+</head>
+
+<body>
+    <h1 id="page-title">My Map</h1>
+    <input class="query-field" id="magnitude-field" type="text" placeholder="Magnitude" />
+    <input class="query-field" id="count-field" type="text" placeholder="Count" />
+    <button class="search-button" id="query-button">Search</button>
+    <div id="map"></div>
+</body>
+
+<script src="js/ItalyNeighbors.js"></script>
+<script src="js/map.js"></script>
+<script src="js/util.js"></script>
+</html>

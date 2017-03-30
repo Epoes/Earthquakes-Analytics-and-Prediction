@@ -37,7 +37,7 @@ public class EarthquakesController {
     @RequestMapping(value = "/api/earthquakes/query", method = RequestMethod.GET)
     public ResponseEntity<?> getEarthquakes(@RequestParam(value = "count", required = false) Optional<Integer> count,
                                             @RequestParam(value = "max_magnitude", required = false) Optional<Float> maxMagnitude,
-                                            @RequestParam(value = "min_magnitude", required = false) Optional<Integer> minMagnitude,
+                                            @RequestParam(value = "min_magnitude", required = false) Optional<Float> minMagnitude,
                                             @RequestParam(value = "start_time", required = false) String startTime,
                                             @RequestParam(value = "end_time", required = false) String endTime,
                                             @RequestParam(value = "min_lat", required = false) Optional<Float> minLat,
