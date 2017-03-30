@@ -1,5 +1,6 @@
 package com.usi.Dao.EarthQuakeDao;
 
+import com.usi.API.FeedRSS.IngvQuery;
 import com.usi.model.Earthquake;
 import com.usi.model.Magnitude;
 import com.usi.model.Origin;
@@ -7,6 +8,7 @@ import com.usi.model.Origin;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -19,46 +21,19 @@ public class EarthquakeDao {
 
     private final int bigLimit = 89000;
     private final int cores = Runtime.getRuntime().availableProcessors();
-//    1000:
-//        My implementation tooks 478 milliseconds
-//        My implementation tooks 481 milliseconds
-
-//    2000:
-//        My implementation tooks 505 milliseconds
-//        My implementation tooks 515 milliseconds
-//
-//    5000:
-//        My implementation tooks 544 milliseconds
-//        My implementation tooks 514 milliseconds
-//
-//    10000:
-//        My implementation tooks 564 milliseconds
-//        My implementation tooks 556 milliseconds
-//
-//    100000:
-//        My implementation tooks 1170 milliseconds
-//        My implementation tooks 1158 milliseconds
-
-
-
-
-
     private EntityManager em;
+    SimpleDateFormat sdf;
 
     @Autowired
     public EarthquakeDao(EntityManager em) {
         this.em = em;
+        sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     }
 
-    public List<Earthquake> selectEarthQuakes(float magnitude, int count){
+    public List<Earthquake> selectEarthQuakes(IngvQuery request){
         long startTime = System.currentTimeMillis();
 
-        final Query q = em.createNativeQuery("select * from earthquake e, origin o, magnitude m where " +
-                "e.magnitude_earthquake = m.magnitude_id and m.magnitude > ? " +
-                "and e.origin_earthquake = o.origin_id order by o.time DESC limit ?;");
-
-        q.setParameter(1, magnitude);
-        q.setParameter(2, count);
+        Query q = getQuery(request);
         List<Object[]> earthQuakesObjects = (List<Object[]>)q.getResultList();
 
         if(earthQuakesObjects.size() > bigLimit){
@@ -73,8 +48,39 @@ public class EarthquakeDao {
         long endTime = System.currentTimeMillis();
         System.out.println("Single CPU:  "+ earthQuakesObjects.size() + " took " + + ((endTime - startTime))+ " milliseconds");
 
-
         return parseEqObjectSingle(earthQuakesObjects);
+
+    }
+
+    private Query getQuery(IngvQuery request) {
+        final String prefix = "select * from earthquake e, origin o, magnitude m where " +
+                "e.magnitude_earthquake = m.magnitude_id and e.origin_earthquake = o.origin_id ";
+
+        String date = "and o.time BETWEEN ? and ? ";
+        String magnitude = "and m.magnitude >= ? and m.magnitude <= ? ";
+        String geo =  "and o.latitude >= ? and o.latitude <= ? and o.longitude >= ? and o.longitude <= ? ";
+        String depth = "and depth >= ? and depth <= ? ";
+        final String suffix = "order by o.time DESC limit ?;";
+
+        final Query q = em.createNativeQuery(prefix + date + magnitude + geo + depth + suffix);
+
+        q.setParameter(1, sdf.format(request.getStartTime().getTime()));
+        q.setParameter(2, sdf.format(request.getEndTime().getTime()));
+
+        q.setParameter(3, request.getMinMagnitude());
+        q.setParameter(4, request.getMaxMagnitude());
+
+        q.setParameter(5, request.getMinPoint().lat);
+        q.setParameter(6, request.getMaxPoint().lat);
+        q.setParameter(7, request.getMinPoint().lng);
+        q.setParameter(8, request.getMaxPoint().lng);
+
+        q.setParameter(9, request.getMinDepth());
+        q.setParameter(10, request.getMaxDepth());
+
+        q.setParameter(11, request.getCount());
+
+        return q;
 
     }
 

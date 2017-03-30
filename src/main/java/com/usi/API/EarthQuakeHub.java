@@ -12,6 +12,7 @@ import com.usi.repository.MagnitudeRepository;
 import com.usi.repository.OriginRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -22,7 +23,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 
-//@Service
+@Service
 public class EarthquakeHub {
     private MapsServices mapsServices;
 
@@ -66,7 +67,7 @@ public class EarthquakeHub {
             }
         };
 
-//        updateTimer.schedule(myTask, 189999, 189999);
+        updateTimer.schedule(myTask, 0, 189999);
 
         TimerTask myTask2 = new TimerTask() {
             @Override
@@ -75,7 +76,7 @@ public class EarthquakeHub {
             }
         };
 
-        getOldTimer.schedule(myTask2, 0, 60000);
+//        getOldTimer.schedule(myTask2, 0, 60000);
     }
 
 
@@ -91,7 +92,7 @@ public class EarthquakeHub {
         sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
 
         query.setOrderBy("time");
-        query.setCount(300);
+        query.setCount(1000);
         query.setMinMagnitude(0);
 
 

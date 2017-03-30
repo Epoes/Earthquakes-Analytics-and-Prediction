@@ -7,6 +7,7 @@ import java.net.URI;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.TimeZone;
 
 public class IngvQuery {
@@ -109,12 +110,22 @@ public class IngvQuery {
         return startTime;
     }
 
+    public void setStartTime(Date date) {
+        this.startTime = Calendar.getInstance();
+        startTime.setTime(date);
+    }
+
     public void setStartTime(Calendar startTime) {
         this.startTime = startTime;
     }
 
     public Calendar getEndTime() {
         return endTime;
+    }
+
+    public void setEndTime(Date date) {
+        this.endTime = Calendar.getInstance();
+        endTime.setTime(date);
     }
 
     public void setEndTime(Calendar endTime) {
@@ -126,9 +137,6 @@ public class IngvQuery {
     }
 
     public void setCount(int count) {
-        if(count < 1 || count > 1000){
-            return;
-        }
         this.count = count;
     }
 
@@ -273,9 +281,8 @@ public class IngvQuery {
     @Override
     public String toString() {
         return "IngvQuery{" +
-                " sdf=" + sdf +
-                ", startTime=" + startTime +
-                ", endTime=" + endTime +
+                ", startTime=" + sdf.format(startTime) +
+                ", endTime=" + sdf.format(endTime) +
                 ", minMagnitude=" + minMagnitude +
                 ", maxMagnitude=" + maxMagnitude +
                 ", minDepth=" + minDepth +
