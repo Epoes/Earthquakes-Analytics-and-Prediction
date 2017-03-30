@@ -1,4 +1,4 @@
-package com.usi.Dao.EarthQuakeDao;
+package com.usi.Dao.EarthquakeDao;
 
 import com.usi.API.FeedRSS.IngvQuery;
 import com.usi.model.Earthquake;
