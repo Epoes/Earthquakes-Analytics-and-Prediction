@@ -1,7 +1,7 @@
 package com.usi;
 
 import com.usi.API.FeedRSS.IngvQuery;
-import com.usi.Dao.EarthQuakeDao.EarthquakeDao;
+import com.usi.Dao.EarthquakeDao.EarthquakeDao;
 import com.usi.model.Earthquake;
 import com.usi.repository.EarthquakeRepository;
 
