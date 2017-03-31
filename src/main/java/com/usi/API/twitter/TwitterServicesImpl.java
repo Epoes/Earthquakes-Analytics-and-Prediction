@@ -20,8 +20,6 @@
 //
 //public class TwitterServicesImpl implements TwitterServices {
 //
-//    private final String consumerKey = "pHxUtircPycTVnxyfUz1qs6C7";
-//    private final String consumerSecret = "OFDC6v3Pc9FIrYjjMQDLrX1qzTmbmtYjucfuVPGafewR3vXAx4";
 //    private final String query = "from:INGVterremoti&#terremoto";
 //    private final String userName = "INGVterremoti";
 //    private final int FromUserId = 121049123;
