@@ -148,7 +148,6 @@ function doRequest(){
         success: function (data, textStatus, jqXHR) {
             earthquakes = data;
             drawEarthquakes(data);
-            // console.log(data);
         }
     });
 }
@@ -224,6 +223,9 @@ function drawEarthquakes(earthquakes) {
 
 }
 
+
+
+
 viewer.canvas.addEventListener('click', function(e){
     var mousePosition = new Cesium.Cartesian2(e.clientX, e.clientY);
     var ellipsoid = viewer.scene.globe.ellipsoid;
@@ -260,7 +262,6 @@ function drawPin(latitude, longitude) {
 
 var entityPin = viewer.entities.add({
             name: 'EarthQuakePin',
-            position: Cesium.Cartesian3.fromDegrees(0, 0),
             billboard: {
                 image: pinBuilder.fromText('?', Cesium.Color.BLACK, 48).toDataURL(),
                 verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
