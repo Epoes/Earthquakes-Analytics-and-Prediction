@@ -134,6 +134,13 @@ function setUpMaxMinDate(minTime, maxTime){
 
 $('#query-button').click(function () {
     doRequest();
+    $("#query-container").slideUp();
+    $("#searchBtn").css("visibility", "visible");
+});
+
+$("#searchBtn").click(function () {
+    $("#query-container").slideDown();
+    $("#searchBtn").css("visibility", "hidden");
 })
 
 
@@ -151,6 +158,30 @@ function doRequest(){
         }
     });
 }
+
+function listEarthquakes(earthquakes){
+    $('#list-earthquakes').append("<ul id='list'></ul>");
+    for(var i = 0; i < earthquakes.length; ++i){
+        var date = new Date(earthquakes[i].origin.time);
+        $("#list").append("<li class='earthquake-item'><a>"+ earthquakes[i].regionName + "<br> " + date.customFormat("#DD#-#MMM#-#YYYY#") +"</a></li>");
+    }
+    // $("#list").append(anonymous(earthquakes));
+
+}
+
+function anonymous(it) {
+    var out='';
+    if(it) {
+        var value,index=-1,l1=it.length-1;
+        while(index<l1){
+            value=it[index+=1];
+            out+='<li class="earthquake-item">'+(value.regionName)+'</li>';
+        }
+    }
+    console.log(out);
+    return out;
+}
+
 function setUpMagnitudeFilter(){
     var slider = $( "#slider-range-magnitude" )
     slider.slider({
@@ -168,6 +199,8 @@ function setUpMagnitudeFilter(){
     });
     $( "#amount-magnitude" ).val( "Magnitude between: " + slider.slider( "values", 0 ) + " and " + slider.slider( "values", 1 ));
 }
+
+
 
 
 function setUpMagnitude(minMagn, maxMagn) {
@@ -220,38 +253,50 @@ function drawEarthquakes(earthquakes) {
         //    }
         // });
     }
-
+    $("#list-earthquakes").empty();
+    listEarthquakes(earthquakes);
 }
 
 
 
+viewer.canvas.addEventListener("click", function(e){
+        var mousePosition = new Cesium.Cartesian2(e.clientX, e.clientY);
+        var ellipsoid = viewer.scene.globe.ellipsoid;
+        var cartesian = viewer.camera.pickEllipsoid(mousePosition, ellipsoid);
+        var cartographic = ellipsoid.cartesianToCartographic(cartesian);
+        var longitude = Cesium.Math.toDegrees(cartographic.longitude).toFixed(4);
+        var latitude = Cesium.Math.toDegrees(cartographic.latitude).toFixed(4);
 
-viewer.canvas.addEventListener('click', function(e){
-    var mousePosition = new Cesium.Cartesian2(e.clientX, e.clientY);
-    var ellipsoid = viewer.scene.globe.ellipsoid;
-    var cartesian = viewer.camera.pickEllipsoid(mousePosition, ellipsoid);
-    var cartographic = ellipsoid.cartesianToCartographic(cartesian);
-    var longitude = Cesium.Math.toDegrees(cartographic.longitude).toFixed(4);
-    var latitude = Cesium.Math.toDegrees(cartographic.latitude).toFixed(4);
+        var targetEarthquake;
+        var squareMinDistance = 1000000;
+        for (var i = 0; i < earthquakes.length; i++) {
+            var e = earthquakes[i];
+            var distance = Math.pow(e.origin.longitude - longitude, 2) + Math.pow(e.origin.latitude - latitude, 2);
+            if (distance < squareMinDistance) {
+                squareMinDistance = distance;
+                targetEarthquake = e;
 
-    var targetEarthquake;
-    var squareMinDistance = 1000000;
-    for (var i = 0; i<earthquakes.length; i++){
-        var e = earthquakes[i];
-        var distance = Math.pow(e.origin.longitude - longitude, 2) + Math.pow(e.origin.latitude - latitude, 2);
-        if(distance < squareMinDistance){
-            squareMinDistance = distance;
-            targetEarthquake = e;
-
+            }
         }
-    }
-    drawPin(targetEarthquake.origin.latitude, targetEarthquake.origin.longitude);
-    console.log(targetEarthquake);
-    console.log(squareMinDistance);
-    console.log(entityPin);
-
+        drawPin(targetEarthquake.origin.latitude, targetEarthquake.origin.longitude);
+        console.log(targetEarthquake);
+        console.log(squareMinDistance);
+        console.log(entityPin);
+        $("#earthquake-info").empty();
+        openNav("Part");
+        displayInfo(targetEarthquake);
 });
 
+
+function displayInfo(earthquake) {
+    var date = new Date(earthquake.origin.time);
+    $('#earthquake-info').append("<ul id='list-info'></ul>");
+    $("#list-info").append("<li class='info-item'><a>Zone: " + earthquake.regionName +"</a></li>");
+    $("#list-info").append("<li class='info-item'><a>Magnitude: " + earthquake.magnitude.magnitude +"</a></li>");
+    $("#list-info").append("<li class='info-item'><a>Depth: " + earthquake.origin.depth +" m</a></li>");
+    $("#list-info").append("<li class='info-item'><a>Date: " + date.customFormat("#DD#-#MMM#-#YYYY#") +"</a></li>");
+
+}
 
 var pinBuilder = new Cesium.PinBuilder();
 
@@ -320,21 +365,23 @@ function interpolateColor(a, b, t){
 }
 
 $('.hamburger').click(function () {
-    openNav();
-    // $('.hamburger').hide();
+    openNav("Left");
 });
 
-$('.closebtn').click(function () {
-    closeNav();
-    // $('.hamburger').show();
-})
+$('#closebtnLeft').click(function () {
+    closeNav("Left");
+});
+
+$('#closebtnPart').click(function () {
+    closeNav("Part");
+});
 /* Set the width of the side navigation to 250px */
-function openNav() {
-    document.getElementById("mySidenav").style.width = "250px";
+function openNav(side) {
+    document.getElementById("mySidenav" + side).style.width = "280px";
 }
 
 /* Set the width of the side navigation to 0 */
-function closeNav() {
-    document.getElementById("mySidenav").style.width = "0";
+function closeNav(side) {
+    document.getElementById("mySidenav" + side).style.width = "0";
 }
 
