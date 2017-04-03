@@ -1,9 +1,9 @@
 package com.usi.Dao.EarthquakeDao;
 
-import com.usi.API.FeedRSS.IngvQuery;
-import com.usi.model.Earthquake;
-import com.usi.model.Magnitude;
-import com.usi.model.Origin;
+import com.usi.model.earthquake.Earthquake;
+import com.usi.model.earthquake.IngvQuery;
+import com.usi.model.earthquake.Magnitude;
+import com.usi.model.earthquake.Origin;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -120,8 +120,6 @@ public class EarthquakeDao {
         earthquakes1.addAll(earthquakes2);
         earthquakes1.addAll(earthquakes3);
         earthquakes1.addAll(earthquakes4);
-
-        System.out.println("multi core list size: " +earthquakes1.size());
 
         return earthquakes1;
     }

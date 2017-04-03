@@ -1,4 +1,4 @@
-package com.usi.model;
+package com.usi.model.earthquake;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

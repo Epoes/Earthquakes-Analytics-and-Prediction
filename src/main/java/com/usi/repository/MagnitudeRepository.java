@@ -1,7 +1,7 @@
 package com.usi.repository;
 
 
-import com.usi.model.Magnitude;
+import com.usi.model.earthquake.Magnitude;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

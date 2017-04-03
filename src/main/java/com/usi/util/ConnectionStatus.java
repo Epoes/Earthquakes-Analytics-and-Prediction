@@ -1,4 +1,4 @@
-package com.usi.API;
+package com.usi.util;
 
 public enum ConnectionStatus {
 

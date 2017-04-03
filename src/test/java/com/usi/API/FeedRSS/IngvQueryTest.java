@@ -3,6 +3,8 @@ package com.usi.API.FeedRSS;
 
 import com.google.maps.model.LatLng;
 
+import com.usi.model.earthquake.IngvQuery;
+
 import org.junit.Test;
 
 import java.net.URL;
@@ -37,7 +39,7 @@ public class IngvQueryTest {
         query.setMaxMagnitude(9);
         query.setMaxPoint(new LatLng(-80, 130));
         query.setMaxDepth(100);
-        URL url = query.generateUrlForMultipleEq();
+        URL url = query.generateUrl();
         assertNotNull(url);
         assertEquals(189, url.getQuery().length());
         assertEquals(result, url.toString());
@@ -63,7 +65,7 @@ public class IngvQueryTest {
         query.setMaxMagnitude(2);
         query.setMinMagnitude(9);
         query.setMaxPoint(new LatLng(200, 40));
-        URL url = query.generateUrlForMultipleEq();
+        URL url = query.generateUrl();
         assertNotNull(url);
         assertEquals(34, url.getQuery().length());
         assertEquals(response, url.toString());

@@ -11,7 +11,7 @@ import com.google.maps.model.ElevationResult;
 import com.google.maps.model.GeocodingResult;
 import com.google.maps.model.LatLng;
 
-import com.usi.API.ConnectionStatus;
+import com.usi.util.ConnectionStatus;
 import com.usi.API.twitter.Response;
 import com.usi.model.Elevation;
 import com.usi.model.Location;

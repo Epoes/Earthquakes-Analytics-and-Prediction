@@ -1,21 +1,20 @@
-package com.usi.API.FeedRSS;
+package com.usi.util;
 
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClientBuilder;
-import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.net.URL;
 
 
-@Service
-public class IngvSimpleHttpRequest {
+
+public class SimpleHttpRequest {
 
 
-    public HttpResponse get(URL url) throws IOException {
+    public static HttpResponse get(URL url) throws IOException {
         HttpClient client = HttpClientBuilder.create().build();
         HttpGet request = new HttpGet(url.toString());
 

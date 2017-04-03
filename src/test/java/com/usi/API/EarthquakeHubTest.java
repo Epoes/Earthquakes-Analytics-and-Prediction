@@ -2,6 +2,7 @@ package com.usi.API;
 
 
 import com.usi.BaseIntegration;
+import com.usi.EarthquakeHub;
 
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;

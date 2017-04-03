@@ -1,7 +1,9 @@
-package com.usi.API.FeedRSS;
+package com.usi.model.earthquake;
 
 
 import com.google.maps.model.LatLng;
+
+import com.usi.model.Query;
 
 import java.net.URI;
 import java.net.URL;
@@ -10,29 +12,29 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
 
-public class IngvQuery {
+public class IngvQuery implements Query {
 
     private final String baseUrl = "http://webservices.ingv.it/fdsnws/event/1/query?";
     private final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
-    private Calendar startTime;
-    private Calendar endTime;
+    public Calendar startTime;
+    public Calendar endTime;
 
     //default value
-    private float minMagnitude = 2.0f;
-    private float maxMagnitude = 10.0f;
-    private int minDepth = -10;
-    private int maxDepth = 10000;
+    public float minMagnitude = 2.0f;
+    public float maxMagnitude = 10.0f;
+    public int minDepth = -900;
+    public int maxDepth = 200000;
 
-    private int count = 1000;
+    public int count = 1000;
 
     //Italy default constraint
-    private LatLng minPoint = new LatLng(35, 5);
-    private LatLng maxPoint = new LatLng(49, 20);
+    public LatLng minPoint = new LatLng(35, 5);
+    public LatLng maxPoint = new LatLng(49, 20);
 
     // "orderby" must be: "time, time-asc, magnitude, magnitude-asc"
-    private String orderBy = "time";
-    private String format = "xml";
+    public String orderBy = "time";
+    public String format = "xml";
 
     public IngvQuery(float minMagnitude, float maxMagnitude, int maxDepth, int minDepth, Calendar startTime, Calendar endTime, int count, LatLng minPoint, LatLng maxPoint, String orderBy, String format) {
         this.minMagnitude = minMagnitude;
@@ -185,7 +187,7 @@ public class IngvQuery {
         this.format = format;
     }
 
-    public URL generateUrlForMultipleEq(){
+    public URL generateUrl(){
 
         URL url = null;
 

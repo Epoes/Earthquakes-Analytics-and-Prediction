@@ -1,6 +1,6 @@
 package com.usi.API.twitter;
 
-import com.usi.model.Earthquake;
+import com.usi.model.earthquake.Earthquake;
 
 import org.springframework.social.twitter.api.Tweet;
 

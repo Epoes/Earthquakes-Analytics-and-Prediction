@@ -2,7 +2,7 @@ package com.usi.API.google_maps;
 
 import com.google.maps.model.LatLng;
 
-import com.usi.API.ConnectionStatus;
+import com.usi.util.ConnectionStatus;
 import com.usi.API.twitter.Response;
 import com.usi.BaseIntegration;
 import com.usi.model.Elevation;

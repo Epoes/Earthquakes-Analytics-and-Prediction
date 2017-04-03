@@ -2,6 +2,8 @@ package com.usi.API.FeedRSS;
 
 
 import com.usi.BaseIntegration;
+import com.usi.model.earthquake.IngvQuery;
+import com.usi.util.SimpleHttpRequest;
 
 import org.apache.http.HttpResponse;
 import org.junit.Test;
@@ -14,9 +16,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
-public class IngvSimpleHttpRequestTest extends BaseIntegration{
+public class SimpleHttpRequestTest extends BaseIntegration{
 
-    IngvSimpleHttpRequest httpRequest = new IngvSimpleHttpRequest();
+    SimpleHttpRequest httpRequest = new SimpleHttpRequest();
 
 
 
@@ -38,7 +40,7 @@ public class IngvSimpleHttpRequestTest extends BaseIntegration{
         query.setCount(20);
 
         try {
-            URL url = query.generateUrlForMultipleEq();
+            URL url = query.generateUrl();
             response = httpRequest.get(url);
         }catch (Exception e){
             e.printStackTrace();

@@ -1,15 +1,16 @@
-package com.usi.API;
+package com.usi;
 
 
-import com.usi.API.FeedRSS.IngvQuery;
-import com.usi.API.FeedRSS.RssService;
 import com.usi.API.google_maps.MapsServices;
 import com.usi.API.google_maps.MapsServicesImpl;
 import com.usi.API.twitter.Response;
-import com.usi.model.Earthquake;
+import com.usi.model.earthquake.Earthquake;
+import com.usi.model.earthquake.IngvQuery;
 import com.usi.repository.EarthquakeRepository;
 import com.usi.repository.MagnitudeRepository;
 import com.usi.repository.OriginRepository;
+import com.usi.services.earthquakeService;
+import com.usi.util.ConnectionStatus;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,12 +24,12 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 
-//@Service
+@Service
 public class EarthquakeHub {
     private MapsServices mapsServices;
 
 
-    private RssService ingvService;
+    private earthquakeService ingvService;
     private EarthquakeRepository earthquakeRepository;
     private  MagnitudeRepository magnitudeRepository;
     private OriginRepository originRepository;
@@ -45,7 +46,7 @@ public class EarthquakeHub {
 
 
     @Autowired
-    public EarthquakeHub(EarthquakeRepository earthquakeRepository, MagnitudeRepository magnitudeRepository, OriginRepository originRepository, RssService ingvService) {
+    public EarthquakeHub(EarthquakeRepository earthquakeRepository, MagnitudeRepository magnitudeRepository, OriginRepository originRepository, earthquakeService ingvService) {
 		this.earthquakeRepository = earthquakeRepository;
 		this.magnitudeRepository = magnitudeRepository;
 		this.originRepository = originRepository;

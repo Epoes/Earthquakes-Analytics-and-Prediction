@@ -87,22 +87,15 @@ var viewer = new Cesium.Viewer('cesiumContainer', {
 });
 
 var scene = viewer.scene;
+//show fps
+scene.debugShowFramesPerSecond = true;
 var points = viewer.scene.primitives.add(new Cesium.PointPrimitiveCollection());
 var start_time;
 var end_time;
 var minMag;
 var maxMag;
 
-// var redCircle = viewer.entities.add({
-//     position: Cesium.Cartesian3.fromDegrees(8.651733, 38.876451),
-//     name : 'Red circle',
-//     ellipse : {
-//         semiMinorAxis : 3000.0,
-//         semiMajorAxis : 3000.0,
-//         material : Cesium.Color.RED.withAlpha(0.5)
-//     }
-// });
-//
+
 $(document).ready(function () {
     setUpDateFilter();
     setUpMagnitudeFilter();
@@ -145,8 +138,9 @@ $('#query-button').click(function () {
 
 function doRequest(){
     points.removeAll();
+    viewer.entities.removeAll();
     $.ajax({
-        url: "http://" + window.location.host + "/api/earthquakes/query?count=1000&start_time="+ start_time + "&end_time=" + end_time + "&max_magnitude=" + maxMag + "&min_magnitude=" + minMag,
+        url: "http://" + window.location.host + "/api/earthquakes/query?count=1000000&start_time="+ start_time + "&end_time=" + end_time + "&max_magnitude=" + maxMag + "&min_magnitude=" + minMag,
         type: "GET",
         success: function (data, textStatus, jqXHR) {
             drawEarthquakes(data);
@@ -177,6 +171,7 @@ function setUpMagnitude(minMagn, maxMagn) {
     minMag = minMagn;
     maxMag = maxMagn;
 }
+
 function drawEarthquakes(earthquakes) {
     // var instances = [];
     for(var i = 0; i < earthquakes.length; ++i){
@@ -184,6 +179,7 @@ function drawEarthquakes(earthquakes) {
         var longitude = earthquakes[i].origin.longitude;
         var magnitude = earthquakes[i].magnitude.magnitude;
         var id = earthquakes[i].id;
+        var zone = earthquakes[i].regionName;
         // var instance = new Cesium.GeometryInstance({
         //     geometry : new Cesium.CircleGeometry({
         //         center : Cesium.Cartesian3.fromDegrees(longitude, latitude),
@@ -198,13 +194,71 @@ function drawEarthquakes(earthquakes) {
         // instances.push(instance);
         points.add({
             position : Cesium.Cartesian3.fromDegrees(longitude, latitude),
-            color : Cesium.Color.fromCssColorString(adjustColor(magnitude)).withAlpha(0.3),
-            pixelSize: magnitude*10,
-            scaleByDistance: new Cesium.NearFarScalar(1.5e2, 2, 1.5e7, 0.0),
+
+            color : new Cesium.Color(interpolateColorMagnitude(0, magnitude),interpolateColorMagnitude(1, magnitude),interpolateColorMagnitude(2, magnitude), 1),
+            pixelSize : (5 + (35-5)*(magnitude/10)),
+            scaleByDistance : new Cesium.NearFarScalar(0, 10, 1.5e4, 1),
+                       //pixelSize : 10,
+            distanceDisplayCondition : new Cesium.DistanceDisplayCondition(0.0, 1.5e8),
+            translucencyByDistance : magnitudeNearFarScalar(magnitude),
             id: id
         });
+
+        //viewer.entities.add({
+        //    position : Cesium.Cartesian3.fromDegrees(longitude, latitude),
+        //    id : id,
+        //    name : zone,
+        //    point : {
+        //        color : new Cesium.Color(interpolateColorMagnitude(0, magnitude),interpolateColorMagnitude(1, magnitude),interpolateColorMagnitude(2, magnitude), 1),
+        //        pixelSize : (5 + (35-5)*(magnitude/10)),
+        //        scaleByDistance : new Cesium.NearFarScalar(0, 10, 1.5e4, 1),
+        //        distanceDisplayCondition : new Cesium.DistanceDisplayCondition(0.0, 1.5e8),
+        //        translucencyByDistance : magnitudeNearFarScalar(magnitude),
+        //    }
+        // });
     }
 
+}
+
+viewer.canvas.addEventListener('click', function(e){
+    var mousePosition = new Cesium.Cartesian2(e.clientX, e.clientY);
+    var ellipsoid = viewer.scene.globe.ellipsoid;
+    var cartesian = viewer.camera.pickEllipsoid(mousePosition, ellipsoid);
+    var cartographic = ellipsoid.cartesianToCartographic(cartesian);
+    var longitude = Cesium.Math.toDegrees(cartographic.longitude).toFixed(4);
+    var latitude = Cesium.Math.toDegrees(cartographic.latitude).toFixed(4);
+    console.log(latitude + ', ' + longitude);
+});
+
+function magnitudeNearFarScalar(magnitude) {
+    if(magnitude <= 2) {
+        return new Cesium.NearFarScalar(1.5e2 * (magnitude), 0.9, 1e6 * (magnitude), 0.0);
+    }else if(magnitude <= 4){
+        return new Cesium.NearFarScalar(1.5e4 * (magnitude), 0.9, 1.5e6 * (magnitude), 0.0);
+    }else{
+        return new Cesium.NearFarScalar(1.5e6 * (magnitude), 0.9, 1.5e7 * (magnitude), 0.0);
+    }
+
+}
+var green = [0.0,1.0,0.0];
+var yellow = [1.0,1.0,0.0];
+var red = [1.0,0.0,0.0];
+var purple = [0.0,0.294,0.51];
+
+function interpolateColorMagnitude(inx, magnitude){
+
+    if(magnitude <= 3){
+        return interpolateColor(green[inx], yellow[inx], magnitude/3);
+    } else if(magnitude <= 6){
+        return interpolateColor(yellow[inx], red[inx], (magnitude-3)/3);
+    }else {
+        return interpolateColor(red[inx], purple[inx], (magnitude-6)/3);
+    }
+
+}
+
+function interpolateColor(a, b, t){
+    return (a + (b-a)*t);
 }
 
 $('.hamburger').click(function () {

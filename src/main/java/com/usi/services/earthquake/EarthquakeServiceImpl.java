@@ -1,15 +1,17 @@
-package com.usi.API.FeedRSS;
+package com.usi.services.earthquake;
 
 
-import com.usi.API.ConnectionStatus;
+import com.usi.util.ConnectionStatus;
 import com.usi.API.twitter.Response;
-import com.usi.model.Earthquake;
-import com.usi.model.Magnitude;
-import com.usi.model.Origin;
+import com.usi.model.earthquake.Earthquake;
+import com.usi.model.earthquake.IngvQuery;
+import com.usi.model.earthquake.Magnitude;
+import com.usi.model.earthquake.Origin;
+import com.usi.services.earthquakeService;
+import com.usi.util.SimpleHttpRequest;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.util.EntityUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -31,24 +33,21 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 @Service
-public class IngvService implements RssService {
-
-    @Autowired
-    IngvSimpleHttpRequest simpleHttpRequest;
+public class EarthquakeServiceImpl implements earthquakeService {
 
     SimpleDateFormat sdf;
 
 
-    public IngvService(){
+    public EarthquakeServiceImpl(){
         sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS z");
     }
 
 
     public Response<Earthquake> getEarthQuakes(IngvQuery query) throws IOException, SAXException, ParserConfigurationException {
-        URL url = query.generateUrlForMultipleEq();
+        URL url = query.generateUrl();
         HttpResponse httpResponse;
 
-        httpResponse = simpleHttpRequest.get(url);
+        httpResponse = SimpleHttpRequest.get(url);
 
         int status = httpResponse.getStatusLine().getStatusCode();
         if (status != 200) {

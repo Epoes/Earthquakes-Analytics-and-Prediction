@@ -1,6 +1,6 @@
 package com.usi.API.twitter;
 
-import com.usi.API.ConnectionStatus;
+import com.usi.util.ConnectionStatus;
 
 import java.util.List;
 

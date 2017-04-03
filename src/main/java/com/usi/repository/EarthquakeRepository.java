@@ -1,6 +1,6 @@
 package com.usi.repository;
 
-import com.usi.model.Earthquake;
+import com.usi.model.earthquake.Earthquake;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

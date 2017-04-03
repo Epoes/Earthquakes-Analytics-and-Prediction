@@ -1,10 +1,12 @@
 package com.usi.API.FeedRSS;
 
 
-import com.usi.API.ConnectionStatus;
+import com.usi.util.ConnectionStatus;
 import com.usi.API.twitter.Response;
 import com.usi.BaseIntegration;
-import com.usi.model.Earthquake;
+import com.usi.model.earthquake.Earthquake;
+import com.usi.services.earthquake.EarthquakeServiceImpl;
+import com.usi.model.earthquake.IngvQuery;
 
 import org.junit.Test;
 
@@ -18,9 +20,9 @@ import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-public class IngvServiceTest extends BaseIntegration {
+public class earthquakeServiceTest extends BaseIntegration {
 
-    IngvService ingvService = new IngvService();
+    EarthquakeServiceImpl ingvService = new EarthquakeServiceImpl();
 
 
 
