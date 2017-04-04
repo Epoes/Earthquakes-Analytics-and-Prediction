@@ -5,7 +5,7 @@ services:
 
 notifications:
   email: false
-  
+
 jdk:
 - oraclejdk8
 # would just use default install/script but the ./mvnw script errors on travis
