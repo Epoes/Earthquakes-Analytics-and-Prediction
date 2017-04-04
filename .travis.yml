@@ -10,7 +10,7 @@ jdk:
 
 before_install:
 - npm install cesium
-- mv node_modules/cesium/Build src/main/resources/static/Cesium
+- mv node_modules/cesium/Build src/main/resources/static/Cesium-1.31
 
 install:
 - mvn install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
