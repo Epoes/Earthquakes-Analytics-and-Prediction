@@ -99,7 +99,7 @@ var maxMag;
 $(document).ready(function () {
     setUpDateFilter();
     setUpMagnitudeFilter();
-    setUpMaxMinDate(new Date('2017.01.01'), new Date());
+    setUpMaxMinDate(new Date('2017-01-01'), new Date());
     setUpMagnitude(2, 10);
     doRequest();
 });
@@ -108,10 +108,10 @@ function setUpDateFilter(){
     var slider = $( "#slider-range-date" )
     slider.slider({
         range: true,
-        min: new Date('1980.01.01').getTime() / 1000,
+        min: new Date('1980-01-01').getTime() / 1000,
         max: new Date().getTime() / 1000,
         step: 86400,
-        values: [  new Date('2017.01.01').getTime() / 1000, new Date().getTime() / 1000 ],
+        values: [  new Date('2017-01-01').getTime() / 1000, new Date().getTime() / 1000 ],
         change: function (event, ui) {
             setUpMaxMinDate(new Date(ui.values[0]*1000), new Date(ui.values[1]*1000));
         },
@@ -127,11 +127,39 @@ function setUpDateFilter(){
 
 
 function setUpMaxMinDate(minTime, maxTime){
-    minTime.setHours(00, 00, 00);
-    maxTime.setHours(23, 59, 59);
-    start_time = minTime.customFormat("#YYYY#-#MM#-#DD# #hh#:#mm#:#ss#");
-    end_time = maxTime.customFormat("#YYYY#-#MM#-#DD# #hh#:#mm#:#ss#");
+    start_time = formatDate(minTime);
+    end_time = formatDate(maxTime);
+}
 
+function formatDate(date){
+    var year = date.getFullYear();
+    var month = date.getMonth();
+    month++;
+    month = month + "";
+    if(month.length === 1){
+        month = "0" + month;
+    }
+    var day = date.getDate();
+    day = day + "";
+    if(day.length === 1){
+        day = "0" + day;
+    }
+    var hour = date.getHours();
+    var min = date.getMinutes();
+    var sec = date.getSeconds();
+    hour = hour + "";
+    if(hour.length === 1){
+        hour = "0" + hour;
+    }
+    min = min + "";
+    if(min.length === 1){
+        min = "0" + min;
+    }
+    sec = sec + "";
+    if(sec.length === 1){
+        sec = "0" + sec;
+    }
+    return year + "-" + month + "-" + day + " " + hour + ":" + min + ":" + sec;
 }
 
 $('#query-button').click(function () {
