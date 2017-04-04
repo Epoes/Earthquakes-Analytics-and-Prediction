@@ -1,5 +1,15 @@
 package com.usi.util;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
+@Component
 public class APIKeys {
-    public static final String GoogleMapsKey = "AIzaSyDnnA66c4WfoVF03ZY725MR-vkA44AZFis";
+
+
+    public static String GoogleMapsKey;
+    @Value("${GoogleKey}")
+    public void APIKeys(String GoogleKey){
+        GoogleMapsKey = GoogleKey;
+    }
 }
