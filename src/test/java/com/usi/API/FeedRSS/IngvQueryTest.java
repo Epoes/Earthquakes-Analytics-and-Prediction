@@ -20,9 +20,9 @@ public class IngvQueryTest {
 
     @Test
     public void generateURITest(){
-        String result = "http://webservices.ingv.it/fdsnws/event/1/query?starttime=2016-03-16 00:00:00&endtime" +
-                "=2017-03-18 23:59:00&minmag=2.0&maxmag=9.0&mindepth=-10&maxdepth=100&minlat=35.0&maxlat=-" +
-                "80.0&minlon=5.0&maxlon=130.0&orderby=time&format=xml&limit=12";
+        final String result = "http://webservices.ingv.it/fdsnws/event/1/query?starttime=2016-03-16%2000:00:00&" +
+                "endtime=2017-03-18%2023:59:00&minmag=2.0&maxmag=9.0&mindepth=-900&maxdepth=100" +
+                "&minlat=35.0&maxlat=-80.0&minlon=5.0&maxlon=130.0&orderby=time&format=xml&limit=12";
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z");
         Calendar start = Calendar.getInstance();
@@ -41,7 +41,7 @@ public class IngvQueryTest {
         query.setMaxDepth(100);
         URL url = query.generateUrl();
         assertNotNull(url);
-        assertEquals(189, url.getQuery().length());
+        assertEquals(192, url.getQuery().length());
         assertEquals(result, url.toString());
     }
 
@@ -49,8 +49,8 @@ public class IngvQueryTest {
     public void generateURITestWrongQuery(){
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z");
         Calendar start = Calendar.getInstance();
-        String response = "http://webservices.ingv.it/fdsnws/event/1/query?starttime=2017-03-18 00:00:00&" +
-                "minlat=35.0&maxlat=49.0&minlon=5.0&maxlon=20.0&orderby=time&format=xml&limit=1000";
+        final String response = "http://webservices.ingv.it/fdsnws/event/1/query?starttime=2017-03-18%2000:00:00&" +
+                "minlat=35.0&maxlat=49.0&minlon=5.0&maxlon=20.0&orderby=time&format=xml&limit=100000";
         try {
             //start > end
             start.setTime(sdf.parse("2017-03-18 00:00:00 UTC"));
@@ -67,7 +67,7 @@ public class IngvQueryTest {
         query.setMaxPoint(new LatLng(200, 40));
         URL url = query.generateUrl();
         assertNotNull(url);
-        assertEquals(34, url.getQuery().length());
+        assertEquals(115, url.getQuery().length());
         assertEquals(response, url.toString());
     }
 }

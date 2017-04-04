@@ -100,7 +100,7 @@ $(document).ready(function () {
     setUpDateFilter();
     setUpMagnitudeFilter();
     setUpMaxMinDate(new Date(), new Date());
-    setUpMagnitude(0, 10);
+    setUpMagnitude(2, 10);
     doRequest();
 });
 
@@ -147,10 +147,9 @@ $("#searchBtn").click(function () {
 var earthquakes;
 
 function doRequest(){
-    earthquakes = null;
     points.removeAll();
     $.ajax({
-        url: "http://" + window.location.host + "/api/earthquakes/query?count=1000000&start_time="+ start_time + "&end_time=" + end_time + "&max_magnitude=" + maxMag + "&min_magnitude=" + minMag,
+        url: "http://" + window.location.host + "/api/earthquakes/query?count=1000&start_time="+ start_time + "&end_time=" + end_time + "&max_magnitude=" + maxMag + "&min_magnitude=" + minMag,
         type: "GET",
         success: function (data, textStatus, jqXHR) {
             earthquakes = data;
@@ -235,11 +234,12 @@ function drawEarthquakes(earthquakes) {
             color : new Cesium.Color(interpolateColorMagnitude(0, magnitude),interpolateColorMagnitude(1, magnitude),interpolateColorMagnitude(2, magnitude), 1),
             pixelSize : (5 + (35-5)*(magnitude/10)),
             scaleByDistance : new Cesium.NearFarScalar(0, 10, 1.5e4, 1),
-                       //pixelSize : 10,
             distanceDisplayCondition : new Cesium.DistanceDisplayCondition(0.0, 1.5e8),
             translucencyByDistance : magnitudeNearFarScalar(magnitude, count),
             id: id
         });
+
+
         //viewer.entities.add({
         //    position : Cesium.Cartesian3.fromDegrees(longitude, latitude),
         //    id : id,
@@ -300,11 +300,13 @@ function displayInfo(earthquake) {
 
 var pinBuilder = new Cesium.PinBuilder();
 
+
 function drawPin(latitude, longitude) {
     entityPin.position = Cesium.Cartesian3.fromDegrees(longitude, latitude);
     entityPin.billboard.show = true;
 }
 
+var pinBuilder = new Cesium.PinBuilder();
 var entityPin = viewer.entities.add({
             name: 'EarthQuakePin',
             billboard: {

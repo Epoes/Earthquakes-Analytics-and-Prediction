@@ -3,6 +3,7 @@ package com.usi.API.controllers;
 import com.usi.BaseIntegration;
 import com.usi.model.Location;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.web.servlet.MockMvc;
@@ -17,7 +18,7 @@ public class ControllerTest extends BaseIntegration {
     @Autowired
     private MockMvc mockMvc;
 
-
+    @Ignore
     @Test
     public void testSomething() throws Exception {
         Location loc = new Location("a", "b", "c", "d");
