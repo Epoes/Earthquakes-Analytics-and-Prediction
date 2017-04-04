@@ -114,6 +114,11 @@
 			<version>LATEST</version>
 		</dependency>
 
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+			<version>1.3.156</version>
+		</dependency>
 
 	</dependencies>
 
