@@ -127,11 +127,11 @@ function setUpDateFilter(){
 
 
 function setUpMaxMinDate(minTime, maxTime){
-    start_time = formatDate(minTime);
-    end_time = formatDate(maxTime);
+    start_time = formatDateForQuery(minTime);
+    end_time = formatDateForQuery(maxTime);
 }
 
-function formatDate(date){
+function formatDateForQuery(date){
     var year = date.getFullYear();
     var month = date.getMonth();
     month++;
@@ -188,7 +188,7 @@ function doRequest(){
             earthquakes = data;
             drawEarthquakes(data);
             var end = new Date().getTime();
-            console.log("execution time: " + (end-start));
+            // console.log("execution time: " + (end-start));
         }
     });
 }
@@ -225,7 +225,7 @@ function anonymous(it) {
             out+='<li class="earthquake-item">'+(value.regionName)+'</li>';
         }
     }
-    console.log(out);
+    // console.log(out);
     return out;
 }
 
@@ -272,8 +272,8 @@ function drawEarthquakes(earthquakes) {
     var count =  earthquakes.length;
     var space = points.length;
     var difference = earthquakes.length - points.length;
-    console.log("I have " + space + " points to use");
-    console.log("I have " + count + " earthquake to display");
+    // console.log("I have " + space + " points to use");
+    // console.log("I have " + count + " earthquake to display");
     if (difference < 0) {
         var i;
         for (i = 0; i < count; ++i) {
@@ -341,7 +341,7 @@ function drawEarthquakes(earthquakes) {
 
 
 
-    console.log("now I have: " +  points.length + "points" );
+    // console.log("now I have: " +  points.length + "points" );
     //$("#list-earthquakes").empty();
     //listEarthquakes(earthquakes);
 }
@@ -381,8 +381,24 @@ function displayInfo(earthquake) {
     $("#list-info").append("<li class='info-item'><a>Zone: " + earthquake.regionName +"</a></li>");
     $("#list-info").append("<li class='info-item'><a>Magnitude: " + earthquake.magnitude.magnitude + " " + earthquake.magnitude.type + "</a></li>");
     $("#list-info").append("<li class='info-item'><a>Depth: " + earthquake.origin.depth +" m</a></li>");
-    $("#list-info").append("<li class='info-item'><a>Date: " + date.customFormat("#DD#-#MMM#-#YYYY#") +"</a></li>");
+    $("#list-info").append("<li class='info-item'><a>Date: " + formatDateForList(date) +"</a></li>");
 
+}
+
+function formatDateForList(date){
+    var year = date.getFullYear();
+    var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+        "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+    ];
+
+    var month = date.getMonth();
+
+    var day = date.getDate();
+    day = day + "";
+    if(day.length === 1){
+        day = "0" + day;
+    }
+    return day + " " + monthNames[month] + " " + year;
 }
 
 var pinBuilder = new Cesium.PinBuilder();
