@@ -16,7 +16,7 @@ install:
 - mvn install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
 
 after_success:
-- docker build -t epoes/eqap
+- docker build -t epoes/eqap .
 - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
 - docker push epoes/eqap
 
