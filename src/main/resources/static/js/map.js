@@ -127,6 +127,9 @@ function setUpDateFilter(){
 
 
 function setUpMaxMinDate(minTime, maxTime){
+    minTime.setHours(00, 00, 00);
+    maxTime.setHours(23, 59, 59);
+
     start_time = formatDateForQuery(minTime);
     end_time = formatDateForQuery(maxTime);
 }
@@ -179,7 +182,7 @@ var earthquakes;
 function doRequest(){
     var start = new Date().getTime();
     var count = 10000000;
-
+    console.log(end_time);
     //points.removeAll();
     $.ajax({
         url: "http://" + window.location.host + "/api/earthquakes/query?count=" + count + "&start_time="+ start_time + "&end_time=" + end_time + "&max_magnitude=" + maxMag + "&min_magnitude=" + minMag,
