@@ -74,7 +74,7 @@ var viewer = new Cesium.Viewer('cesiumContainer', {
 
     animation: false,
 
-    geocoder: false,
+    // geocoder: false,
 
     timeline: false,
 
