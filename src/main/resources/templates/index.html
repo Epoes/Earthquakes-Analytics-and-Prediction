@@ -52,8 +52,40 @@
 </div>
 <button class="hamburger">&#9776;</button>
 
+<div id="logo-container">
+    <a href="http://reveal.inf.usi.ch/" target="_blank">
+        <img id="reveal-logo" src="images/REVEALogo-black.png"/>
+    </a>
+    <a href="http://www.inf.usi.ch/" target="_blank">
+        <img id="usi-logo" src="images/logo_usi.png"/>
+    </a>
+    <a href="javascript:void(0)">
+        <img id="info" src="images/about us.png"/>
+    </a>
+</div>
+
+<div id="myModal" class="modal">
+    <div class="modal-content">
+        <div class="tab">
+            <button class="tablinks" onclick="openTab(event, 'About-us')" id="defaultOpen">About Us</button>
+            <button class="tablinks" onclick="openTab(event, 'Credits')">Credits</button>
+        </div>
+
+        <div id="About-us" class="tabcontent">
+            <p>Conceived by Prof. Dr. Michele Lanza, Dr. Andrea Mocci, Marco Calzana,
+                Leonardo Iandiorio.</p>
+            <p>Developed by Marco Calzana &amp; Leonardo Iandiorio</p>
+        </div>
+
+        <div id="Credits" class="tabcontent">
+            <p id="credit"></p>
+        </div>
+
+    </div>
+
+</div>
 <div id="cesiumContainer"></div>
-<div id="credit" style="z-index: -30"></div>
+
 </body>
 
 <script src="js/map.js"></script>

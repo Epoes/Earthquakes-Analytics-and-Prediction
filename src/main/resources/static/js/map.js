@@ -48,6 +48,7 @@
 
 var extent = Cesium.Rectangle.fromDegrees(0.0, 32.0, 20.0, 53.0);
 
+Cesium.BingMapsApi.defaultKey = "AjE_qTx15RrWAEQV5xQQuEg3qUvjtly009hVaEFGsIWOigXnhXFaj984NfDYzvdx";
 
 Cesium.Camera.DEFAULT_VIEW_RECTANGLE = extent;
 Cesium.Camera.DEFAULT_VIEW_FACTOR = 0;
@@ -108,7 +109,7 @@ function setUpDateFilter(){
     var slider = $( "#slider-range-date" )
     slider.slider({
         range: true,
-        min: new Date('1980-01-01').getTime() / 1000,
+        min: new Date('1985-01-02').getTime() / 1000,
         max: new Date().getTime() / 1000,
         step: 86400,
         values: [  new Date('2017-01-01').getTime() / 1000, new Date().getTime() / 1000 ],
@@ -182,7 +183,6 @@ var earthquakes;
 function doRequest(){
     var start = new Date().getTime();
     var count = 10000000;
-    console.log(end_time);
     //points.removeAll();
     $.ajax({
         url: "http://" + window.location.host + "/api/earthquakes/query?count=" + count + "&start_time="+ start_time + "&end_time=" + end_time + "&max_magnitude=" + maxMag + "&min_magnitude=" + minMag,
@@ -494,3 +494,45 @@ function closeNav(side) {
     document.getElementById("mySidenav" + side).style.width = "0";
 }
 
+// Get the modal
+var modal = document.getElementById('myModal');
+
+// Get the button that opens the modal
+var btn = document.getElementById("info");
+
+// Get the <span> element that closes the modal
+var span = document.getElementsByClassName("close")[0];
+
+// When the user clicks on the button, open the modal
+btn.onclick = function() {
+    modal.style.display = "block";
+    document.getElementById("defaultOpen").click();
+}
+
+// When the user clicks anywhere outside of the modal, close it
+window.onclick = function(event) {
+    if (event.target == modal) {
+        modal.style.display = "none";
+    }
+}
+
+function openTab(evt, tabName) {
+    // Declare all variables
+    var i, tabcontent, tablinks;
+
+    // Get all elements with class="tabcontent" and hide them
+    tabcontent = document.getElementsByClassName("tabcontent");
+    for (i = 0; i < tabcontent.length; i++) {
+        tabcontent[i].style.display = "none";
+    }
+
+    // Get all elements with class="tablinks" and remove the class "active"
+    tablinks = document.getElementsByClassName("tablinks");
+    for (i = 0; i < tablinks.length; i++) {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+    }
+
+    // Show the current tab, and add an "active" class to the button that opened the tab
+    document.getElementById(tabName).style.display = "block";
+    evt.currentTarget.className += " active";
+}
