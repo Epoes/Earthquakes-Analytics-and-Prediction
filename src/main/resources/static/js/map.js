@@ -96,75 +96,75 @@ function anonymous(it) {
 
 
 function drawEarthquakes(earthquakes) {
-    var count =  earthquakes.length;
-    var space = points.length;
     var difference = earthquakes.length - points.length;
-    // console.log("I have " + space + " points to use");
-    // console.log("I have " + count + " earthquake to display");
-    if (difference < 0) {
-        var i;
-        for (i = 0; i < count; ++i) {
-
-            var point = points.get(i);
-            var latitude = earthquakes[i].origin.latitude;
-            var longitude = earthquakes[i].origin.longitude;
-            var magnitude = earthquakes[i].magnitude.magnitude;
-            var id = earthquakes[i].id;
+    var count;
+    var isEnough;
 
 
-            point.position = Cesium.Cartesian3.fromDegrees(longitude, latitude);
-            point.color =
-                new Cesium.Color(interpolateColorMagnitude(0, magnitude), interpolateColorMagnitude(
-                    1, magnitude), interpolateColorMagnitude(2, magnitude), 1);
-            point.pixelSize = (5 + (35 - 5) * (magnitude / 10));
-            point.translucencyByDistance = magnitudeNearFarScalar(magnitude, count);
-            point.id = id;
-            point.show = true;
-        }
-
-        for(i; i < space; ++i){
-            var point = points.get(i);
-            point.show = false;
-        }
-    }else {
-        var i;
-        for (i = 0; i < space; ++i) {
-
-            var point = points.get(i);
-            var latitude = earthquakes[i].origin.latitude;
-            var longitude = earthquakes[i].origin.longitude;
-            var magnitude = earthquakes[i].magnitude.magnitude;
-            var id = earthquakes[i].id;
-
-
-            point.position = Cesium.Cartesian3.fromDegrees(longitude, latitude);
-            point.color =
-                new Cesium.Color(interpolateColorMagnitude(0, magnitude), interpolateColorMagnitude(
-                    1, magnitude), interpolateColorMagnitude(2, magnitude), 1);
-            point.pixelSize = (5 + (35 - 5) * (magnitude / 10));
-            point.translucencyByDistance = magnitudeNearFarScalar(magnitude, count);
-            point.id = id;
-            point.show = true;
-        }
-
-        for (i; i < count; ++i) {
-            var latitude = earthquakes[i].origin.latitude;
-            var longitude = earthquakes[i].origin.longitude;
-            var magnitude = earthquakes[i].magnitude.magnitude;
-            var id = earthquakes[i].id;
-            points.add({
-                           position: Cesium.Cartesian3.fromDegrees(longitude, latitude),
-                           color: new Cesium.Color(interpolateColorMagnitude(0,
-                                                                             magnitude), interpolateColorMagnitude(
-                               1, magnitude), interpolateColorMagnitude(2, magnitude), 1),
-                           pixelSize: (5 + (35 - 5) * (magnitude / 10)),
-                           scaleByDistance: new Cesium.NearFarScalar(0, 10, 1.5e4, 1),
-                           distanceDisplayCondition: new Cesium.DistanceDisplayCondition(0.0, 1.5e8),
-                           translucencyByDistance: magnitudeNearFarScalar(magnitude, count),
-                           id: id
-                       });
-        }
+    //more points then needed
+    if(difference < 0){
+        count =  earthquakes.length;
+        isEnough = true;
+    }else{
+        count = points.length;
+        isEnough = false;
     }
+
+    // console.log("I have " + points.length + " points to use");
+    // console.log("I have " + earthquakes.length + " earthquake to display");
+    var i;
+    for (i = 0; i < count; ++i) {
+
+        var point = points.get(i);
+        var latitude = earthquakes[i].origin.latitude;
+        var longitude = earthquakes[i].origin.longitude;
+        var magnitude = earthquakes[i].magnitude.magnitude;
+        var id = earthquakes[i].id;
+
+
+        point.position = Cesium.Cartesian3.fromDegrees(longitude, latitude);
+        point.color =
+            new Cesium.Color(interpolateColorMagnitude(0, magnitude), interpolateColorMagnitude(
+                1, magnitude), interpolateColorMagnitude(2, magnitude), 1);
+        point.pixelSize = (5 + (35 - 5) * (magnitude / 10));
+        point.translucencyByDistance = magnitudeNearFarScalar(magnitude, earthquakes.length);
+        point.id = id;
+        point.show = true;
+    }
+
+        if(isEnough) {
+            cancelPointsFrom(i, points);
+        }else{
+            addPointFrom(i, earthquakes);
+        }
+}
+
+function cancelPointsFrom(idx, pointsList) {
+    for (idx; idx < pointsList.length; ++idx) {
+        var point = points.get(idx);
+        point.show = false;
+    }
+}
+
+function addPointFrom(idx, pointsList){
+    for (idx; idx < pointsList.length; ++idx) {
+        var latitude = earthquakes[idx].origin.latitude;
+        var longitude = earthquakes[idx].origin.longitude;
+        var magnitude = earthquakes[idx].magnitude.magnitude;
+        var id = earthquakes[idx].id;
+        points.add({
+                       position: Cesium.Cartesian3.fromDegrees(longitude, latitude),
+                       color: new Cesium.Color(interpolateColorMagnitude(0,
+                                                                         magnitude), interpolateColorMagnitude(
+                           1, magnitude), interpolateColorMagnitude(2, magnitude), 1),
+                       pixelSize: (5 + (35 - 5) * (magnitude / 10)),
+                       scaleByDistance: new Cesium.NearFarScalar(0, 10, 1.5e4, 1),
+                       distanceDisplayCondition: new Cesium.DistanceDisplayCondition(0.0, 1.5e8),
+                       translucencyByDistance: magnitudeNearFarScalar(magnitude, pointsList.length),
+                       id: id
+                   });
+    }
+
 }
 
 
@@ -210,8 +210,6 @@ handler.setInputAction(function (click) {
                 $("#earthquake-info").empty();
                 openNav("Part");
                 displayInfo(e);
-                console.log(e);
-
             }
         }
 

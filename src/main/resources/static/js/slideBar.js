@@ -61,6 +61,7 @@ function formatDateForQuery(date){
 
 $('#query-button').click(function () {
     doRequest();
+    cancelPin();
     //$("#query-container").slideUp();
     //$("#searchBtn").css("visibility", "visible");
 });
