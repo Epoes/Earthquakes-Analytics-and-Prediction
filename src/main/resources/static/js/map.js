@@ -1,50 +1,3 @@
-//
-// var map = L.map(document.getElementById('map')).setView([43.097003, 12.390278], 5);
-// var italyLayer = L.geoJson(italyNeighbors).addTo(map);
-// map.fitBounds(italyLayer.getBounds());
-//
-// var markers = new L.FeatureGroup();
-//
-// $("#query-button").click(function () {
-//     markers.clearLayers();
-//     var magnitude = document.getElementById("magnitude-field").value;
-//     var count = document.getElementById("count-field").value;
-//     $.ajax({
-//         url: "http://localhost:8080/api/earthquakes/last-update/" + validateCount(count) + "/" + validateMagnitude(magnitude),
-//         type: "GET",
-//         success: function (data, textStatus, jqXHR) {
-//          // drawEarthquakes(data);
-//             console.log(data);
-//         }
-//     });
-// });
-//
-// function validateMagnitude(magnitude){
-//     return magnitude ? magnitude : 2;
-// }
-//
-// function validateCount(count){
-//     return count ? count : 100;
-// }
-//
-// function drawEarthquakes(earthquakes) {
-//     for(var i = 0; i < earthquakes.length; ++i){
-//         var latitude = earthquakes[i].origin.latitude;
-//         var longitude = earthquakes[i].origin.longitude;
-//         var magnitude = earthquakes[i].magnitude.magnitude;
-//         var circle = (L.circle([latitude, longitude], {radius: adjustRadius(magnitude), color: adjustColor(magnitude), stroke: false}));
-//         var center = (L.circle([latitude, longitude], {radius: adjustRadius(magnitude)/1000, color: adjustColor(magnitude)}));
-//         var popup = L.popup()
-//             .setLatLng([latitude, longitude])
-//             .setContent("<b>Magnitude: </b>" + magnitude + "<br> <b>Zone: </b>" + earthquakes[i].regionName + "<br><b>Date: </b>" + dateFormatter(earthquakes[i].origin.time))
-//             .openOn(map);
-//         circle.bindPopup(popup).openPopup(center);
-//         markers.addLayer(circle);
-//         markers.addLayer(center);
-//     }
-//     map.addLayer(markers);
-// }
-//
 
 var extent = Cesium.Rectangle.fromDegrees(0.0, 32.0, 20.0, 53.0);
 
@@ -61,6 +14,8 @@ var viewer = new Cesium.Viewer('cesiumContainer', {
     terrainProvider : new Cesium.CesiumTerrainProvider({
         url : 'https://assets.agi.com/stk-terrain/world'
     }),
+
+    selectorIndicator : false,
     //Hide the base layer picker
     // baseLayerPicker : false,
     //Use OpenStreetMaps
@@ -105,77 +60,7 @@ $(document).ready(function () {
     doRequest();
 });
 
-function setUpDateFilter(){
-    var slider = $( "#slider-range-date" )
-    slider.slider({
-        range: true,
-        min: new Date('1985-01-02').getTime() / 1000,
-        max: new Date().getTime() / 1000,
-        step: 86400,
-        values: [  new Date('2017-01-01').getTime() / 1000, new Date().getTime() / 1000 ],
-        change: function (event, ui) {
-            setUpMaxMinDate(new Date(ui.values[0]*1000), new Date(ui.values[1]*1000));
-        },
-        slide: function( event, ui ) {
-            $( "#amount-date" ).val( (new Date(ui.values[ 0 ] *1000).toDateString() ) + " - " + (new Date(ui.values[ 1 ] *1000)).toDateString() );
-        }
-    });
-    $( "#amount-date" ).val( (new Date(slider.slider( "values", 0 )*1000).toDateString()) +
-        " - " + (new Date(slider.slider( "values", 1 )*1000)).toDateString());
-}
 
-
-
-
-function setUpMaxMinDate(minTime, maxTime){
-    minTime.setHours(00, 00, 00);
-    maxTime.setHours(23, 59, 59);
-
-    start_time = formatDateForQuery(minTime);
-    end_time = formatDateForQuery(maxTime);
-}
-
-function formatDateForQuery(date){
-    var year = date.getFullYear();
-    var month = date.getMonth();
-    month++;
-    month = month + "";
-    if(month.length === 1){
-        month = "0" + month;
-    }
-    var day = date.getDate();
-    day = day + "";
-    if(day.length === 1){
-        day = "0" + day;
-    }
-    var hour = date.getHours();
-    var min = date.getMinutes();
-    var sec = date.getSeconds();
-    hour = hour + "";
-    if(hour.length === 1){
-        hour = "0" + hour;
-    }
-    min = min + "";
-    if(min.length === 1){
-        min = "0" + min;
-    }
-    sec = sec + "";
-    if(sec.length === 1){
-        sec = "0" + sec;
-    }
-    return year + "-" + month + "-" + day + " " + hour + ":" + min + ":" + sec;
-}
-
-$('#query-button').click(function () {
-    doRequest();
-    //$("#query-container").slideUp();
-    //$("#searchBtn").css("visibility", "visible");
-});
-
-$("#searchBtn").click(function () {
-    $("#query-container").slideDown();
-    $("#searchBtn").css("visibility", "hidden");
-})
 
 
 var earthquakes;
@@ -196,29 +81,6 @@ function doRequest(){
     });
 }
 
-function listEarthquakes(earthquakes){
-    $('#list-earthquakes').append("<ul id='list'></ul>");
-    for(var i = 0; i < earthquakes.length; ++i){
-        var date = new Date(earthquakes[i].origin.time);
-        $("#list").append("<li class='earthquake-item'><a>"+ earthquakes[i].regionName + "<br> " + date.customFormat("#DD#-#MMM#-#YYYY#") +"</a></li>");
-    }
-    // $("#list").append(anonymous(earthquakes));
-    $("#list").slice(20).hide();
-}
-
-//var mincount = 20;
-//var maxcount = 40;
-//
-//$(window).scroll(function() {
-//     if($(window).scrollTop() + $(window).height() >= $(document).height() - 400) {
-//         $("#list li").slice(mincount,maxcount).fadeIn(1200);
-//
-//         mincount = mincount+20;
-//         maxcount = maxcount+20;
-//
-//     }
-// });
-
 function anonymous(it) {
     var out='';
     if(it) {
@@ -232,44 +94,6 @@ function anonymous(it) {
     return out;
 }
 
-function setUpMagnitudeFilter(){
-    var slider = $( "#slider-range-magnitude" )
-    slider.slider({
-        range: true,
-        min: 0,
-        max: 10,
-        step: 0.5,
-        values: [2, 10],
-        change: function (event, ui) {
-            setUpMagnitude(ui.values[0], ui.values[1]);
-        },
-        slide: function( event, ui ) {
-            $( "#amount-magnitude" ).val("Magnitude between: " + ui.values[0] + " and " + ui.values[1]);
-        }
-    });
-    $( "#amount-magnitude" ).val( "Magnitude between: " + slider.slider( "values", 0 ) + " and " + slider.slider( "values", 1 ));
-}
-
-
-
-
-function setUpMagnitude(minMagn, maxMagn) {
-    minMag = minMagn;
-    maxMag = maxMagn;
-}
-
-// var instance = new Cesium.GeometryInstance({
-//     geometry : new Cesium.CircleGeometry({
-//         center : Cesium.Cartesian3.fromDegrees(longitude, latitude),
-//         radius : 90000.0,
-//         granularity : 2 * Cesium.Math.RADIANS_PER_DEGREE,
-//         vertexFormat: Cesium.VertexFormat.POSITION_AND_COLOR
-//     }),
-//     attributes : {
-//         color : new Cesium.ColorGeometryInstanceAttribute(1.0, 0.0, 0.0, 0.4)
-//     }
-// });
-// instances.push(instance);
 
 function drawEarthquakes(earthquakes) {
     var count =  earthquakes.length;
@@ -341,41 +165,63 @@ function drawEarthquakes(earthquakes) {
                        });
         }
     }
-
-
-
-    // console.log("now I have: " +  points.length + "points" );
-    //$("#list-earthquakes").empty();
-    //listEarthquakes(earthquakes);
 }
 
 
+//
+// viewer.canvas.addEventListener("click", function(e){
+//         var mousePosition = new Cesium.Cartesian2(e.clientX, e.clientY);
+//         var ellipsoid = viewer.scene.globe.ellipsoid;
+//         var cartesian = viewer.camera.pickEllipsoid(mousePosition, ellipsoid);
+//         var cartographic = ellipsoid.cartesianToCartographic(cartesian);
+//         var longitude = Cesium.Math.toDegrees(cartographic.longitude).toFixed(4);
+//         var latitude = Cesium.Math.toDegrees(cartographic.latitude).toFixed(4);
+//
+//         var targetEarthquake;
+//         var squareMinDistance = 1000000;
+//         for (var i = 0; i < earthquakes.length; i++) {
+//             var e = earthquakes[i];
+//             var distance = Math.pow(e.origin.longitude - longitude, 2) + Math.pow(e.origin.latitude - latitude, 2);
+//             if (distance < squareMinDistance) {
+//                 squareMinDistance = distance;
+//                 targetEarthquake = e;
+//
+//             }
+//         }
+//         drawPin(targetEarthquake.origin.latitude, targetEarthquake.origin.longitude);
+//
+//         $("#earthquake-info").empty();
+//         openNav("Part");
+//         displayInfo(targetEarthquake);
+// });
 
-viewer.canvas.addEventListener("click", function(e){
-        var mousePosition = new Cesium.Cartesian2(e.clientX, e.clientY);
-        var ellipsoid = viewer.scene.globe.ellipsoid;
-        var cartesian = viewer.camera.pickEllipsoid(mousePosition, ellipsoid);
-        var cartographic = ellipsoid.cartesianToCartographic(cartesian);
-        var longitude = Cesium.Math.toDegrees(cartographic.longitude).toFixed(4);
-        var latitude = Cesium.Math.toDegrees(cartographic.latitude).toFixed(4);
+handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
+handler.setInputAction(function (click) {
+    var pickedObject = viewer.scene.pick(click.position);
 
-        var targetEarthquake;
-        var squareMinDistance = 1000000;
+    //if not undefined
+    if(pickedObject !== undefined) {
+        var id = pickedObject.id;
         for (var i = 0; i < earthquakes.length; i++) {
             var e = earthquakes[i];
-            var distance = Math.pow(e.origin.longitude - longitude, 2) + Math.pow(e.origin.latitude - latitude, 2);
-            if (distance < squareMinDistance) {
-                squareMinDistance = distance;
-                targetEarthquake = e;
+
+            if (e.id == id) {
+                drawPin(e.origin.latitude, e.origin.longitude);
+                $("#earthquake-info").empty();
+                openNav("Part");
+                displayInfo(e);
+                console.log(e);
 
             }
         }
-        drawPin(targetEarthquake.origin.latitude, targetEarthquake.origin.longitude);
 
-        $("#earthquake-info").empty();
-        openNav("Part");
-        displayInfo(targetEarthquake);
-});
+    }else{
+        cancelPin();
+    }
+
+
+
+}, Cesium.ScreenSpaceEventType.LEFT_CLICK);
 
 
 function displayInfo(earthquake) {
@@ -394,25 +240,34 @@ function formatDateForList(date){
         "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
     ];
 
-    var month = date.getMonth();
+    var month =  date.getMonth();
+    var monthToString = monthNames[month]
+    var day = date.getDate() + "";
+    day = addZeroToString(day);
+    var hours = date.getHours() + "";
+    hours = addZeroToString(hours);
+    var minutes = date.getMinutes() + "";
+    minutes = addZeroToString(minutes);
+    var seconds =date.getSeconds() + "";
+    seconds = addZeroToString(seconds)
 
-    var day = date.getDate();
-    day = day + "";
-    if(day.length === 1){
-        day = "0" + day;
-    }
-    return day + " " + monthNames[month] + " " + year;
+    return day + " " + monthToString + " " + year + " at " + hours + "h" +minutes + "m" + seconds + "s";
 }
 
-var pinBuilder = new Cesium.PinBuilder();
 
+
+var pinBuilder = new Cesium.PinBuilder();
 
 function drawPin(latitude, longitude) {
     entityPin.position = Cesium.Cartesian3.fromDegrees(longitude, latitude);
     entityPin.billboard.show = true;
 }
 
-var pinBuilder = new Cesium.PinBuilder();
+function cancelPin() {
+    entityPin.billboard.show = false;
+}
+
+
 var entityPin = viewer.entities.add({
             name: 'EarthQuakePin',
             billboard: {
@@ -460,79 +315,13 @@ var purple = [0.0,0.294,0.51];
 function interpolateColorMagnitude(inx, magnitude){
 
     if(magnitude <= 3){
-        return interpolateColor(green[inx], yellow[inx], magnitude/3);
+        return interpolate(green[inx], yellow[inx], magnitude/3);
     } else if(magnitude <= 6){
-        return interpolateColor(yellow[inx], red[inx], (magnitude-3)/3);
+        return interpolate(yellow[inx], red[inx], (magnitude-3)/3);
     }else {
-        return interpolateColor(red[inx], purple[inx], (magnitude-6)/3);
+        return interpolate(red[inx], purple[inx], (magnitude-6)/3);
     }
 
 }
 
-function interpolateColor(a, b, t){
-    return (a + (b-a)*t);
-}
 
-$('.hamburger').click(function () {
-    openNav("Left");
-});
-
-$('#closebtnLeft').click(function () {
-    closeNav("Left");
-});
-
-$('#closebtnPart').click(function () {
-    closeNav("Part");
-});
-/* Set the width of the side navigation to 250px */
-function openNav(side) {
-    document.getElementById("mySidenav" + side).style.width = "280px";
-}
-
-/* Set the width of the side navigation to 0 */
-function closeNav(side) {
-    document.getElementById("mySidenav" + side).style.width = "0";
-}
-
-// Get the modal
-var modal = document.getElementById('myModal');
-
-// Get the button that opens the modal
-var btn = document.getElementById("info");
-
-// Get the <span> element that closes the modal
-var span = document.getElementsByClassName("close")[0];
-
-// When the user clicks on the button, open the modal
-btn.onclick = function() {
-    modal.style.display = "block";
-    document.getElementById("defaultOpen").click();
-}
-
-// When the user clicks anywhere outside of the modal, close it
-window.onclick = function(event) {
-    if (event.target == modal) {
-        modal.style.display = "none";
-    }
-}
-
-function openTab(evt, tabName) {
-    // Declare all variables
-    var i, tabcontent, tablinks;
-
-    // Get all elements with class="tabcontent" and hide them
-    tabcontent = document.getElementsByClassName("tabcontent");
-    for (i = 0; i < tabcontent.length; i++) {
-        tabcontent[i].style.display = "none";
-    }
-
-    // Get all elements with class="tablinks" and remove the class "active"
-    tablinks = document.getElementsByClassName("tablinks");
-    for (i = 0; i < tablinks.length; i++) {
-        tablinks[i].className = tablinks[i].className.replace(" active", "");
-    }
-
-    // Show the current tab, and add an "active" class to the button that opened the tab
-    document.getElementById(tabName).style.display = "block";
-    evt.currentTarget.className += " active";
-}

@@ -34,6 +34,18 @@ function sortByDepthRev(earthquakes) {
     });
 }
 
+function interpolate(a, b, t){
+    return (a + (b-a)*t);
+}
+
+function addZeroToString(s){
+    if(s.length === 1){
+        s = "0" + s;
+    }
+    return s;
+
+}
+
 
 
 
