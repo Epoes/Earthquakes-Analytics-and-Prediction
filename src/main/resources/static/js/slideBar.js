@@ -1,3 +1,14 @@
+
+var start_time;
+var end_time;
+var minMag;
+var maxMag;
+var startDate = new Date();
+//start time 100 days back
+startDate.setDate(startDate.getDate()-100);
+
+
+
 function setUpDateFilter(){
     var slider = $( "#slider-range-date" )
     slider.slider({
@@ -5,7 +16,7 @@ function setUpDateFilter(){
                       min: new Date('1985-01-02').getTime() / 1000,
                       max: new Date().getTime() / 1000,
                       step: 86400,
-                      values: [  new Date('2017-01-01').getTime() / 1000, new Date().getTime() / 1000 ],
+                      values: [  startDate.getTime() / 1000, new Date().getTime() / 1000 ],
                       change: function (event, ui) {
                           setUpMaxMinDate(new Date(ui.values[0]*1000), new Date(ui.values[1]*1000));
                       },
@@ -159,4 +170,34 @@ function openTab(evt, tabName) {
     // Show the current tab, and add an "active" class to the button that opened the tab
     document.getElementById(tabName).style.display = "block";
     evt.currentTarget.className += " active";
+}
+
+function displayInfo(earthquake) {
+    var date = new Date(earthquake.origin.time);
+    $('#earthquake-info').append("<ul id='list-info'></ul>");
+    $("#list-info").append("<li class='info-item'><a>Zone: " + earthquake.regionName +"</a></li>");
+    $("#list-info").append("<li class='info-item'><a>Magnitude: " + earthquake.magnitude.magnitude + " " + earthquake.magnitude.type + "</a></li>");
+    $("#list-info").append("<li class='info-item'><a>Depth: " + earthquake.origin.depth +" m</a></li>");
+    $("#list-info").append("<li class='info-item'><a>Date: " + formatDateForList(date) +"</a></li>");
+
+}
+
+function formatDateForList(date){
+    var year = date.getFullYear();
+    var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                      "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+    ];
+
+    var month =  date.getMonth();
+    var monthToString = monthNames[month]
+    var day = date.getDate() + "";
+    day = addZeroToString(day);
+    var hours = date.getHours() + "";
+    hours = addZeroToString(hours);
+    var minutes = date.getMinutes() + "";
+    minutes = addZeroToString(minutes);
+    var seconds =date.getSeconds() + "";
+    seconds = addZeroToString(seconds)
+
+    return day + " " + monthToString + " " + year + " at " + hours + "h" +minutes + "m" + seconds + "s";
 }
