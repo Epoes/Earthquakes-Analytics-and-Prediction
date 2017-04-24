@@ -8,6 +8,7 @@
     <!-- Make the application on mobile take up the full browser screen and disable user scaling. -->
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no"/>
     <title>Visual Earthquakes</title>
+
     <link href="css/map.css" rel="stylesheet" type="text/css"/>
     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css"/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"/>
@@ -23,77 +24,15 @@
     <script src="Cesium/Build/Cesium/Cesium.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-
 </head>
+
+
 <body>
-<div id="mySidenavPart" class="sidenavPart">
-    <a href="javascript:void(0)" id="closebtnPart" class="closebtn">&#8592;</a>
-    <div id="earthquake-info">
-
-    </div>
-</div>
-<div id="mySidenavLeft" class="sidenavLeft">
-    <a href="javascript:void(0)" id="closebtnLeft" class="closebtn">&times;</a>
-    <a href="javascript:void(0)" id="searchBtn" class="searchBtn" >
-        <i class="fa fa-search"></i>
-    </a>
-    <div id="query-container">
-        <div id="slider-range-date">
-            <div class="ui-slider-handle custom-handle"></div>
-            <div class="ui-slider-handle custom-handle"></div>
-        </div>
-
-        <p>
-            <input type="text" id="amount-magnitude" class="input-filter" size="50" readonly="readonly" />
-        </p>
-        <div id="slider-range-magnitude">
-            <div class="ui-slider-handle custom-handle"></div>
-            <div class="ui-slider-handle custom-handle"></div>
-        </div>
-        <button type="button" id="query-button">Search!</button>
-    </div>
-    <div id="list-earthquakes">
-    </div>
-</div>
-<button class="hamburger">&#9776;</button>
-
-<div id="logo-container">
-    <a href="http://reveal.inf.usi.ch/" target="_blank">
-        <img id="reveal-logo" src="images/REVEALogo-black.png"/>
-    </a>
-    <a href="http://www.inf.usi.ch/" target="_blank">
-        <img id="usi-logo" src="images/logo_usi.png"/>
-    </a>
-    <a href="javascript:void(0)">
-        <img id="info" src="images/about us.png"/>
-    </a>
-</div>
-
-<div id="myModal" class="modal">
-    <div class="modal-content">
-        <div class="tab">
-            <button class="tablinks" onclick="openTab(event, 'About-us')" id="defaultOpen">About Us</button>
-            <button class="tablinks" onclick="openTab(event, 'Credits')">Credits</button>
-        </div>
-
-        <div id="About-us" class="tabcontent">
-            <p>Conceived by Prof. Dr. Michele Lanza, Dr. Andrea Mocci, Marco Calzana,
-                Leonardo Iandiorio.</p>
-            <p>Developed by Marco Calzana &amp; Leonardo Iandiorio</p>
-        </div>
-
-        <div id="Credits" class="tabcontent">
-            <p id="credit"></p>
-        </div>
-
-    </div>
-
-</div>
 <div id="cesiumContainer"></div>
 
 </body>
 
 <script src="js/map.js"></script>
 <script src="js/util.js"></script>
-<script src="js/slideBar.js"></script>
+<!--<script src="js/slideBar.js"></script>-->
 </html>
