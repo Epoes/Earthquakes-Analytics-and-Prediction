@@ -70,14 +70,14 @@ public class EarthquakeHub {
 
         updateTimer.schedule(myTask, 189999, 189999);
 
-        TimerTask myTask2 = new TimerTask() {
-            @Override
-            public void run() {
-                saveOldEarthQuakes();
-            }
-        };
-
-        getOldTimer.schedule(myTask2, 0, 30000);
+//        TimerTask myTask2 = new TimerTask() {
+//            @Override
+//            public void run() {
+//                saveOldEarthQuakes();
+//            }
+//        };
+//
+//        getOldTimer.schedule(myTask2, 0, 30000);
     }
 
 

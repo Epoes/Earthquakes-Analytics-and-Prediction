@@ -58,13 +58,13 @@ var points = scene.primitives.add(primitiveCollection);
 
 
 var stdRequest = {
-    count : 1000000,
+    count : 10000,
     endTime : new Date(),
     startTime : new Date(),
-    minMag : 0,
+    minMag : 2,
     maxMag : 10,
     minDepth : -1000,
-    maxDepth : 700000,
+    maxDepth : 20000,
     minPoint : {
         longitude: 35,
         latitude: 5
@@ -84,7 +84,28 @@ $(document).ready(function () {
     // setUpMagnitude(2, 10);
 
     doRequest(stdRequest);
+
+    // var point = points.add({
+    //                position: Cesium.Cartesian3.fromDegrees(15, 38, 0),
+    //                color: new Cesium.Color(0,0,1,1),
+    //                pixelSize: 100
+    //            })
+    // var startTime = Date.now();
+    // setInterval(function(){
+    //     animatePoint(point, startTime)
+    // }, 10);
+
 });
+
+// function animatePoint(point, startTime){
+//     console.log("ciaone")
+//     var maxTime =  1;
+//     var currentTime = (Date.now() - startTime)/1000;
+//     console.log(currentTime)
+//     if(currentTime <= 1) {
+//         point.pixelSize = currentTime*100;
+//     }
+// }
 
 // var sort = util.sortByMagnitude;
 
@@ -94,7 +115,7 @@ function doRequest(request){
     $.ajax({
         url: "http://" + window.location.host + "/api/earthquakes/query?count=" + request.count + "&start_time="+ formatDateForQuery(request.startTime)
              + "&end_time=" + formatDateForQuery(request.endTime) + "&max_magnitude=" + request.maxMag + "&min_magnitude=" +
-             request.minMag + "&min_depth=" + request.minDepth + "&maxDepth=" + request.maxDepth,
+             request.minMag + "&min_depth=" + request.minDepth + "&max_depth=" + request.maxDepth,
 
              // "&min_lat=" + minPoint.latitude +
              // "&min_lng=" + minPoint.longitude + "&max_lat=" + maxPoint.latitude + "&max_lng=" + maxPoint.longitude,
@@ -102,13 +123,14 @@ function doRequest(request){
         type: "GET",
         success: function (data, textStatus, jqXHR) {
             earthquakes = data;
+            setUpDepth(earthquakes);
             setUpDateRange(earthquakes);
             sortByMagnitude(earthquakes);
             drawEarthquakes(data);
-            console.log(points);
         }
     });
 }
+
 var maxLongTime;
 var minLongTime;
 var interval;
@@ -118,6 +140,27 @@ function setUpDateRange(earthquakes){
     minLongTime = earthquakes[earthquakes.length - 1].origin.time;
     interval = maxLongTime - minLongTime;
     step = interval/3;
+}
+
+var minDepth = 700000;
+var maxDepth = -1000;
+var depthInterval;
+var depthStep;
+
+function setUpDepth(earthquakes){
+    for( var i = 0; i < earthquakes.length; i++){
+        var e = earthquakes[i];
+        if(e.origin.depth > maxDepth){
+            maxDepth = e.origin.depth;
+        }
+
+        if(e.origin.depth < minDepth){
+            minDepth = e.origin.depth;
+        }
+    }
+
+    depthInterval = maxDepth - minDepth;
+    depthStep = depthInterval/3;
 }
 //
 // function anonymous(it) {
@@ -168,7 +211,7 @@ function drawEarthquakes(earthquakes) {
     }
     var i;
     for (i = 0; i < count; ++i) {
-        resetPoint(earthquakes[i], points.get(i));
+        resetPoint(earthquakes[i], points.get(i), i);
     }
 
     if(isEnough) {
@@ -187,12 +230,12 @@ function cancelPointsFrom(idx, pointsList) {
 
 function addPointFrom(idx, earthquakeList){
     for (idx; idx < earthquakeList.length; ++idx) {
-        points.add(initPoint(earthquakeList[idx]));
+        points.add(initPoint(earthquakeList[idx], idx));
     }
 
 }
 
-function initPoint(earthquake){
+function initPoint(earthquake, index){
     var latitude = earthquake.origin.latitude;
     var longitude = earthquake.origin.longitude;
     var magnitude = earthquake.magnitude.magnitude;
@@ -203,11 +246,11 @@ function initPoint(earthquake){
         color: getCesiumColor(earthquake),
         pixelSize: getPixelSize(earthquake),
         scaleByDistance: getNearForScalar(),
-        translucencyByDistance: magnitudeNearFarScalar(earthquake, earthquakes.length)
+        translucencyByDistance: magnitudeNearFarScalar(earthquake,index, earthquakes.length)
     };
 }
 
-function resetPoint(earthquake, point){
+function resetPoint(earthquake, point, index){
     var latitude = earthquake.origin.latitude;
     var longitude = earthquake.origin.longitude;
     var magnitude = earthquake.magnitude.magnitude;
@@ -217,7 +260,7 @@ function resetPoint(earthquake, point){
     point.id = id;
     point.color =  getCesiumColor(earthquake);
     point.pixelSize =  getPixelSize(earthquake);
-    point.translucencyByDistance =  magnitudeNearFarScalar(earthquake, earthquakes.length);
+    point.translucencyByDistance =  magnitudeNearFarScalar(earthquake, index, earthquakes.length);
     point.show = true;
 }
 
@@ -237,52 +280,32 @@ function getPixelSize(e) {
 }
 
 
-
-var bigNumber = 50000;
-var lowNumber = 2000;
-
-//usa il max magnitude per pddc
-
-function magnitudeNearFarScalar(earthquake, count) {
+function magnitudeNearFarScalar(earthquake, index, count) {
     var magnitude = earthquake.magnitude.magnitude;
-    if(count > bigNumber){
-        return getLowPerformanceNearFarScalar(magnitude);
-    }
-
-    return getNormalPerformanceNearFarScalar(magnitude);
-
+    return getBestPerformanceNearFarScalar(magnitude, index, count);
 }
 
-function getNormalPerformanceNearFarScalar(magnitude){
-    if(magnitude <= 2) {
-        return new Cesium.NearFarScalar(1.5e2 * (magnitude), 0.9, 1e6 * (magnitude), 0.0);
-    }
-    else if(magnitude <= 4){
-        return new Cesium.NearFarScalar(1.5e4 * (magnitude), 0.9, 1.5e6 * (magnitude), 0.0);
-    }else{
+function getBestPerformanceNearFarScalar(magnitude, index, count){
+
+    if(index > count - 400) {
         return new Cesium.NearFarScalar(1.5e6 * (magnitude), 0.9, 1.5e7 * (magnitude), 0.0);
-    }
-}
-
-function getLowPerformanceNearFarScalar(magnitude){
-    if(magnitude <= 2){
-        return new Cesium.NearFarScalar(interpolate(1.5e3, 5e3, normalizeT(magnitude, 0, 2)), 0.9, interpolate(1e4, 5e4, (magnitude/2)), 0.0);
-    }else if(magnitude <= 3){
-        return new Cesium.NearFarScalar(interpolate(1.5e4, 4.5e4, normalizeT(magnitude, 2, 3)), 0.9, interpolate(3e5, 9e5, (magnitude - 2)), 0.0);
-    }else if(magnitude <= 4) {
+    }else if(index > count - 6600){
         return new Cesium.NearFarScalar(1.5e4 * (magnitude), 0.9, 3e6 * (magnitude), 0.0);
-    }else{
-        return new Cesium.NearFarScalar(1.5e6 * (magnitude), 0.9, 1.5e7 * (magnitude), 0.0);
+    }else if (index > count - 85000){
+        return new Cesium.NearFarScalar(interpolate(1.5e4, 4.5e4, normalizeT(magnitude, 2, 3)), 0.9, interpolate(3e5, 9e5, (magnitude - 2)), 0.0);
     }
-}
 
+    return new Cesium.NearFarScalar(interpolate(1.5e3, 5e3, normalizeT(magnitude, 0, 2)), 0.9, interpolate(1e4, 5e4, (magnitude/2)), 0.0);
+}
 
 
 
 var green = [0.0,1.0,0.0];
 var yellow = [1.0,1.0,0.0];
 var red = [1.0,0.0,0.0];
-var purple = [0.0,0.294,0.51];
+var orange =[1.0, 0.647, 0];
+// var purple = [0.0,0.294,0.51];
+var purple = [0.0,0.0,1.0];
 
 function getCesiumColor(e){
     return new Cesium.Color(selectedColorInterpolation(0, e),
@@ -297,9 +320,22 @@ function interpolateColorByTime(inx, e){
     if(time <= (minLongTime+step)){
         return interpolate(green[inx], yellow[inx], normalizeT(time, minLongTime, minLongTime+step));
     } else if(time <= (minLongTime+ (2*step))){
-        return interpolate(yellow[inx], red[inx], normalizeT(time, minLongTime+step, minLongTime + (2*step)));
+        return interpolate(yellow[inx], orange[inx], normalizeT(time, minLongTime+step, minLongTime + (2*step)));
     }else {
-        return interpolate(red[inx], purple[inx], normalizeT(time, minLongTime+(2*step), maxLongTime));
+        return interpolate(orange[inx], red[inx], normalizeT(time, minLongTime+(2*step), maxLongTime));
+    }
+
+}
+
+function interpolateColorByDepth(inx, e){
+    var depth = e.origin.depth;
+
+    if(depth <= (minDepth+depthStep)){
+        return interpolate(green[inx], yellow[inx], normalizeT(depth, minDepth, minDepth+depthStep));
+    } else if(depth <= (minDepth+ (2*depthStep))){
+        return interpolate(yellow[inx], orange[inx], normalizeT(depth, minDepth+depthStep, minDepth + (2*depthStep)));
+    }else {
+        return interpolate(orange[inx], red[inx], normalizeT(depth, minDepth+(2*depthStep), maxDepth));
     }
 
 }
@@ -318,9 +354,13 @@ function interpolateColorByMagnitude(inx, e){
 }
 
 //default color pick.
-// var selectedColorInterpolation = interpolateColorByMagnitude;
+var selectedColorInterpolation = interpolateColorByMagnitude;
 
-var selectedColorInterpolation = interpolateColorByTime
+// var selectedColorInterpolation = interpolateColorByTime;
+// var selectedColorInterpolation = interpolateColorByDepth;
+
+
+
 var pinBuilder = new Cesium.PinBuilder();
 var entityPin = viewer.entities.add({
     name: 'EarthQuakePin',
@@ -336,6 +376,7 @@ var entityPin = viewer.entities.add({
 
 var pickedPoint = undefined;
 var pickedEarthquake = undefined;
+var pickedIndex = 0;
 handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
 
 handler.setInputAction(function (click) {
@@ -349,6 +390,7 @@ handler.setInputAction(function (click) {
             if (e.id == id) {
                 pickedEarthquake = e;
                 pickedPoint = pickedObject;
+                pickedIndex = i;
                 underLinePoint(pickedObject, e);
                 showInfoBox(e);
             }
@@ -367,11 +409,12 @@ function resetLastPoint(){
         var latitude = pickedEarthquake.origin.latitude;
         var longitude = pickedEarthquake.origin.longitude;
         var magnitude = pickedEarthquake.magnitude.magnitude;
-        pickedPoint.primitive.translucencyByDistance = magnitudeNearFarScalar(pickedEarthquake, earthquakes.length);
+        pickedPoint.primitive.translucencyByDistance = magnitudeNearFarScalar(pickedEarthquake, pickedIndex, earthquakes.length);
         pickedPoint.primitive.outlineWidth = 0;
         pickedPoint.primitive.position = Cesium.Cartesian3.fromDegrees(longitude, latitude, magnitude);
         pickedPoint = undefined;
         pickedEarthquake = undefined;
+        pickedIndex = 0;
     }
 }
 
@@ -424,16 +467,56 @@ handler.setInputAction(function(click) {
 
 
 
+//
+// function drawPin(latitude, longitude) {
+//     entityPin.position = Cesium.Cartesian3.fromDegrees(longitude, latitude, 10);
+//     entityPin.eyeOffset = Cesium.Cartesian3(0.0, 0.0, -1.0);
+//     entityPin.billboard.show = true;
+// }
+//
+// function cancelPin() {
+//     entityPin.billboard.show = false;
+// }
 
-function drawPin(latitude, longitude) {
-    entityPin.position = Cesium.Cartesian3.fromDegrees(longitude, latitude, 10);
-    entityPin.eyeOffset = Cesium.Cartesian3(0.0, 0.0, -1.0);
-    entityPin.billboard.show = true;
-}
+// var bigNumber = 50000;
+// var lowNumber = 5000;
+// if(count > bigNumber){
+//     return getLowPerformanceNearFarScalar(magnitude);
+// }else if(count > lowNumber){
+//     return getNormalPerformanceNearFarScalar(magnitude);
+// }
+//
+// return getBestPerformanceNearFarScalar(magnitude);
 
-function cancelPin() {
-    entityPin.billboard.show = false;
-}
+// function getBestPerformanceNearFarScalar(magnitude){
+//     return new Cesium.NearFarScalar(1.5e6 * (magnitude), 0.9, 1.5e7 * (magnitude), 0.0);
+// }
+//
+//
+//
+// function getNormalPerformanceNearFarScalar(magnitude){
+//     if(magnitude <= 2) {
+//         return new Cesium.NearFarScalar(1.5e2 * (magnitude), 0.9, 1e6 * (magnitude), 0.0);
+//     }
+//     else if(magnitude <= 4){
+//         return new Cesium.NearFarScalar(1.5e4 * (magnitude), 0.9, 1.5e6 * (magnitude), 0.0);
+//     }else{
+//         return new Cesium.NearFarScalar(1.5e6 * (magnitude), 0.9, 1.5e7 * (magnitude), 0.0);
+//     }
+// }
+//
+// function getLowPerformanceNearFarScalar(magnitude){
+//     if(magnitude <= 2){
+//         return new Cesium.NearFarScalar(interpolate(1.5e3, 5e3, normalizeT(magnitude, 0, 2)), 0.9, interpolate(1e4, 5e4, (magnitude/2)), 0.0);
+//     }else if(magnitude <= 3){
+//         return new Cesium.NearFarScalar(interpolate(1.5e4, 4.5e4, normalizeT(magnitude, 2, 3)), 0.9, interpolate(3e5, 9e5, (magnitude - 2)), 0.0);
+//     }else if(magnitude <= 4) {
+//         return new Cesium.NearFarScalar(1.5e4 * (magnitude), 0.9, 3e6 * (magnitude), 0.0);
+//     }else{
+//         return new Cesium.NearFarScalar(1.5e6 * (magnitude), 0.9, 1.5e7 * (magnitude), 0.0);
+//     }
+// }
+
 
 
 
