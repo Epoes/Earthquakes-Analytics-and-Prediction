@@ -149,22 +149,84 @@
 //
 // }
 //
-// function formatDateForList(date){
-//     var year = date.getFullYear();
-//     var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
-//                       "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
-//     ];
-//
-//     var month =  date.getMonth();
-//     var monthToString = monthNames[month]
-//     var day = date.getDate() + "";
-//     day = addZeroToString(day);
-//     var hours = date.getHours() + "";
-//     hours = addZeroToString(hours);
-//     var minutes = date.getMinutes() + "";
-//     minutes = addZeroToString(minutes);
-//     var seconds =date.getSeconds() + "";
-//     seconds = addZeroToString(seconds)
-//
-//     return day + " " + monthToString + " " + year + " at " + hours + "h" +minutes + "m" + seconds + "s";
-// }
+function formatDateForList(date){
+    var year = date.getFullYear();
+    var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                      "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+    ];
+
+    var month =  date.getMonth();
+    var monthToString = monthNames[month]
+    var day = date.getDate() + "";
+    day = addZeroToString(day);
+    var hours = date.getHours() + "";
+    hours = addZeroToString(hours);
+    var minutes = date.getMinutes() + "";
+    minutes = addZeroToString(minutes);
+    var seconds =date.getSeconds() + "";
+    seconds = addZeroToString(seconds)
+
+    return day + " " + monthToString + " " + year + " at " + hours + "h" +minutes + "m" + seconds + "s";
+}
+
+
+
+// $( ".cesium-viewer-toolbar" ).append( "<div class= card></div>");
+
+function showInfoBox(earthquake){
+    console.log(earthquake);
+    viewer.selectedEntity = new Cesium.Entity({
+                                  id: earthquake.id,
+                                  description: "<table>"
+                                               + "<tr>"
+                                                  + "<td>zone</td>"
+                                                  + "<td>" + earthquake.regionName + "</td>"
+                                               + "</tr>"
+
+                                               + "<tr>"
+                                                    + "<td>magnitude</td>"
+                                                    + "<td>" + earthquake.magnitude.magnitude + " " + earthquake.magnitude.type + "</td>"
+                                               + "</tr>"
+
+                                               + "<tr>"
+                                                  + "<td>time</td>"
+                                                  + "<td>" + formatDateForList(new Date(earthquake.origin.time)) + "</td>"
+                                               + "</tr>"
+
+                                               + "<tr>"
+                                               + "<td>depth</td>"
+                                               + "<td>" + earthquake.origin.depth + "m" + "</td>"
+                                               + "</tr>"
+
+                                               + "<tr>"
+                                               + "<td>intensity</td>"
+                                               + "<td>" + getTheoreticalIntensity(earthquake.magnitude.magnitude) + "</td>"
+                                               + "</tr>"
+
+                                               + "</table>"
+
+                              });
+}
+
+function getTheoreticalIntensity(magnitude){
+    if (magnitude < 2.4){
+        return "I";
+    }else if(magnitude < 2.8){
+        return "II";
+    }else if(magnitude < 3.2){
+        return "III";
+    }else if(magnitude < 2.7){
+        return "IV";
+    }else if(magnitude < 4.2){
+        return "V";
+    }else if(magnitude < 4.7){
+        return "VI";
+    }else if(magnitude < 5.2){
+        return "VII";
+    }else if(magnitude < 5.6){
+        return "VIII";
+    }
+
+    return "IX";
+
+}

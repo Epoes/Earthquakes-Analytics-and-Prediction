@@ -68,7 +68,7 @@ public class EarthquakeHub {
             }
         };
 
-        updateTimer.schedule(myTask, 0, 189999);
+        updateTimer.schedule(myTask, 189999, 189999);
 
         TimerTask myTask2 = new TimerTask() {
             @Override
@@ -77,7 +77,7 @@ public class EarthquakeHub {
             }
         };
 
-//        getOldTimer.schedule(myTask2, 0, 60000);
+        getOldTimer.schedule(myTask2, 0, 30000);
     }
 
 
@@ -146,7 +146,7 @@ public class EarthquakeHub {
         sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
 
         query.setOrderBy("time");
-        query.setCount(1000);
+        query.setCount(5000);
         query.setMinMagnitude(0);
         query.setMaxMagnitude(2);
 

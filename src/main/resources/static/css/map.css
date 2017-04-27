@@ -316,33 +316,5 @@ div.tab button.active {
     border: 1px solid #ccc;
     border-top: none;
 }
-/*#map{*/
-    /*height: 600px;*/
-    /*!*width: 700px;*!*/
-    /*!*display: block;*!*/
-    /*!*margin-left: auto;*!*/
-    /*!*margin-right: auto;*!*/
 
-/*}*/
 
-/*.leaflet-interactive{*/
-    /*!*-webkit-animation: pulsate 1s ease-out;*!*/
-    /*!*-webkit-animation-iteration-count: infinite;*!*/
-    /*!*opacity: 0.0;*!*/
-/*}*/
-
-/*@-webkit-keyframes pulsate {*/
-    /*!*0% {-webkit-transform: scale(0.1, 0.1); opacity: 0.0;}*!*/
-    /*!*50% {opacity: 1.0;}*!*/
-    /*!*100% {-webkit-transform: scale(1.2, 1.2); opacity: 0.0;}*!*/
-/*}*/
-
-/*#page-title{*/
-    /*font-family: "Gill Sans";*/
-    /*font-weight: lighter;*/
-    /*display: inline;*/
-/*}*/
-
-/*.query-field{*/
-    /*display: inline;*/
-/*}*/

@@ -12,7 +12,6 @@ var viewer = new Cesium.Viewer('cesiumContainer', {
     animation: false,
     fullscreenButton : true,
     vrButton : false,
-    geocoder : true,  // search button from bing api
     homeButton : true,
     infoBox : true,
     sceneModePicker : true,
@@ -76,7 +75,7 @@ var stdRequest = {
     }
 };
 
-stdRequest.startTime.setDate(stdRequest.startTime.getDate() - 10000);
+stdRequest.startTime.setDate(stdRequest.startTime.getDate() - 100000);
 
 $(document).ready(function () {
     // setUpDateFilter();
@@ -88,6 +87,8 @@ $(document).ready(function () {
 });
 
 // var sort = util.sortByMagnitude;
+
+
 
 function doRequest(request){
     $.ajax({
@@ -101,11 +102,22 @@ function doRequest(request){
         type: "GET",
         success: function (data, textStatus, jqXHR) {
             earthquakes = data;
+            setUpDateRange(earthquakes);
             sortByMagnitude(earthquakes);
             drawEarthquakes(data);
             console.log(points);
         }
     });
+}
+var maxLongTime;
+var minLongTime;
+var interval;
+var step;
+function setUpDateRange(earthquakes){
+    maxLongTime = earthquakes[0].origin.time;
+    minLongTime = earthquakes[earthquakes.length - 1].origin.time;
+    interval = maxLongTime - minLongTime;
+    step = interval/3;
 }
 //
 // function anonymous(it) {
@@ -278,6 +290,21 @@ function getCesiumColor(e){
                             selectedColorInterpolation(2, e), 1);
 }
 
+
+function interpolateColorByTime(inx, e){
+    var time = e.origin.time;
+
+    if(time <= (minLongTime+step)){
+        return interpolate(green[inx], yellow[inx], normalizeT(time, minLongTime, minLongTime+step));
+    } else if(time <= (minLongTime+ (2*step))){
+        return interpolate(yellow[inx], red[inx], normalizeT(time, minLongTime+step, minLongTime + (2*step)));
+    }else {
+        return interpolate(red[inx], purple[inx], normalizeT(time, minLongTime+(2*step), maxLongTime));
+    }
+
+}
+
+
 function interpolateColorByMagnitude(inx, e){
     var magnitude = e.magnitude.magnitude;
     if(magnitude <= 3){
@@ -291,8 +318,9 @@ function interpolateColorByMagnitude(inx, e){
 }
 
 //default color pick.
-var selectedColorInterpolation = interpolateColorByMagnitude;
+// var selectedColorInterpolation = interpolateColorByMagnitude;
 
+var selectedColorInterpolation = interpolateColorByTime
 var pinBuilder = new Cesium.PinBuilder();
 var entityPin = viewer.entities.add({
     name: 'EarthQuakePin',
@@ -305,6 +333,7 @@ var entityPin = viewer.entities.add({
 
     }
 });
+
 var pickedPoint = undefined;
 var pickedEarthquake = undefined;
 handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
@@ -318,15 +347,10 @@ handler.setInputAction(function (click) {
         for (var i = 0; i < earthquakes.length; i++) {
             var e = earthquakes[i];
             if (e.id == id) {
-
-                console.log(pickedObject);
                 pickedEarthquake = e;
                 pickedPoint = pickedObject;
                 underLinePoint(pickedObject, e);
-
-
-
-                // drawPin(e.origin.latitude, e.origin.longitude);
+                showInfoBox(e);
             }
         }
 
@@ -359,6 +383,7 @@ function underLinePoint(point, earthquake){
     point.primitive.translucencyByDistance = undefined;
     point.primitive.outlineColor = Cesium.Color.fromCssColorString(computeColorComplement(point.primitive.color.red, point.primitive.color.green, point.primitive.color.blue));
     point.primitive.color.alpha = 0.999;
+    //TODO: try using 0.5*pixelSize
     point.primitive.outlineWidth = 3;
     point.primitive.position = Cesium.Cartesian3.fromDegrees(longitude, latitude, 10);
     point.primitive = points.add(point.primitive);
@@ -368,7 +393,6 @@ function underLinePoint(point, earthquake){
 var handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
 handler.setInputAction(function(click) {
     var pickedObject = viewer.scene.pick(click.position);
-    console.log(pickedObject);
     var height = viewer.scene.camera.positionCartographic.height;
     if(height < 100){
         return;
