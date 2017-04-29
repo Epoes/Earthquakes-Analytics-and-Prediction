@@ -1,5 +1,7 @@
 package com.usi.model.earthquake;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -21,9 +23,11 @@ public class Magnitude {
     private String type;
 
     @Column(name = "uncertainty", nullable = false)
+    @JsonIgnore
     private float uncertainty;
 
     @OneToOne(fetch = FetchType.LAZY,  mappedBy="magnitude")
+    @JsonIgnore
     private Earthquake earthquake;
 
     public Magnitude(int id){

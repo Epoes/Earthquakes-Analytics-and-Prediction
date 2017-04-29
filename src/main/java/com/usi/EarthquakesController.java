@@ -58,7 +58,6 @@ public class EarthquakesController {
         maxLng.ifPresent(value->query.getMaxPoint().lng = value);
         minDepth.ifPresent(value->query.setMinDepth(value));
         maxDepth.ifPresent(value->query.setMaxDepth(value));
-
         try {
             query.setStartTime(parseStartTime(startTime));
             query.setEndTime(parseEndTime(endTime));

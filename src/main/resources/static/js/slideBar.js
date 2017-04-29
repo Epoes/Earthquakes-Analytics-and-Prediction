@@ -177,35 +177,51 @@ function showInfoBox(earthquake){
     console.log(earthquake);
     viewer.selectedEntity = new Cesium.Entity({
                                   id: earthquake.id,
-                                  description: "<table>"
-                                               + "<tr>"
-                                                  + "<td>zone</td>"
-                                                  + "<td>" + earthquake.regionName + "</td>"
-                                               + "</tr>"
+                                  description: getInfoBoxDescription(earthquake)
 
-                                               + "<tr>"
-                                                    + "<td>magnitude</td>"
-                                                    + "<td>" + earthquake.magnitude.magnitude + " " + earthquake.magnitude.type + "</td>"
-                                               + "</tr>"
-
-                                               + "<tr>"
-                                                  + "<td>time</td>"
-                                                  + "<td>" + formatDateForList(new Date(earthquake.origin.time)) + "</td>"
-                                               + "</tr>"
-
-                                               + "<tr>"
-                                               + "<td>depth</td>"
-                                               + "<td>" + earthquake.origin.depth + "m" + "</td>"
-                                               + "</tr>"
-
-                                               + "<tr>"
-                                               + "<td>intensity</td>"
-                                               + "<td>" + getTheoreticalIntensity(earthquake.magnitude.magnitude) + "</td>"
-                                               + "</tr>"
-
-                                               + "</table>"
+                                  // "<table>"
+                                  //              + "<tr>"
+                                  //                 + "<td>zone</td>"
+                                  //                 + "<td>" + earthquake.regionName + "</td>"
+                                  //              + "</tr>"
+                                  //
+                                  //              + "<tr>"
+                                  //                   + "<td>magnitude</td>"
+                                  //                   + "<td>" + earthquake.magnitude.magnitude + " " + earthquake.magnitude.type + "</td>"
+                                  //              + "</tr>"
+                                  //
+                                  //              + "<tr>"
+                                  //                 + "<td>time</td>"
+                                  //                 + "<td>" + formatDateForList(new Date(earthquake.origin.time)) + "</td>"
+                                  //              + "</tr>"
+                                  //
+                                  //              + "<tr>"
+                                  //              + "<td>depth</td>"
+                                  //              + "<td>" + earthquake.origin.depth + " m" + "</td>"
+                                  //              + "</tr>"
+                                  //
+                                  //              + "<tr>"
+                                  //              + "<td>intensity</td>"
+                                  //              + "<td>" + getTheoreticalIntensity(earthquake.magnitude.magnitude) + "</td>"
+                                  //              + "</tr>"
+                                  //
+                                  //              + "</table>"
 
                               });
+}
+
+
+function getInfoBoxDescription(e){
+    return "<div class = wrap>"
+                + "<div class=table-wrapper>"
+                    + "<tbody>"
+                        +"<tr>"
+                            + "<td data-title= magnitude>"+ e.magnitude.magnitude + " " + e.magnitude.type + "</td>"
+                        +"</tr>"
+                    + "</tbody>>"
+                + "</div>"
+
+           + "</div>"
 }
 
 function getTheoreticalIntensity(magnitude){

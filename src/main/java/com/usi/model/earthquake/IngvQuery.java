@@ -83,9 +83,9 @@ public class IngvQuery implements Query {
     }
 
     public void setMinDepth(int minDepth) {
-        if(minDepth> -10000 && minDepth < 1000000) {
-            this.minDepth = minDepth;
-        }
+
+        this.minDepth = minDepth;
+
     }
 
     public float getMaxMagnitude() {
@@ -103,9 +103,8 @@ public class IngvQuery implements Query {
     }
 
     public void setMaxDepth(int maxDepth) {
-        if(maxDepth> -10000 && maxDepth < 1000000) {
             this.maxDepth = maxDepth;
-        }
+
     }
 
     public Calendar getStartTime() {

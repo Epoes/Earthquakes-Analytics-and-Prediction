@@ -1,5 +1,7 @@
 package com.usi.model.earthquake;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -29,6 +31,7 @@ public class Origin {
     private int depth;
 
     @OneToOne(fetch = FetchType.LAZY, mappedBy="origin")
+    @JsonIgnore
     private Earthquake earthquake;
 
     public Origin(int id){
