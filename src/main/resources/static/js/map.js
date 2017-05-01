@@ -12,7 +12,7 @@ var viewer = new Cesium.Viewer('cesiumContainer', {
     animation: false,
     fullscreenButton : true,
     vrButton : false,
-    homeButton : true,
+    homeButton : false,
     infoBox : true,
     sceneModePicker : true,
 
@@ -52,7 +52,10 @@ scene.fxaa = true;
 
 //possible optimisation. maximumScreenSpaceError > best performance
 scene.globe.maximumScreenSpaceError = 2;
-scene.globe.tileCacheSize = 200;
+scene.globe.tileCacheSize = 100;
+
+var layers = scene.imageryLayers;
+// viewer.scene.imageryLayers.get(0).alpha = 0.5;
 //terrainProviderChanged : Event --> possible implementation
 
 
@@ -67,7 +70,7 @@ var points = scene.primitives.add(primitiveCollection);
 
 
 var stdRequest = {
-    count : 350000,
+    count : 50000,
     endTime : new Date(),
     startTime : new Date(),
     minMag : 0,
@@ -84,7 +87,7 @@ var stdRequest = {
     }
 };
 
-stdRequest.startTime.setDate(stdRequest.startTime.getDate() - 10000000);
+stdRequest.startTime.setDate(stdRequest.startTime.getDate() - 100000);
 
 $(document).ready(function () {
     // stdRequest.minPoint.latitude = 40;
@@ -129,7 +132,7 @@ function doRequest(request){
         type: "GET",
         success: function (data, textStatus, jqXHR) {
             earthquakes = data;
-            console.log("query size for " + data.length + " objects: " + (sizeof(data[0]) * data.length));
+            // console.log("query size for " + data.length + " objects: " + (sizeof(data[0]) * data.length));
             setUpDepth(earthquakes);
             setUpDateRange(earthquakes);
             sortByMagnitude(earthquakes);
@@ -150,7 +153,7 @@ function setUpDateRange(earthquakes){
     step = interval/3;
 }
 
-var minDepth = 700000;
+var minDepth = 900000;
 var maxDepth = -1000;
 var depthInterval;
 var depthStep;
@@ -198,6 +201,27 @@ function drawEarthquakes(earthquakes) {
     }
 }
 
+function updatePointsColor(){
+    for( var i = 0; i < earthquakes.length; i++){
+        if(points.get(i).id != earthquakes[i].id){
+            console.log(points.get(i).id);
+            console.log(earthquakes[i].id);
+        }
+        points.get(i).color = getCesiumColor(earthquakes[i]);
+    }
+
+}
+
+function updatePointsPosition(){
+    for( var i = 0; i < earthquakes.length; i++){
+        if(points.get(i).id != earthquakes[i].id){
+            console.log(points.get(i).id);
+            console.log(earthquakes[i].id);
+        }
+        points.get(i).position = getCartesianPosition(earthquakes[i]);
+    }
+}
+
 function cancelPointsFrom(idx, pointsList) {
     for (idx; idx < pointsList.length; ++idx) {
         var point = points.get(idx);
@@ -220,6 +244,7 @@ function initPoint(earthquake, index){
     return {
         position: getCartesianPosition(earthquake),
         id : id,
+        earthquake : earthquake,
         color: getCesiumColor(earthquake),
         pixelSize: getPixelSize(earthquake),
         scaleByDistance: getNearForScalar(),
@@ -243,6 +268,7 @@ function resetPoint(earthquake, point, index){
 
     point.position = getCartesianPosition(earthquake);
     point.id = id;
+    point.earthquake = earthquake,
     point.color =  getCesiumColor(earthquake);
     point.pixelSize =  getPixelSize(earthquake);
     point.translucencyByDistance =  magnitudeNearFarScalar(earthquake, index, earthquakes.length);
@@ -289,7 +315,6 @@ var green = [0.0,1.0,0.0];
 var yellow = [1.0,1.0,0.0];
 var red = [1.0,0.0,0.0];
 var orange =[1.0, 0.647, 0];
-// var purple = [0.0,0.294,0.51];
 var purple = [0.0,0.0,1.0];
 
 function getCesiumColor(e){
@@ -341,12 +366,13 @@ function interpolateColorByMagnitude(inx, e){
 var pickedPoint = undefined;
 var pickedEarthquake = undefined;
 var pickedIndex = 0;
+var pickedNearForScalar;
 handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
 
 handler.setInputAction(function (click) {
+    resetCameraRotationCenter();
     var pickedObject = viewer.scene.pick(click.position);
     resetLastPoint();
-    resetCameraRotationCenter();
     //if define
     if(pickedObject !== undefined) {
         var id = pickedObject.id;
@@ -356,13 +382,14 @@ handler.setInputAction(function (click) {
                 pickedEarthquake = e;
                 pickedPoint = pickedObject;
                 pickedIndex = i;
+                pickedNearForScalar = pickedPoint.primitive.translucencyByDistance.clone();
                 underLinePoint(pickedObject, e);
                 showInfoBox(e);
+                //TODO: a more efficient way
+                earthquakes.push(earthquakes.splice(i, 1)[0]);
                 return;
             }
         }
-
-    }else{
 
     }
 
@@ -372,8 +399,7 @@ handler.setInputAction(function (click) {
 
 function resetLastPoint(){
     if(pickedPoint !== undefined) {
-        // pickedPoint.primitive.pixelSize -= 3;
-        pickedPoint.primitive.translucencyByDistance = magnitudeNearFarScalar(pickedEarthquake, pickedIndex, earthquakes.length);
+        pickedPoint.primitive.translucencyByDistance = pickedNearForScalar;
         pickedPoint.primitive.outlineWidth = 0;
         pickedPoint.primitive.position = getCartesianPosition(pickedEarthquake);
         pickedPoint = undefined;
@@ -385,15 +411,14 @@ function resetLastPoint(){
 function underLinePoint(point, earthquake){
     points.remove(point.primitive);
     point.primitive.translucencyByDistance = undefined;
-    // point.primitive.pixelSize += 3;
     point.primitive.outlineColor = Cesium.Color.fromCssColorString(computeColorComplement(point.primitive.color.red, point.primitive.color.green, point.primitive.color.blue));
     point.primitive.color.alpha = 0.999;
-    //TODO: try using 0.5*pixelSize
     point.primitive.outlineWidth = 3;
     point.primitive = points.add(point.primitive);
+
 }
 
-
+const zoomFactor = 1.3;
 var handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
 handler.setInputAction(function(click) {
     doubleClickHandler(click);
@@ -403,7 +428,6 @@ handler.setInputAction(function(click) {
 function doubleClickHandler2d(click){
     var pickedObject = viewer.scene.pick(click.position);
     var cameraHeight = viewer.scene.camera.positionCartographic.height;
-
     if(pickedObject !== undefined) {
         var id = pickedObject.id;
         for (var i = 0; i < earthquakes.length; i++) {
@@ -412,18 +436,14 @@ function doubleClickHandler2d(click){
                 var cartographicPosition = Cesium.Ellipsoid.WGS84.cartesianToCartographic(pickedObject.primitive.position);
 
                 var pointHeight = cartographicPosition.height
-                cameraHeight -= (cameraHeight/1.3);
+                cameraHeight -= (cameraHeight/zoomFactor);
                 if(cameraHeight < pointHeight + 100){
                     cameraHeight = pointHeight + 100;
-                }else{
-                    cameraHeight -= (cameraHeight/1.3);
                 }
                 moveCameraTo(e, cameraHeight);
                 return;
             }
         }
-    }else{
-        resetCameraRotationCenter();
     }
 
 }
@@ -444,14 +464,12 @@ function moveCameraTo(e, height){
 function doubleClickHandler3d(click){
     var pickedObject = viewer.scene.pick(click.position);
     var cameraHeight = viewer.scene.camera.positionCartographic.height;
-
     if(pickedObject !== undefined) {
         var id = pickedObject.id;
         for (var i = 0; i < earthquakes.length; i++) {
             var e = earthquakes[i];
             if (e.id == id) {
                 var cartographicPosition = Cesium.Ellipsoid.WGS84.cartesianToCartographic(pickedObject.primitive.position);
-
                 var pointHeight = cartographicPosition.height
                 cameraHeight -= (cameraHeight/1.3);
                 if(cameraHeight < pointHeight + 100){
@@ -461,8 +479,6 @@ function doubleClickHandler3d(click){
                 return;
             }
         }
-    }else{
-        resetCameraRotationCenter();
     }
 
 }
@@ -484,16 +500,16 @@ function changeCameraRotationCenter(e, pointHeight, cameraHeight) {
 
 //settings
 
-// var selectedColorInterpolation = interpolateColorByMagnitude;
-var selectedColorInterpolation = interpolateColorByTime;
+var selectedColorInterpolation = interpolateColorByMagnitude;
+// var selectedColorInterpolation = interpolateColorByTime;
 // var selectedColorInterpolation = interpolateColorByDepth;
 
-// var getCartesianPosition = get2dPosition;
-var getCartesianPosition = get3dPosition;
+var getCartesianPosition = get2dPosition;
+// var getCartesianPosition = get3dPosition;
 
 
-// var doubleClickHandler = doubleClickHandler2d;
-var doubleClickHandler = doubleClickHandler3d;
+var doubleClickHandler = doubleClickHandler2d;
+// var doubleClickHandler = doubleClickHandler3d;
 
 
 //

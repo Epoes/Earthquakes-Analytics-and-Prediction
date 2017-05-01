@@ -170,57 +170,153 @@ function formatDateForList(date){
 }
 
 
+$(document.body).append("<div class='nav-bar'> "
+                        + "<div class='bar-item' id = 'home' > <i class='fa fa-home big-icon' aria-hidden='true'></i> </div>"
 
-// $( ".cesium-viewer-toolbar" ).append( "<div class= card></div>");
+                        + "<div class='bar-item open-nav open-button' > <i class='fa fa-search big-icon open-button' aria-hidden='true'></i> "
+                            + "<div class = 'bar-menu' id = 'search-menu'> "
+                                +"<i class='fa fa-times bar-menu-close' aria-hidden='true'></i>"
+                                + "<h3 class = bar-menu-title>Search</h3>"
+                                + "<div class = menu-body></div>"
+                                + "</div>"
+                            + "</div>"
 
+                        + "<div class='bar-item open-nav open-button'> <i class='fa fa-cog big-icon open-button' aria-hidden='true'></i> "
+                            + "<div class = 'bar-menu' id = 'settings-menu'> "
+                            +"<i class='fa fa-times bar-menu-close' aria-hidden='true'></i>"
+                                + "<h3 class = bar-menu-title>Settings</h3>"
+                                + "<div class = menu-body>"
+                                    + "<div class='menu-select-box' id = 'color-selector'>"
+                                        + "<select>"
+                                            +"<option>magnitude</option>"
+                                            + "<option>date</option>"
+                                            + "<option>depth</option>"
+                                        + "</select>"
+                                    + "</div>"
+                                    + "<div class='menu-select-box' id = '3d-selector'>"
+                                        + "<select>"
+                                            +"<option>off</option>"
+                                            + "<option>on</option>"
+                                        + "</select>"
+                                    + "</div>"
+                                + "</div>"
+                            + "</div>"
+                        + "</div>"
+
+                        + "<div class='bar-item open-nav open-button'> <i class='fa fa-bar-chart big-icon open-button' aria-hidden='true'></i> "
+                            + "<div class = 'bar-menu' id = 'chart-menu'> "
+                                +"<i class='fa fa-times bar-menu-close' aria-hidden='true'></i>"
+                                + "<h3 class = bar-menu-title>Charts</h3>"
+                                + "<div class = menu-body>"
+
+                                + "</div>"
+                            + "</div>"
+                        + "</div>"
+
+                        + "<div class='bar-item open-nav open-button'> <i class='fa fa-info big-icon open-button' aria-hidden='true'></i> "
+                            + "<div class = 'bar-menu' id = 'info-menu'> "
+                                +"<i class='fa fa-times bar-menu-close' aria-hidden='true'></i>"
+                                + "<h3 class = bar-menu-title>Info</h3>"
+                                + "<div class = menu-body></div>"
+                        + "</div>"
+                        + "</div>");
+
+$( "#home" ).click(function() {
+    var camera = viewer.camera;
+    camera.flyHome(3);
+});
+
+
+//open menu-bar
+$( ".open-nav" ).click(function(e) {
+    if($(e.target).hasClass("open-button")) {
+        $(".bar-item").css("background-color", '');
+        $(".nav-bar").css("background-color", "rgba(48, 51, 54, 1)");
+        var clicked = $(this);
+        clicked.css("background-color", "#282828");
+        $(".bar-menu").css("left", "-400px");
+        clicked.find(".bar-menu").css("left", "90px");
+    }
+});
+
+//close menu-bar
+$(".bar-menu-close").click(function() {
+    $(".nav-bar").css("background-color", "");
+    $(".bar-menu").css("left", '');
+    $(".open-nav").css("background-color", "");
+});
+
+//color selector
+$("#color-selector").on("change",function(e) {
+    var colorOption = $("#color-selector option:selected").text();
+    var isChange = true;
+
+    if(colorOption === "magnitude"){
+        selectedColorInterpolation = interpolateColorByMagnitude;
+
+    }else if (colorOption === "date"){
+        selectedColorInterpolation = interpolateColorByTime;
+    }else{
+        selectedColorInterpolation = interpolateColorByDepth;
+    }
+
+    updatePointsColor();
+});
+
+$("#3d-selector").on("change",function(e) {
+    var colorOption = $("#3d-selector option:selected").text();
+
+    if(colorOption === "on"){
+        getCartesianPosition = get3dPosition;
+        doubleClickHandler = doubleClickHandler3d;
+
+    }else {
+        getCartesianPosition = get2dPosition;
+        doubleClickHandler = doubleClickHandler2d;
+    }
+
+    updatePointsPosition();
+});
+
+
+//infoBox
 function showInfoBox(earthquake){
-    console.log(earthquake);
     viewer.selectedEntity = new Cesium.Entity({
                                   id: earthquake.id,
                                   description: getInfoBoxDescription(earthquake)
-
-                                  // "<table>"
-                                  //              + "<tr>"
-                                  //                 + "<td>zone</td>"
-                                  //                 + "<td>" + earthquake.regionName + "</td>"
-                                  //              + "</tr>"
-                                  //
-                                  //              + "<tr>"
-                                  //                   + "<td>magnitude</td>"
-                                  //                   + "<td>" + earthquake.magnitude.magnitude + " " + earthquake.magnitude.type + "</td>"
-                                  //              + "</tr>"
-                                  //
-                                  //              + "<tr>"
-                                  //                 + "<td>time</td>"
-                                  //                 + "<td>" + formatDateForList(new Date(earthquake.origin.time)) + "</td>"
-                                  //              + "</tr>"
-                                  //
-                                  //              + "<tr>"
-                                  //              + "<td>depth</td>"
-                                  //              + "<td>" + earthquake.origin.depth + " m" + "</td>"
-                                  //              + "</tr>"
-                                  //
-                                  //              + "<tr>"
-                                  //              + "<td>intensity</td>"
-                                  //              + "<td>" + getTheoreticalIntensity(earthquake.magnitude.magnitude) + "</td>"
-                                  //              + "</tr>"
-                                  //
-                                  //              + "</table>"
-
                               });
 }
 
 
 function getInfoBoxDescription(e){
     return "<div class = wrap>"
-                + "<div class=table-wrapper>"
+                + "<div class=cesium-infoBox-description>"
+                    +"<table class=cesium-infoBox-defaultTable>"
                     + "<tbody>"
                         +"<tr>"
-                            + "<td data-title= magnitude>"+ e.magnitude.magnitude + " " + e.magnitude.type + "</td>"
+                            + "<th>region</th>"
+                            + "<td>"+ e.regionName + "</td>"
                         +"</tr>"
-                    + "</tbody>>"
-                + "</div>"
+                        +"<tr>"
+                            + "<th>magnitude</th>"
+                            + "<td>"+ e.magnitude.magnitude + " " + e.magnitude.type + "</td>"
+                        +"</tr>"
+                        +"<tr>"
+                            + "<th>date</th>"
+                            + "<td>"+ formatDateForList(new Date(e.origin.time))  + "</td>"
+                        +"</tr>"
+                        + "<tr>"
+                            + "<th>depth</th>"
+                            + "<td>" + e.origin.depth + " m" + "</td>"
+                        + "</tr>"
 
+                        + "<tr>"
+                            + "<th>intensity</th>"
+                            + "<td>" + getTheoreticalIntensity(e.magnitude.magnitude) + "</td>"
+                        + "</tr>"
+                    + "</tbody>"
+                    +"</table>"
+                + "</div>"
            + "</div>"
 }
 
