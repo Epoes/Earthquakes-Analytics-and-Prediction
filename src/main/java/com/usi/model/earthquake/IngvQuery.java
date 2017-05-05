@@ -73,9 +73,9 @@ public class IngvQuery implements Query {
     }
 
     public void setMinMagnitude(float minMagnitude) {
-        if(minMagnitude < 10) {
-            this.minMagnitude = minMagnitude;
-        }
+
+        this.minMagnitude = minMagnitude;
+
     }
 
     public int getMinDepth() {
@@ -93,9 +93,7 @@ public class IngvQuery implements Query {
     }
 
     public void setMaxMagnitude(float maxMagnitude) {
-        if(maxMagnitude > 0) {
             this.maxMagnitude = maxMagnitude;
-        }
     }
 
     public int getMaxDepth() {

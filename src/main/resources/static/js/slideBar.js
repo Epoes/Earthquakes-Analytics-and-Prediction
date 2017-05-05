@@ -164,7 +164,7 @@ function formatDateForList(date){
     var minutes = date.getMinutes() + "";
     minutes = addZeroToString(minutes);
     var seconds =date.getSeconds() + "";
-    seconds = addZeroToString(seconds)
+    seconds = addZeroToString(seconds);
 
     return day + " " + monthToString + " " + year + " at " + hours + "h" +minutes + "m" + seconds + "s";
 }
@@ -177,7 +177,23 @@ $(document.body).append("<div class='nav-bar'> "
                             + "<div class = 'bar-menu' id = 'search-menu'> "
                                 +"<i class='fa fa-times bar-menu-close' aria-hidden='true'></i>"
                                 + "<h3 class = bar-menu-title>Search</h3>"
-                                + "<div class = menu-body></div>"
+                                + "<div class = menu-body>"
+
+                                    + "<div class = search-container ><p> date </p>"
+                                        + "<div id='reportrange' class='pull-left' > <i class='glyphicon glyphicon-calendar fa fa-calendar'></i>&nbsp;<span></span> <b class='caret'></b> </div>"
+
+                                    +"</div>"
+
+                                    + "<div class = search-container > <p> magnitude </p>"
+                                        + "<input id='magnitude-slider' type='text' />"
+                                    +"</div>"
+
+                                    + "<div class = search-container > <p> depth </p>"
+                                        + "<input id='depth-slider' type='text' />"
+                                    +"</div>"
+
+                                    + "<button type='button' class='btn btn-default' id = 'search-button'> search</button>"
+                                + "</div>"
                                 + "</div>"
                             + "</div>"
 
@@ -185,20 +201,7 @@ $(document.body).append("<div class='nav-bar'> "
                             + "<div class = 'bar-menu' id = 'settings-menu'> "
                             +"<i class='fa fa-times bar-menu-close' aria-hidden='true'></i>"
                                 + "<h3 class = bar-menu-title>Settings</h3>"
-                                + "<div class = menu-body>"
-                                    + "<div class='menu-select-box' id = 'color-selector'>"
-                                        + "<select>"
-                                            +"<option>magnitude</option>"
-                                            + "<option>date</option>"
-                                            + "<option>depth</option>"
-                                        + "</select>"
-                                    + "</div>"
-                                    + "<div class='menu-select-box' id = '3d-selector'>"
-                                        + "<select>"
-                                            +"<option>off</option>"
-                                            + "<option>on</option>"
-                                        + "</select>"
-                                    + "</div>"
+                               + getSettingsMenuTable()
                                 + "</div>"
                             + "</div>"
                         + "</div>"
@@ -217,9 +220,120 @@ $(document.body).append("<div class='nav-bar'> "
                             + "<div class = 'bar-menu' id = 'info-menu'> "
                                 +"<i class='fa fa-times bar-menu-close' aria-hidden='true'></i>"
                                 + "<h3 class = bar-menu-title>Info</h3>"
-                                + "<div class = menu-body></div>"
+                                + "<div class = menu-body id = 'info-menu-body'></div>"
                         + "</div>"
                         + "</div>");
+
+
+
+
+//slider
+$(document).ready(function () {
+    $('#magnitude-slider').slider({
+                                      id: "slider1",
+                                      min: 0,
+                                      max: 10,
+                                      range: true,
+                                      value: [(stdRequest.minMag), (stdRequest.maxMag)]
+                                  })
+
+    $('#magnitude-slider').on('slideStop', function (slideEvt) {
+
+                                  updateMagnitudeRequest(slideEvt.value[0], slideEvt.value[1])
+                              }
+    );
+    $('#depth-slider').slider({
+                                  id: "slider2",
+                                  min: 0,
+                                  max: 600,
+                                  range: true,
+                                  value: [(stdRequest.minDepth / 1000),
+                                          (stdRequest.maxDepth / 1000)],
+                                  scale: 'logarithmic',
+                              })
+
+    $('#depth-slider').on('slideStop', function (slideEvt) {
+                              updateDepthRequest((slideEvt.value[0] * 1000), (slideEvt.value[1] * 1000))
+                          }
+    );
+
+    $(function() {
+
+        var start = moment().subtract(100, 'days');
+        var end = moment();
+
+        function cb(start, end) {
+            $('#reportrange span').html(start.format('MMM D, YYYY') + ' - ' + end.format('MMM D, YYYY'));
+            nextRequest.startTime = start.toDate();
+            nextRequest.endTime = end.toDate();
+            console.log(nextRequest)
+        }
+
+        $('#reportrange').daterangepicker({
+                                              startDate: start,
+                                              endDate: end,
+                                              ranges: {
+                                                  'Today': [moment(), moment()],
+                                                  'Last 2 days': [moment().subtract(1, 'days'), moment()],
+                                                  'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+                                                  'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+                                                  'Last Year': [moment().subtract(1, 'year'), moment()],
+                                                  "All" : [moment("1985/01/01",  "YYYY-MM-DD"), moment()]
+                                              },
+                                              linkedCalendars : false,
+                                              showDropdowns: true,
+                                              autoApply : true,
+                                              minDate: moment("1985/01/01", "YYYY-MM-DD"),
+                                              maxDate: moment(),
+
+                                          }, cb);
+
+        cb(start, end);
+
+    });
+
+});
+
+function updateDepthRequest(min, max){
+    nextRequest.minDepth = min;
+    nextRequest.maxDepth = max;
+}
+
+function updateMagnitudeRequest(min, max){
+    nextRequest.minMag = min + 0.01;
+    nextRequest.maxMag = max + 0.01;
+}
+
+
+function getSettingsMenuTable(){
+    return  "<div class = menu-body>"
+        +"<table class=settings-table>"
+        + "<tbody>"
+            +"<tr>"
+                + "<td><p>color by</p></td>"
+                + "<td>"
+                    + "<div class='menu-select-box' id = 'color-selector'>"
+                        + "<select class = 'menu-selector selectpicker'  data-width='auto' >"
+                            +" <option>magnitude</option>"
+                            + "<option>date</option>"
+                            + "<option>depth</option>"
+                        + "</select>"
+                    + "</div>"
+                +"</td>"
+                + "</tr>"
+                +"<td><p>3d view</p></td>"
+                + "<td>"
+                    + "<div class='menu-switch-box ' id = 'view-selector'>"
+                        + "<select class = 'menu-selector selectpicker' data-width='auto'>"
+                            +"<option>off</option>"
+                            + "<option>on</option>"
+                        + "</select>"
+                    + "</div>"
+                + "</td>"
+            + "</tr>"
+        + "</tbody>"
+    +"</table>";
+}
 
 $( "#home" ).click(function() {
     var camera = viewer.camera;
@@ -263,8 +377,8 @@ $("#color-selector").on("change",function(e) {
     updatePointsColor();
 });
 
-$("#3d-selector").on("change",function(e) {
-    var colorOption = $("#3d-selector option:selected").text();
+$("#view-selector").on("change",function(e) {
+    var colorOption = $("#view-selector option:selected").text();
 
     if(colorOption === "on"){
         getCartesianPosition = get3dPosition;
@@ -278,6 +392,17 @@ $("#3d-selector").on("change",function(e) {
     updatePointsPosition();
 });
 
+$("#search-button").click(function() {
+    $("#search-button").prepend("<i id = 'loading-icon' class='fa fa-spinner fa-spin'></i>");
+    $("#search-button").prop("disabled",true);
+
+        // $this.button('reset');
+    setTimeout(doMultiRequest(nextRequest, function () {
+        $("#loading-icon").remove();
+        $("#search-button").prop("disabled",false);
+    }), 0 );
+});
+
 
 //infoBox
 function showInfoBox(earthquake){
@@ -285,6 +410,10 @@ function showInfoBox(earthquake){
                                   id: earthquake.id,
                                   description: getInfoBoxDescription(earthquake)
                               });
+}
+
+function closeInfoBox(){
+    viewer.selectedEntity = undefined;
 }
 
 
