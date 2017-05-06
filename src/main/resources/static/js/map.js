@@ -74,12 +74,12 @@ var stdRequest = {
     minDepth : 0,
     maxDepth : 25000,
     minPoint : {
-        longitude: 5,
-        latitude: 35
+        longitude: 5.00,
+        latitude: 35.00
     },
     maxPoint : {
-        longitude: 20,
-        latitude: 49
+        longitude: 20.00,
+        latitude: 49.00
     }
 };
 
@@ -91,23 +91,59 @@ var nextRequest;
 $(document).ready(function () {
     nextRequest = copyObject(stdRequest);
     doRequest(stdRequest);
-    // stdRequest.minPoint.latitude = 40;
-    // stdRequest.minPoint.longitude = 10;
-    // stdRequest.maxPoint.latitude = 45;
-    // stdRequest.maxPoint.longitude = 15;
 
 });
 
 
+var totalTime = 30;
+function timeLineShowEvent(){
+    showTimeLine();
+    // hidePoints();
+    sortByDate(earthquakes);
+    // var minTime = minLongTime;
+    // var maxTime = maxLongTime;
+    // var timeInterval = maxTime - minTime;
 
 
+    // var step = (timeInterval/totalTime);
+    // var index = 0;
+    // var timer = setInterval(function(){
+    //     index = showPoints(minTime, step, index, earthquakes);
+    //     minTime += step;
+    //
+    //     if(minTime >= maxTime){
+    //         clearInterval(timer);
+    //         console.log("clear!");
+    //     }
+    //
+    // }, 1000);
+
+    // sortByMagnitude(earthquakes);
+    // drawEarthquakes(earthquakes);
+}
+
+
+function showPoints(currentTime, step, index, earthquakes){
+
+    while(index < earthquakes.length && earthquakes[index].origin.time <= currentTime + step){
+            earthquakes[index].primitivePoint.show = true;
+            index++;
+
+        }
+    return index;
+}
+
+
+function hidePoints(){
+    for(var i = 0; i < earthquakes.length; i++){
+        points.get(i).show = false;
+    }
+}
+
+
+
+//TODO: this
 function doMultiRequest(request, loadingCallBack){
-    // var afterRequest = copyObject(nextRequest);
-    // if(nextRequest.maxMag > stdRequest.maxMag){
-    //     afterRequest.minMag = stdRequest.maxMag + 0.1;
-    // }
-    // console.log(afterRequest);
-
     stdRequest = request;
     nextRequest = copyObject(stdRequest);
     doRequest(request, loadingCallBack);
@@ -137,12 +173,13 @@ function doRequest(request, callback){
             if(callback !== undefined){
                 callback();
             }
+            // timeLineShowEvent();
         }
     });
 }
 
 function removeSelectedPoint(){
-    if(selectedPoint != undefined){
+    if(selectedPoint !== undefined){
         resetLastPoint();
         points.remove(selectedPoint);
     }
@@ -212,8 +249,6 @@ function drawEarthquakes(earthquakes) {
     }else{
         addPointFrom(i, earthquakes);
     }
-    // console.log(earthquakes.length)
-    // console.log(points.length)
     selectedPoint = addSelectedPoint();
 
 }
@@ -270,14 +305,12 @@ function cancelPointsFrom(idx, pointsList) {
 function addPointFrom(idx, earthquakeList){
     for (idx; idx < earthquakeList.length; ++idx) {
         points.add(initPoint(earthquakeList[idx], idx));
+        earthquakeList[idx].primitivePoint = points.get(idx);
     }
 
 }
 
 function initPoint(earthquake, index){
-    var latitude = earthquake.origin.latitude;
-    var longitude = earthquake.origin.longitude;
-    var magnitude = earthquake.magnitude.magnitude;
     var id = earthquake.id;
     return {
         position: getCartesianPosition(earthquake),
@@ -298,9 +331,7 @@ function get2dPosition(e){
 }
 
 function resetPoint(earthquake, point, index){
-    var latitude = earthquake.origin.latitude;
-    var longitude = earthquake.origin.longitude;
-    var magnitude = earthquake.magnitude.magnitude;
+    earthquake.primitivePoint = point;
     var id = earthquake.id;
 
     point.position = getCartesianPosition(earthquake);
@@ -332,6 +363,8 @@ function magnitudeNearFarScalar(earthquake, index, count) {
     return getBestPerformanceNearFarScalar(magnitude, index, count);
 }
 
+
+//TODO: review
 function getBestPerformanceNearFarScalar(magnitude, index, count){
     if(index > count - 400) {
         return new Cesium.NearFarScalar(1.5e6 * (magnitude), 0.9, 1.5e7 * (magnitude), 0.0);
@@ -339,6 +372,7 @@ function getBestPerformanceNearFarScalar(magnitude, index, count){
         return new Cesium.NearFarScalar(1.5e4 * (magnitude), 0.9, 3e6 * (magnitude), 0.0);
     }else if (index > count - 85000){
         return new Cesium.NearFarScalar(interpolate(1.5e4, 4.5e4, normalizeT(magnitude, 2, 3)), 0.9, interpolate(3e5, 9e5, (magnitude - 2)), 0.0);
+
     }
 
     return new Cesium.NearFarScalar(interpolate(1.5e3, 5e3, normalizeT(magnitude, 0, 2)), 0.9, interpolate(1e4, 5e4, (magnitude/2)), 0.0);
@@ -473,30 +507,6 @@ function clonePoint(primitivePoint, clone){
     clone.pixelSize =  primitivePoint.pixelSize;
     clone.id = primitivePoint.id;
 }
-
-// function resetLastPoint(){
-//     if(pickedPoint !== undefined) {
-//         pickedPoint.primitive.translucencyByDistance = pickedNearForScalar;
-//         pickedPoint.primitive.outlineWidth = 0;
-//         pickedPoint.primitive.position = getCartesianPosition(pickedEarthquake);
-//         pickedPoint = undefined;
-//         pickedEarthquake = undefined;
-//         pickedIndex = 0;
-//     }
-// }
-//
-//
-// function underLinePoint(point, earthquake){
-//     if(pickedPoint !== undefined){
-//         points.remove(point.primitive);
-//         point.primitive.translucencyByDistance = undefined;
-//         point.primitive.outlineColor = Cesium.Color.fromCssColorString(computeColorComplement(point.primitive.color.red, point.primitive.color.green, point.primitive.color.blue));
-//         point.primitive.color.alpha = 0.999;
-//         point.primitive.outlineWidth = 3;
-//         point.primitive = points.add(point.primitive);
-//     }
-//
-// }
 
 const zoomFactor = 1.3;
 var handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);

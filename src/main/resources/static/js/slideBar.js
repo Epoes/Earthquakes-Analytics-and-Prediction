@@ -192,6 +192,9 @@ $(document.body).append("<div class='nav-bar'> "
                                         + "<input id='depth-slider' type='text' />"
                                     +"</div>"
 
+                                    + "<div class = search-container > <p> square coordinates </p>"
+                                        + getCoordinateHTML()
+
                                     + "<button type='button' class='btn btn-default' id = 'search-button'> search</button>"
                                 + "</div>"
                                 + "</div>"
@@ -224,11 +227,33 @@ $(document.body).append("<div class='nav-bar'> "
                         + "</div>"
                         + "</div>");
 
+$(document.body).append("<div id = 'slider-container'>"
+                        + "<div id='time-slider'></div>"
+                        + "</div>");
 
 
 
-//slider
+function getCoordinateHTML(){
+    return ("<div class = 'coordinates-container'>"
+    +  "<input type='text' class='form-control coordinate-input'  id = 'min-lat' placeholder='lat' >"
+    +  "<input type='text' class='form-control coordinate-input'  id='min-lng' placeholder='lng'> "
+    + "</div>"
+
+    + "<div class = 'coordinates-container'>"
+    +  "<input type='text' class='form-control coordinate-input'  id = 'max-lat' placeholder='lat' >"
+    +  "<input type='text' class='form-control coordinate-input'  id='max-lng' placeholder='lng'> "
+    + "</div>"
+    + "</div>");
+}
+
 $(document).ready(function () {
+
+
+
+
+
+    writeCoordinates();
+
     $('#magnitude-slider').slider({
                                       id: "slider1",
                                       min: 0,
@@ -266,7 +291,6 @@ $(document).ready(function () {
             $('#reportrange span').html(start.format('MMM D, YYYY') + ' - ' + end.format('MMM D, YYYY'));
             nextRequest.startTime = start.toDate();
             nextRequest.endTime = end.toDate();
-            console.log(nextRequest)
         }
 
         $('#reportrange').daterangepicker({
@@ -293,6 +317,17 @@ $(document).ready(function () {
     });
 
 });
+
+function writeCoordinates() {
+    $("#min-lat").val(stdRequest.minPoint.latitude );
+    $("#min-lng").val(stdRequest.minPoint.longitude);
+    $("#min-lat").before("<p style='float : left; width: 35px;'>min</p>");
+
+    $("#max-lat").val(stdRequest.maxPoint.latitude );
+    $("#max-lng").val(stdRequest.maxPoint.longitude);
+    $("#max-lat").before("<p style='float : left; width: 35px;'>max</p>");
+}
+
 
 function updateDepthRequest(min, max){
     nextRequest.minDepth = min;
@@ -401,6 +436,40 @@ $("#search-button").click(function() {
         $("#loading-icon").remove();
         $("#search-button").prop("disabled",false);
     }), 0 );
+});
+
+$("#min-lat").change(function(){
+    if(isANumb($(this).val())){
+        nextRequest.minPoint.latitude = Number($(this).val());
+    }else{
+        $(this).val(nextRequest.minPoint.latitude);
+    }
+
+});
+
+$("#min-lng").change(function(){
+    if(isANumb($(this).val())){
+        nextRequest.minPoint.longitude = Number($(this).val());
+    }else{
+        $(this).val(nextRequest.minPoint.longitude);
+    }
+});
+
+$("#max-lat").change(function(){
+    if(isANumb($(this).val())){
+        nextRequest.maxPoint.latitude = Number($(this).val());
+    }else{
+        $(this).val(nextRequest.maxPoint.latitude);
+    }
+
+});
+
+$("#max-lng").change(function(){
+    if(isANumb($(this).val())){
+        nextRequest.maxPoint.longitude = Number($(this).val());
+    }else{
+        $(this).val(nextRequest.maxPoint.longitude);
+    }
 });
 
 

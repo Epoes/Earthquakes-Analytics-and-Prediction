@@ -15,6 +15,7 @@ width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden;
     width: 90px;
     padding-top: 0px;
     background-color: rgba(48, 51, 54,0.5);
+    overflow: auto;
 }
 
 
@@ -51,6 +52,7 @@ width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden;
 }
 
 .bar-menu{
+    overflow: auto;
     background: #282828;
     -moz-box-shadow: 20px 16px 20px 0px rgba(0, 0, 0, 0.5), 6px 20px 20px 0 rgba(0, 0, 0, 0.19);
     -webkit-box-shadow: 20px 16px 20px 0px rgba(0, 0, 0, 0.5), 6px 20px 20px 0 rgba(0, 0, 0, 0.19);
@@ -89,7 +91,6 @@ width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden;
 }
 
 .menu-body{
-    height: 100%;
     width : auto;
     padding-top: 30px;
     font-size: 0.5em;
@@ -126,6 +127,7 @@ width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden;
 #search-button{
     float: right;
     margin-right: 20px;
+    margin-bottom: 30px;
 }
 
 #reportrange{
@@ -138,6 +140,28 @@ width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden;
     font-size: 12px;
     margin-bottom: 30px;
     margin-top: 10px;
+}
+
+#min-point, #max-point{
+    width: 130px;
+    margin-bottom: 20px;
+}
+
+.coordinate-input{
+    width: 67px;
+    float: left;
+    margin-left: 20px;
+    margin-bottom: 30px;
+}
+
+.coordinates-container{
+    margin-top: 10px;
+}
+#slider-container{
+    width: 100%;
+    bottom: 0px;
+    position: absolute;
+    z-index: 9;
 }
 
 

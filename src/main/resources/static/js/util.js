@@ -34,10 +34,6 @@ function sortByDepthRev(earthquakes) {
     });
 }
 
-// function interpolate(a, b, t){
-//     return (a + (b-a)*t);
-// }
-
 function interpolate(a, b, t){
     return (1 - t) * a + (t * b);
 }
@@ -135,6 +131,11 @@ var padZero = function (str, len) {
     var zeros = new Array(len).join('0');
     return (zeros + str).slice(-len);
 };
+
+function isANumb(text){
+    const regex = /^[+-]?\d+(\.\d+)?$/;
+    return regex.test(text)
+}
 
 /*
 
