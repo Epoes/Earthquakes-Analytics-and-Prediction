@@ -52,6 +52,14 @@ public class EarthquakeDao {
 
     }
 
+    public List<Object[]>selectEarthQuakesRow(IngvQuery request) {
+        long startTime = System.currentTimeMillis();
+
+        Query q = getQuery(request);
+        List<Object[]> earthQuakesObjects = (List<Object[]>) q.getResultList();
+        return earthQuakesObjects;
+    }
+
     private Query getQuery(IngvQuery request) {
         final String prefix = "select * from earthquake e, origin o, magnitude m where " +
                 "e.magnitude_earthquake = m.magnitude_id and e.origin_earthquake = o.origin_id ";

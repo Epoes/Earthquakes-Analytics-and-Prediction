@@ -1,173 +1,4 @@
-//
-//
-// var startDate = new Date();
-// //start time 100 days back
-// startDate.setDate(startDate.getDate()-100);
-//
-//
-//
-// function setUpDateFilter(){
-//     var slider = $( "#slider-range-date" )
-//     slider.slider({
-//                       range: true,
-//                       min: new Date('1985-01-02').getTime() / 1000,
-//                       max: new Date().getTime() / 1000,
-//                       step: 86400,
-//                       values: [  startDate.getTime() / 1000, new Date().getTime() / 1000 ],
-//                       change: function (event, ui) {
-//                           setUpMaxMinDate(new Date(ui.values[0]*1000), new Date(ui.values[1]*1000));
-//                       },
-//                       slide: function( event, ui ) {
-//                           $( "#amount-date" ).val( (new Date(ui.values[ 0 ] *1000).toDateString() ) + " - " + (new Date(ui.values[ 1 ] *1000)).toDateString() );
-//                       }
-//                   });
-//     $( "#amount-date" ).val( (new Date(slider.slider( "values", 0 )*1000).toDateString()) +
-//                              " - " + (new Date(slider.slider( "values", 1 )*1000)).toDateString());
-// }
-//
-//
-//
-//
-// function setUpMaxMinDate(minTime, maxTime){
-//     minTime.setHours(00, 00, 00);
-//     maxTime.setHours(23, 59, 59);
-//
-//     start_time = formatDateForQuery(minTime);
-//     end_time = formatDateForQuery(maxTime);
-// }
-//
-//
-// $('#query-button').click(function () {
-//     doRequest();
-//     cancelPin();
-//     //$("#query-container").slideUp();
-//     //$("#searchBtn").css("visibility", "visible");
-// });
-//
-// $("#searchBtn").click(function () {
-//     $("#query-container").slideDown();
-//     $("#searchBtn").css("visibility", "hidden");
-// })
-//
-// function setUpMagnitudeFilter(){
-//     var slider = $( "#slider-range-magnitude" )
-//     slider.slider({
-//                       range: true,
-//                       min: 0,
-//                       max: 10,
-//                       step: 0.5,
-//                       values: [2, 10],
-//                       change: function (event, ui) {
-//                           setUpMagnitude(ui.values[0], ui.values[1]);
-//                       },
-//                       slide: function( event, ui ) {
-//                           $( "#amount-magnitude" ).val("Magnitude between: " + ui.values[0] + " and " + ui.values[1]);
-//                       }
-//                   });
-//     $( "#amount-magnitude" ).val( "Magnitude between: " + slider.slider( "values", 0 ) + " and " + slider.slider( "values", 1 ));
-// }
-//
-//
-//
-//
-// function setUpMagnitude(minMagn, maxMagn) {
-//     minMag = minMagn;
-//     maxMag = maxMagn;
-// }
-//
-// $('.hamburger').click(function () {
-//     openNav("Left");
-// });
-//
-// $('#closebtnLeft').click(function () {
-//     closeNav("Left");
-// });
-//
-// $('#closebtnPart').click(function () {
-//     closeNav("Part");
-// });
-// /* Set the width of the side navigation to 250px */
-// function openNav(side) {
-//     document.getElementById("mySidenav" + side).style.width = "280px";
-// }
-//
-// /* Set the width of the side navigation to 0 */
-// function closeNav(side) {
-//     document.getElementById("mySidenav" + side).style.width = "0";
-// }
-//
-// // Get the modal
-// var modal = document.getElementById('myModal');
-//
-// // Get the button that opens the modal
-// var btn = document.getElementById("info");
-//
-// // Get the <span> element that closes the modal
-// var span = document.getElementsByClassName("close")[0];
-//
-// // When the user clicks on the button, open the modal
-// btn.onclick = function() {
-//     modal.style.display = "block";
-//     document.getElementById("defaultOpen").click();
-// }
-//
-// // When the user clicks anywhere outside of the modal, close it
-// window.onclick = function(event) {
-//     if (event.target == modal) {
-//         modal.style.display = "none";
-//     }
-// }
-//
-// function openTab(evt, tabName) {
-//     // Declare all variables
-//     var i, tabcontent, tablinks;
-//
-//     // Get all elements with class="tabcontent" and hide them
-//     tabcontent = document.getElementsByClassName("tabcontent");
-//     for (i = 0; i < tabcontent.length; i++) {
-//         tabcontent[i].style.display = "none";
-//     }
-//
-//     // Get all elements with class="tablinks" and remove the class "active"
-//     tablinks = document.getElementsByClassName("tablinks");
-//     for (i = 0; i < tablinks.length; i++) {
-//         tablinks[i].className = tablinks[i].className.replace(" active", "");
-//     }
-//
-//     // Show the current tab, and add an "active" class to the button that opened the tab
-//     document.getElementById(tabName).style.display = "block";
-//     evt.currentTarget.className += " active";
-// }
-//
-// function displayInfo(earthquake) {
-//     var date = new Date(earthquake.origin.time);
-//     $('#earthquake-info').append("<ul id='list-info'></ul>");
-//     $("#list-info").append("<li class='info-item'><a>Zone: " + earthquake.regionName +"</a></li>");
-//     $("#list-info").append("<li class='info-item'><a>Magnitude: " + earthquake.magnitude.magnitude + " " + earthquake.magnitude.type + "</a></li>");
-//     $("#list-info").append("<li class='info-item'><a>Depth: " + earthquake.origin.depth +" m</a></li>");
-//     $("#list-info").append("<li class='info-item'><a>Date: " + formatDateForList(date) +"</a></li>");
-//
-// }
-//
-function formatDateForList(date){
-    var year = date.getFullYear();
-    var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
-                      "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
-    ];
 
-    var month =  date.getMonth();
-    var monthToString = monthNames[month]
-    var day = date.getDate() + "";
-    day = addZeroToString(day);
-    var hours = date.getHours() + "";
-    hours = addZeroToString(hours);
-    var minutes = date.getMinutes() + "";
-    minutes = addZeroToString(minutes);
-    var seconds =date.getSeconds() + "";
-    seconds = addZeroToString(seconds);
-
-    return day + " " + monthToString + " " + year + " at " + hours + "h" +minutes + "m" + seconds + "s";
-}
 
 
 $(document.body).append("<div class='nav-bar'> "
@@ -179,20 +10,22 @@ $(document.body).append("<div class='nav-bar'> "
                                 + "<h3 class = bar-menu-title>Search</h3>"
                                 + "<div class = menu-body>"
 
-                                    + "<div class = search-container ><p> date </p>"
+                                    + "<div class = search-container >"
+                                        + "<p> Date Range </p>"
                                         + "<div id='reportrange' class='pull-left' > <i class='glyphicon glyphicon-calendar fa fa-calendar'></i>&nbsp;<span></span> <b class='caret'></b> </div>"
-
                                     +"</div>"
 
-                                    + "<div class = search-container > <p> magnitude </p>"
-                                        + "<input id='magnitude-slider' type='text' />"
+                                    + "<div class = search-container >"
+                                        + "<p> Magnitude </p>"
+                                        + "<input class = 'option-slider' id='magnitude-slider' type='text' />"
                                     +"</div>"
 
-                                    + "<div class = search-container > <p> depth </p>"
-                                        + "<input id='depth-slider' type='text' />"
+                                    + "<div class = search-container > "
+                                        + "<p> Depth </p>"
+                                        + "<input id='depth-slider' class = 'option-slider' type='text' />"
                                     +"</div>"
 
-                                    + "<div class = search-container > <p> square coordinates </p>"
+                                    + "<div class = search-container style = 'height: 169px;'> <p style='margin-bottom: 20px;'> Coordinates <button type='button' class='btn btn-default' id = 'default-points-button'>Reset</button></p>"
                                         + getCoordinateHTML()
 
                                     + "<button type='button' class='btn btn-default' id = 'search-button'> search</button>"
@@ -248,29 +81,24 @@ function getCoordinateHTML(){
 
 $(document).ready(function () {
 
+    /*
+     MAGNITUDE search options
+     */
 
-
-
-
-    writeCoordinates();
-
-    $('#magnitude-slider').slider({
-                                      id: "slider1",
-                                      min: 0,
-                                      max: 10,
-                                      range: true,
-                                      value: [(stdRequest.minMag), (stdRequest.maxMag)]
-                                  })
+    setUpMagnitudeSlider();
 
     $('#magnitude-slider').on('slideStop', function (slideEvt) {
+        updateMagnitudeRequest(slideEvt.value[0], slideEvt.value[1])
+    });
 
-                                  updateMagnitudeRequest(slideEvt.value[0], slideEvt.value[1])
-                              }
-    );
+
+
+
+
     $('#depth-slider').slider({
                                   id: "slider2",
                                   min: 0,
-                                  max: 600,
+                                  max: 650,
                                   range: true,
                                   value: [(stdRequest.minDepth / 1000),
                                           (stdRequest.maxDepth / 1000)],
@@ -292,6 +120,8 @@ $(document).ready(function () {
             nextRequest.startTime = start.toDate();
             nextRequest.endTime = end.toDate();
         }
+
+        writeCoordinates();
 
         $('#reportrange').daterangepicker({
                                               startDate: start,
@@ -318,15 +148,34 @@ $(document).ready(function () {
 
 });
 
+
+function setUpMagnitudeSlider(){
+    $('#magnitude-slider').slider({
+      id: "slider1",
+      min: 0,
+      max: 10,
+      range: true,
+      value: [(stdRequest.minMag), (stdRequest.maxMag)]
+    });
+
+}
+
+function updateMagnitudeRequest(min, max){
+    nextRequest.minMag = min;
+    nextRequest.maxMag = max;
+}
+
 function writeCoordinates() {
     $("#min-lat").val(stdRequest.minPoint.latitude );
     $("#min-lng").val(stdRequest.minPoint.longitude);
-    $("#min-lat").before("<p style='float : left; width: 35px;'>min</p>");
+    $("#min-lat").before("<p>min point</p>");
 
     $("#max-lat").val(stdRequest.maxPoint.latitude );
     $("#max-lng").val(stdRequest.maxPoint.longitude);
-    $("#max-lat").before("<p style='float : left; width: 35px;'>max</p>");
+    $("#max-lat").before("<p>max point</p>");
 }
+
+
 
 
 function updateDepthRequest(min, max){
@@ -334,40 +183,53 @@ function updateDepthRequest(min, max){
     nextRequest.maxDepth = max;
 }
 
-function updateMagnitudeRequest(min, max){
-    nextRequest.minMag = min + 0.01;
-    nextRequest.maxMag = max + 0.01;
-}
+
 
 
 function getSettingsMenuTable(){
     return  "<div class = menu-body>"
-        +"<table class=settings-table>"
-        + "<tbody>"
-            +"<tr>"
-                + "<td><p>color by</p></td>"
-                + "<td>"
-                    + "<div class='menu-select-box' id = 'color-selector'>"
-                        + "<select class = 'menu-selector selectpicker'  data-width='auto' >"
-                            +" <option>magnitude</option>"
-                            + "<option>date</option>"
-                            + "<option>depth</option>"
-                        + "</select>"
-                    + "</div>"
-                +"</td>"
-                + "</tr>"
-                +"<td><p>3d view</p></td>"
-                + "<td>"
+                +"<div class = settings-container >"
+                    +"<p class ='settings-title'>color by</p>"
+                        + "<div class='menu-select-box' id = 'color-selector'>"
+                            + "<select class = 'menu-selector selectpicker'  data-width='auto' >"
+                                +" <option>magnitude</option>"
+                                + "<option>date</option>"
+                                + "<option>depth</option>"
+                            + "</select>"
+                        + "</div>"
+                +"</div>"
+
+                +"<div class = settings-container >"
+                +"<p class = 'settings-title'>3d view</p>"
                     + "<div class='menu-switch-box ' id = 'view-selector'>"
                         + "<select class = 'menu-selector selectpicker' data-width='auto'>"
                             +"<option>off</option>"
                             + "<option>on</option>"
                         + "</select>"
                     + "</div>"
-                + "</td>"
-            + "</tr>"
-        + "</tbody>"
-    +"</table>";
+                +"</div>"
+                +"<div class = settings-container >"
+                    +"<p class ='settings-title'>Resolution</p>"
+                    + "<div class='menu-select-box' id = 'resolution-selector'>"
+                    + "<select class = 'menu-selector selectpicker'  data-width='auto' >"
+                        +" <option value = '2' >very high</option>"
+                        + "<option value = '1.5' >high</option>"
+                        + "<option value = '1' >medium</option>"
+                        + "<option value = '0.7' >low</option>"
+                        + "<option value = '0.5' >very low</option>"
+                    + "</select>"
+                    + "</div>"
+                +"</div>"
+                +"<div class = settings-container >"
+                    +"<p class ='settings-title'>FPS</p>"
+                    + "<div class='menu-select-box' id = 'frames-selector'>"
+                    + "<select class = 'menu-selector selectpicker'  data-width='auto' >"
+                        +" <option value = '60' >60 fps</option>"
+                        + "<option value = '30' >30 fps</option>"
+                        + "<option value = '25' >25 fps</option>"
+                    + "</select>"
+                    + "</div>"
+                +"</div>"
 }
 
 $( "#home" ).click(function() {
@@ -427,6 +289,21 @@ $("#view-selector").on("change",function(e) {
     updatePointsPosition();
 });
 
+$("#resolution-selector").on("change", function(){
+    var numb = Number($("#resolution-selector option:selected").val());
+    changeResolution(numb);
+});
+
+$("#resolution-selector option[value='1']").attr("selected",true);
+
+$("#frames-selector").on("change", function(){
+    var numb = Number($("#frames-selector option:selected").val());
+    changeFPS(numb);
+});
+
+
+
+
 $("#search-button").click(function() {
     $("#search-button").prepend("<i id = 'loading-icon' class='fa fa-spinner fa-spin'></i>");
     $("#search-button").prop("disabled",true);
@@ -473,6 +350,25 @@ $("#max-lng").change(function(){
 });
 
 
+$("#default-points-button").click(function(){
+    resetCoordinates();
+});
+
+
+
+function resetCoordinates(){
+    nextRequest.minPoint.latitude = Number(35);
+    nextRequest.minPoint.longitude = Number(5);
+    nextRequest.maxPoint.latitude = Number(49);
+    nextRequest.maxPoint.longitude = Number(20);
+    $("#min-lat").val(nextRequest.minPoint.latitude );
+    $("#min-lng").val(nextRequest.minPoint.longitude);
+
+    $("#max-lat").val(nextRequest.maxPoint.latitude );
+    $("#max-lng").val(nextRequest.maxPoint.longitude);
+}
+
+
 //infoBox
 function showInfoBox(earthquake){
     viewer.selectedEntity = new Cesium.Entity({
@@ -491,10 +387,10 @@ function getInfoBoxDescription(e){
                 + "<div class=cesium-infoBox-description>"
                     +"<table class=cesium-infoBox-defaultTable>"
                     + "<tbody>"
-                        +"<tr>"
-                            + "<th>region</th>"
-                            + "<td>"+ e.regionName + "</td>"
-                        +"</tr>"
+                        // +"<tr>"
+                        //     + "<th>region</th>"
+                        //     + "<td>"+ e.regionName + "</td>"
+                        // +"</tr>"
                         +"<tr>"
                             + "<th>magnitude</th>"
                             + "<td>"+ e.magnitude.magnitude + " " + e.magnitude.type + "</td>"

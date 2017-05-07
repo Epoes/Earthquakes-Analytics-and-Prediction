@@ -1,6 +1,8 @@
 package com.usi.model.earthquake;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -26,6 +28,7 @@ public class Earthquake {
     Magnitude magnitude;
 
     @Column(name = "regionName", nullable = false, length = 255)
+    @JsonIgnore
     String regionName;
 
 

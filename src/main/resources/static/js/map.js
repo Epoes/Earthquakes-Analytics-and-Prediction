@@ -44,6 +44,15 @@ var viewer = new Cesium.Viewer('cesiumContainer', {
 });
 
 
+function changeResolution(numb){
+    viewer.resolutionScale = numb;
+}
+
+function changeFPS(numb){
+    viewer.targetFrameRate = numb;
+}
+
+
 //remove fixed entity.
 viewer.cesiumWidget.screenSpaceEventHandler.removeInputAction(Cesium.ScreenSpaceEventType.LEFT_DOUBLE_CLICK);
 
@@ -70,7 +79,7 @@ var stdRequest = {
     endTime : new Date(),
     startTime : new Date(),
     minMag : 2,
-    maxMag : 10,
+    maxMag : 9,
     minDepth : 0,
     maxDepth : 25000,
     minPoint : {
@@ -168,6 +177,7 @@ function doRequest(request, callback){
             sortByMagnitude(earthquakes);
             closeInfoBox();
             removeSelectedPoint();
+            resetCameraRotationCenter();
             drawEarthquakes(data);
 
             if(callback !== undefined){

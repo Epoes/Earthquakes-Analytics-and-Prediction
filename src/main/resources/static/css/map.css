@@ -92,7 +92,6 @@ width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden;
 
 .menu-body{
     width : auto;
-    padding-top: 30px;
     font-size: 0.5em;
 }
 
@@ -114,9 +113,13 @@ width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden;
 /*}*/
 
 .search-container{
-    padding-left: 20px;
-    padding-right: 20px;
-    padding-bottom: 30px;
+    height: 117px;
+    margin: 10px;
+    border-color: gray;
+    border-style: solid;
+    border-width: 1px;
+    background-color: rgb(48, 51, 54);
+    padding: 10px;
 }
 
 .slider-selection {
@@ -126,8 +129,10 @@ width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden;
 
 #search-button{
     float: right;
-    margin-right: 20px;
+    margin-top: 20px;
+    margin-right: 10px;
     margin-bottom: 30px;
+    width: 95px;
 }
 
 #reportrange{
@@ -148,10 +153,12 @@ width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden;
 }
 
 .coordinate-input{
-    width: 67px;
+    width: 66px;
     float: left;
     margin-left: 20px;
     margin-bottom: 30px;
+    font-size: 12px;
+    height: 29px;
 }
 
 .coordinates-container{
@@ -164,447 +171,66 @@ width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden;
     z-index: 9;
 }
 
+.coordinates-container p {
+    float: left;
+    width: 35px;
+    font-size: 12px;
+}
+
+.min{
+    float: left;
+    width: 45px;
+    text-align: left;
+}
+
+.max{
+    float: right;
+    width: 45px;
+    height: 30px;
+    text-align: right;
+}
+
+.slider-description{
+    float: left;
+    text-align: center;
+    width: 120px;
+}
+
+.slider{
+    width: 100% !important;
+    margin-top : 10px;
+}
+
+#default-points-button{
+    display: inline;
+    width: 45px;
+    margin: 0px;
+    height: 30px;
+    text-align: center;
+    padding: 0px;
+    float: right;
+}
+
+.settings-container{
+    height: 70px;
+    margin: 10px;
+    border-color: gray;
+    border-style: solid;
+    border-width: 1px;
+    background-color: rgb(48, 51, 54);
+    padding: 10px;
+}
+
+.settings-title {
+    width: 98px;
+    float: left;
+    font-size: 19px;
+    height: 34px;
+    padding-top: 4px;
+}
 
 
-/*#color-selector::before{*/
-    /*content : "color by";*/
-    /*font-size: 0.5em;*/
-    /*padding-left: 10px;*/
-    /*padding-right: 25px;*/
-/*}*/
-/*#view-selector::before{*/
-    /*content : "3d view";*/
-    /*font-size: 0.5em;*/
-    /*padding-left: 10px;*/
-    /*padding-right: 25px;*/
-/*}*/
 
-
-
-/*#info-table {*/
-    /*padding: 3px;*/
-    /*margin-bottom: 5px;*/
-    /*background-color : blue;*/
-/*}*/
-
-/*.cesium-widget-credits{*/
-    /*position: relative !important;*/
-    /*color: black !important;*/
-    /*text-shadow: none !important;*/
-/*}*/
-/*#query-button{*/
-    /*float: right;*/
-    /*margin-top: 6%;*/
-    /*margin-right: 8%;*/
-/*}*/
-
-/*.input-filter{*/
-    /*border: 0;*/
-    /*color: #f6931f;*/
-    /*font-weight: bold;*/
-    /*width: 80%;*/
-    /*margin-left: 9%;*/
-    /*text-align: center;*/
-/*}*/
-
-/*#slider-range-date{*/
-    /*width: 90%;*/
-    /*margin-left: 4%;*/
-/*}*/
-
-/*#slider-range-magnitude{*/
-    /*width: 90%;*/
-    /*margin-left: 4%;*/
-/*}*/
-
-/*.custom-handle {*/
-    /*top: 50% !important;*/
-    /*margin-top: -.8em;*/
-    /*line-height: 1.6em;*/
-    /*border-radius: 50% !important;*/
-/*}*/
-
-
-/*.ui-widget-header{*/
-    /*background: #f6931f !important;*/
-/*}*/
-/*!* The side navigation menu *!*/
-/*.sidenavLeft {*/
-    /*height: 100%; !* 100% Full-height *!*/
-    /*width: 0; !* 0 width - change this with JavaScript *!*/
-    /*position: fixed; !* Stay in place *!*/
-    /*z-index: 1000; !* Stay on top *!*/
-    /*top: 0;*/
-    /*left: 0;*/
-    /*background-color: #111; !* Black*!*/
-    /*overflow: hidden; !* Disable horizontal scroll *!*/
-    /*padding-top: 60px; !* Place content 60px from the top *!*/
-    /*transition: 0.5s; !* 0.5 second transition effect to slide in the sidenav *!*/
-/*}*/
-
-/*!* The navigation menu links *!*/
-/*.sidenavLeft a {*/
-    /*padding: 8px 8px 8px 32px;*/
-    /*text-decoration: none;*/
-    /*font-size: 25px;*/
-    /*color: #818181;*/
-    /*display: block;*/
-    /*transition: 0.3s*/
-/*}*/
-
-/*!* When you mouse over the navigation links, change their color *!*/
-/*.sidenavLeft a:hover, .offcanvas a:focus{*/
-    /*color: #f1f1f1;*/
-/*}*/
-
-/*!* Position and style the close button (top right corner) *!*/
-/*.sidenavLeft .closebtn {*/
-    /*position: absolute;*/
-    /*top: 0;*/
-    /*right: 25px;*/
-    /*font-size: 36px;*/
-    /*margin-left: 50px;*/
-/*}*/
-
-/*.sidenavLeft .searchBtn {*/
-    /*position: absolute;*/
-    /*top: 10px;*/
-    /*left: -10px;*/
-    /*font-size: 23px;*/
-    /*margin-right: 50px;*/
-    /*visibility: hidden;*/
-/*}*/
-
-
-/*!* The side navigation menu *!*/
-/*.sidenavPart {*/
-    /*height: 100%; !* 100% Full-height *!*/
-    /*width: 0; !* 0 width - change this with JavaScript *!*/
-    /*position: fixed; !* Stay in place *!*/
-    /*z-index: 1001; !* Stay on top *!*/
-    /*top: 0;*/
-    /*left: 0;*/
-    /*background-color: #111; !* Black*!*/
-    /*overflow: hidden; !* Disable horizontal scroll *!*/
-    /*padding-top: 60px; !* Place content 60px from the top *!*/
-    /*transition: 0.5s; !* 0.5 second transition effect to slide in the sidenav *!*/
-/*}*/
-
-/*!* The navigation menu links *!*/
-/*.sidenavPart a {*/
-    /*padding: 8px 8px 8px 8px;*/
-    /*text-decoration: none;*/
-    /*font-size: 25px;*/
-    /*color: #818181;*/
-    /*display: block;*/
-    /*transition: 0.3s*/
-/*}*/
-
-/*!* When you mouse over the navigation links, change their color *!*/
-/*.sidenavPart a:hover, .offcanvas a:focus{*/
-    /*color: #f1f1f1;*/
-/*}*/
-
-/*!* Position and style the close button (top right corner) *!*/
-/*.sidenavPart .closebtn {*/
-    /*position: absolute;*/
-    /*top: 0;*/
-    /*right: 25px;*/
-    /*font-size: 36px;*/
-    /*margin-left: 50px;*/
-/*}*/
-
-
-/*!* On smaller screens, where height is less than 450px, change the style of the sidenav (less padding and a smaller font size) *!*/
-/*@media screen and (max-height: 450px) {*/
-    /*.sidenavLeft {padding-top: 15px;}*/
-    /*.sidenavLeft a {font-size: 18px;}*/
-/*}*/
-
-/*#list-earthquakes{*/
-    /*height: 100%;*/
-    /*overflow: hidden;*/
-    /*box-sizing: border-box;*/
-    /*width: 100%;*/
-    /*top: 0;*/
-/*}*/
-
-/*#list{*/
-    /*position: relative;*/
-    /*max-height: 100%;*/
-    /*overflow: auto;*/
-    /*padding-left: 0px;*/
-/*}*/
-
-
-/*.hamburger{*/
-    /*background:none;*/
-    /*position:absolute;*/
-    /*top:0;*/
-    /*left:0;*/
-    /*line-height:45px;*/
-    /*padding:5px 15px 0px 15px;*/
-    /*color:#999;*/
-    /*border:0;*/
-    /*font-size:1.4em;*/
-    /*font-weight:bold;*/
-    /*cursor:pointer;*/
-    /*outline:none;*/
-    /*z-index:10;*/
-    /*transition: margin-left .5s;*/
-    /*padding: 20px;*/
-/*}*/
-
-
-/*ul {*/
-    /*list-style-type: none;*/
-    /*margin: 0;*/
-    /*padding: 0;*/
-/*}*/
-
-/*.earthquake-item {*/
-    /*background-color: white;*/
-    /*font: 200 20px/1.5 Helvetica, Verdana, sans-serif;*/
-    /*border-bottom: 1px solid #ccc;*/
-/*}*/
-
-/*.earthquake-item:last-child {*/
-    /*border: none;*/
-/*}*/
-
-/*.earthquake-item a {*/
-    /*text-decoration: none;*/
-    /*color: #000;*/
-    /*-webkit-transition: font-size 0.3s ease, background-color 0.3s ease;*/
-    /*-moz-transition: font-size 0.3s ease, background-color 0.3s ease;*/
-    /*-o-transition: font-size 0.3s ease, background-color 0.3s ease;*/
-    /*-ms-transition: font-size 0.3s ease, background-color 0.3s ease;*/
-    /*transition: font-size 0.3s ease, background-color 0.3s ease;*/
-    /*display: block;*/
-    /*width: 100%;*/
-/*}*/
-
-/*.earthquake-item a:hover {*/
-    /*font-size: 28px;*/
-    /*color: #000;*/
-    /*background-color: #f6f6f6;*/
-/*}*/
-
-
-/*.info-item {*/
-    /*background-color: white;*/
-    /*font: 200 20px/1.5 Helvetica, Verdana, sans-serif;*/
-    /*border-bottom: 1px solid #ccc;*/
-/*}*/
-
-/*.info-item:last-child {*/
-    /*border: none;*/
-/*}*/
-
-/*.info-item a {*/
-    /*text-decoration: none;*/
-    /*color: #000;*/
-    /*display: block;*/
-    /*width: 100%;*/
-/*}*/
-
-/*.info-item a:hover {*/
-    /*font-size: 28px;*/
-    /*color: #000;*/
-    /*background-color: #f6f6f6;*/
-/*}*/
-
-/*#logo-container{*/
-    /*bottom: 0;*/
-    /*position: fixed;*/
-    /*z-index: 1500;*/
-/*}*/
-
-/*#logo-container a{*/
-    /*text-decoration: none;*/
-/*}*/
-/*#reveal-logo{*/
-    /*width: 10%;*/
-/*}*/
-
-/*#usi-logo{*/
-    /*width: 3.5%;*/
-/*}*/
-
-/*#info{*/
-    /*width: 3.5%;*/
-/*}*/
-
-/*!* The Modal (background) *!*/
-/*.modal {*/
-    /*display: none; !* Hidden by default *!*/
-    /*position: fixed; !* Stay in place *!*/
-    /*z-index: 2000; !* Sit on top *!*/
-    /*left: 0;*/
-    /*top: 0;*/
-    /*width: 100%; !* Full width *!*/
-    /*height: 100%; !* Full height *!*/
-    /*overflow: auto; !* Enable scroll if needed *!*/
-    /*background-color: rgb(0,0,0); !* Fallback color *!*/
-    /*background-color: rgba(0,0,0,0.4); !* Black w/ opacity *!*/
-/*}*/
-
-/*!* Modal Content/Box *!*/
-/*.modal-content {*/
-    /*background-color: #fefefe;*/
-    /*margin: 15% auto; !* 15% from the top and centered *!*/
-    /*padding: 20px;*/
-    /*border: 1px solid #888;*/
-    /*width: 50%; !* Could be more or less, depending on screen size *!*/
-    /*z-index: 2000;*/
-    /*font: 200 18px/1.5 Helvetica, Verdana, sans-serif;*/
-/*}*/
-
-/*!* Style the tab *!*/
-/*div.tab {*/
-    /*overflow: hidden;*/
-    /*border: 1px solid #ccc;*/
-    /*background-color: #f1f1f1;*/
-/*}*/
-
-/*!* Style the buttons inside the tab *!*/
-/*div.tab button {*/
-    /*background-color: inherit;*/
-    /*float: left;*/
-    /*border: none;*/
-    /*outline: none;*/
-    /*cursor: pointer;*/
-    /*padding: 14px 16px;*/
-    /*transition: 0.3s;*/
-/*}*/
-
-/*!* Change background color of buttons on hover *!*/
-/*div.tab button:hover {*/
-    /*background-color: #ddd;*/
-/*}*/
-
-/*!* Create an active/current tablink class *!*/
-/*div.tab button.active {*/
-    /*background-color: #ccc;*/
-/*}*/
-
-/*!* Style the tab content *!*/
-/*.tabcontent {*/
-    /*display: none;*/
-    /*padding: 6px 12px;*/
-    /*border: 1px solid #ccc;*/
-    /*border-top: none;*/
-/*}*/
-
-
-/* my style! */
-/*$screen-sm-min: 768px;*/
-/*$shadow: 0 2px 3px rgba(0, 0, 0, .2);*/
-/*$gray-border: darken(#f8f8f8, 10%);*/
-/*$gray-light: rgba(0, 0, 0, .35);*/
-/*$faded-yellow: lighten(#f1c40f, 40%);*/
-
-
-
-/*// thx, @HugoGiraudel*/
-/*@mixin scrollbars($size, $foreground-color, $background-color: mix($foreground-color, white, 50%)) {*/
-    /*::-webkit-scrollbar {*/
-        /*width:  $size;*/
-        /*height: $size;*/
-    /*}*/
-
-    /*::-webkit-scrollbar-thumb {*/
-        /*background: $foreground-color;*/
-    /*}*/
-
-    /*::-webkit-scrollbar-track {*/
-        /*background: $background-color;*/
-    /*}*/
-
-
-
-/*}*/
-
-
-/*body {*/
-    /*font-family: "Roboto";*/
-/*}*/
-
-/*.wrap {*/
-    /*display: flex;*/
-    /*align-items: center;*/
-    /*justify-content: center;*/
-    /*flex-direction: column;*/
-    /*height: 100%;*/
-    /*width: 100%;*/
-/*}*/
-
-/*.table-wrapper {*/
-    /*max-width: 300px;*/
-    /*width: 80%;*/
-    /*margin: 0 auto 0;*/
-    /*max-height: 500px;*/
-    /*overflow-y: scroll;*/
-    /*position: relative;*/
-    /*background: white;*/
-    /*box-shadow: 0 2px 3px rgba(0, 0, 0, .2);*/
-
-    /*}*/
-
-
-/*.card-list-table {*/
-    /*table-layout: fixed;*/
-    /*background: transparent;*/
-    /*margin-bottom: 0;*/
-    /*width: 100%;*/
-
-/*tbody tr {*/
-    /*box-shadow: $ shadow;*/
-    /*background: #fff;*/
-    /*border-bottom: 1px solid $ gray-border;*/
-    /*display: block;*/
-    /*padding: 15px 10px;*/
-    /*margin: 0 0 10px 0;*/
-/*}*/
-
-/*}*/
-/*tbody td {*/
-    /*border: 0;*/
-    /*display: block;*/
-    /*padding: 10px 10px 20px 40%;*/
-    /*position: relative;*/
-/*:first-of-type::after {*/
-     /*visibility: hidden;*/
- /*}*/
-/*:after {*/
-     /*content: '';*/
-     /*width: calc(100% - 30px);*/
-     /*display: block;*/
-     /*margin: 0 auto;*/
-     /*height: 1px;*/
-     /*background: $gray-border;*/
-     /*position: absolute;*/
-     /*left: 0;*/
-     /*right: 0;*/
-     /*top: -6px*/
- /*}*/
-/*:before {*/
-     /*color: $gray-light;*/
-     /*text-transform: uppercase;*/
-     /*font-size: .85em;*/
-     /*content: attr(data-title);*/
-     /*display: table-cell;*/
-     /*font-weight: 500;*/
-     /*height: 100%;*/
-     /*left: 15px;*/
-     /*margin: auto;*/
-     /*position: absolute;*/
-     /*vertical-align: middle;*/
-     /*white-space: nowrap;*/
-     /*width: 40%;*/
- /*}*/
-/*}*/
-/*}*/
 
 
 

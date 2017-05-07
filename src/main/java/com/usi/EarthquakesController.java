@@ -1,8 +1,8 @@
 package com.usi;
 
-import com.usi.model.earthquake.IngvQuery;
 import com.usi.Dao.EarthquakeDao.EarthquakeDao;
 import com.usi.model.earthquake.Earthquake;
+import com.usi.model.earthquake.IngvQuery;
 import com.usi.repository.EarthquakeRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;

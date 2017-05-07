@@ -210,6 +210,26 @@ function sizeof(object){
 
 }
 
+function formatDateForList(date){
+    var year = date.getFullYear();
+    var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                      "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+    ];
+
+    var month =  date.getMonth();
+    var monthToString = monthNames[month]
+    var day = date.getDate() + "";
+    day = addZeroToString(day);
+    var hours = date.getHours() + "";
+    hours = addZeroToString(hours);
+    var minutes = date.getMinutes() + "";
+    minutes = addZeroToString(minutes);
+    var seconds =date.getSeconds() + "";
+    seconds = addZeroToString(seconds);
+
+    return day + " " + monthToString + " " + year + " at " + hours + "h" +minutes + "m" + seconds + "s";
+}
+
 
 
 
