@@ -24,6 +24,8 @@ width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden;
     background-color: rgba(48, 51, 54,1);
 }
 
+.btn:focus {outline:none;}
+
 .bar-item{
     color: white;
     font-size: 3em;
@@ -229,6 +231,54 @@ width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden;
     padding-top: 4px;
 }
 
+.player{
+    bottom: -400px;
+    height: 50px;
+    background-color: rgba(48, 51, 54,0.5);
+    z-index: 9;
+    position: absolute;
+    left: 180px;
+    right: 90px;
+    transition: all 300ms cubic-bezier(1.000, 0.000, 0.000, 1.000);
+    -webkit-transition: all 300ms cubic-bezier(1.000, 0.000, 0.000, 1.000);
+    -moz-transition: all 300ms cubic-bezier(1.000, 0.000, 0.000, 1.000);
+}
+
+#play-container, #stop-container{
+    height: 100%;
+    width: 50px;
+    text-align: center;
+    margin: 0px;
+    float: left;
+}
+
+#play-button, #pause-button, #stop-button {
+    background-color: transparent;
+    border: 0px;
+    font-size: 27px;
+    position: relative;
+    color: white;
+}
+
+#slider3{
+    bottom: 81px;
+}
+
+#current-time, #max-time{
+    color: white;
+    float: right;
+    position: relative;
+    top: 15px;
+    margin-right: 6px;
+}
+
+#time, #total-time{
+    color: white;
+    float: left;
+    position: relative;
+    top: 15px;
+    margin-right: 4px;
+}
 
 
 

@@ -1,6 +1,4 @@
-
-
-
+//TODO: move to index.html
 $(document.body).append("<div class='nav-bar'> "
                         + "<div class='bar-item' id = 'home' > <i class='fa fa-home big-icon' aria-hidden='true'></i> </div>"
 
@@ -58,11 +56,83 @@ $(document.body).append("<div class='nav-bar'> "
                                 + "<h3 class = bar-menu-title>Info</h3>"
                                 + "<div class = menu-body id = 'info-menu-body'></div>"
                         + "</div>"
-                        + "</div>");
+                        + "</div>"
+);
 
-$(document.body).append("<div id = 'slider-container'>"
-                        + "<div id='time-slider'></div>"
-                        + "</div>");
+$(document.body).append("<div class= 'player' id = 'player' >"
+                            + "<div id = 'play-container' >"
+                                + "<button  class='btn btn-default' id='play-button'> <i class='fa fa-play' aria-hidden='true'></i></i></button>"
+                                + "<button  class='btn btn-default' id='pause-button'> <i class='fa fa-pause' aria-hidden='true' ></i></button>"
+                            + "</div>"
+                            + "<div id = 'stop-container' >"
+                                + "<button  class='btn btn-default' id='stop-button'> <i class='fa fa-stop' aria-hidden='true'></i></button>"
+                            + "</div>"
+                            + "<div id = 'info-container' >"
+                                + "<p id = 'max-time'>/0</p><p id = 'current-time'>0</p>"
+                                + "<p id = 'time'>0</p><p id = 'total-time'>/0</p>"
+                                + "</div>"
+
+                            + "<input class = 'option-slider' id='time-slider' type='text' />"
+                        + "</div>"
+);
+
+
+function getSettingsMenuTable(){
+    return  "<div class = menu-body>"
+            +"<div class = settings-container >"
+            +"<p class ='settings-title'>color by</p>"
+            + "<div class='menu-select-box' id = 'color-selector'>"
+            + "<select class = 'menu-selector selectpicker'  data-width='auto' >"
+            +" <option>magnitude</option>"
+            + "<option>date</option>"
+            + "<option>depth</option>"
+            + "</select>"
+            + "</div>"
+            +"</div>"
+
+            +"<div class = settings-container >"
+            +"<p class = 'settings-title'>3d view</p>"
+            + "<div class='menu-switch-box ' id = 'view-selector'>"
+            + "<select class = 'menu-selector selectpicker' data-width='auto'>"
+            +"<option>off</option>"
+            + "<option>on</option>"
+            + "</select>"
+            + "</div>"
+            +"</div>"
+
+            +"<div class = settings-container >"
+            +"<p class = 'settings-title'>time view</p>"
+            + "<div class='menu-switch-box ' id = 'time-view-selector'>"
+            + "<select class = 'menu-selector selectpicker' data-width='auto'>"
+            +"<option>off</option>"
+            + "<option>on</option>"
+            + "</select>"
+            + "</div>"
+            +"</div>"
+
+            +"<div class = settings-container >"
+            +"<p class ='settings-title'>Resolution</p>"
+            + "<div class='menu-select-box' id = 'resolution-selector'>"
+            + "<select class = 'menu-selector selectpicker'  data-width='auto' >"
+            +" <option value = '2' >very high</option>"
+            + "<option value = '1.5' >high</option>"
+            + "<option value = '1' >medium</option>"
+            + "<option value = '0.7' >low</option>"
+            + "<option value = '0.5' >very low</option>"
+            + "</select>"
+            + "</div>"
+            +"</div>"
+            +"<div class = settings-container >"
+            +"<p class ='settings-title'>FPS</p>"
+            + "<div class='menu-select-box' id = 'frames-selector'>"
+            + "<select class = 'menu-selector selectpicker'  data-width='auto' >"
+            +" <option value = '60' >60 fps</option>"
+            + "<option value = '30' >30 fps</option>"
+            + "<option value = '25' >25 fps</option>"
+            + "</select>"
+            + "</div>"
+            +"</div>"
+}
 
 
 
@@ -81,72 +151,107 @@ function getCoordinateHTML(){
 
 $(document).ready(function () {
 
-    /*
-     MAGNITUDE search options
-     */
-
     setUpMagnitudeSlider();
 
-    $('#magnitude-slider').on('slideStop', function (slideEvt) {
-        updateMagnitudeRequest(slideEvt.value[0], slideEvt.value[1])
-    });
+    setUpPointsCoordinates();
+
+    setUpDepthSlider();
+
+    setUpDataRange();
+
+});
+
+// var dateFormat = "MMMM Do YYYY, h:mm:ss a";
+var dateFormat = "MMM Do YYYY";
+var timeFormat = "mm:ss"
+
+$("#pause-button").hide();
+$("#play-container").click(function(e){
+    if(!play){
+        playTimeLine();
+    }else{
+        pauseTimeLine();
+    }
+});
+
+$("#stop-container").click(function(e){
+    resetTimeLaps();
+});
+
+var timeSlider;
+function setupTimeSlider(minDate, maxDate, totalTime){
+    timeSlider = $("#time-slider").slider({
+                                              id : "slider3",
+                                              min : minDate,
+                                              max : maxDate,
+                                              selection : "before",
+                                              value : minDate
+                                          });
+    $("#current-time").text(moment(minDate).format(dateFormat));
+    $("#max-time").text(" / " +moment(maxDate).format(dateFormat));
+    $("#total-time").text(moment(totalTime).format(timeFormat));
+    $("#time").text(moment(0).format(timeFormat) + " / ")
+}
+
+
+function setTimeSliderValue(date, time){
+    timeSlider.slider('setValue', date);
+    $("#current-time").text(moment(date).format(dateFormat));
+    $("#time").text(moment(time).format(timeFormat) + " / ")
+}
+$('#time-slider').on('slideStart', function (slideEvt) {
+    pauseTimeLine();
+});
+
+$('#time-slider').on('slide', function (slideEvt) {
+    $("#current-time").text(moment(slideEvt.value).format(dateFormat));
+});
+
+$('#time-slider').on('slideStop', function (slideEvt) {
+    changeTimeLineCurrentTime(slideEvt.value);
+    playTimeLine();
+});
 
 
 
 
 
-    $('#depth-slider').slider({
-                                  id: "slider2",
-                                  min: 0,
-                                  max: 650,
-                                  range: true,
-                                  value: [(stdRequest.minDepth / 1000),
-                                          (stdRequest.maxDepth / 1000)],
-                                  scale: 'logarithmic',
-                              })
 
-    $('#depth-slider').on('slideStop', function (slideEvt) {
-                              updateDepthRequest((slideEvt.value[0] * 1000), (slideEvt.value[1] * 1000))
-                          }
-    );
-
+function setUpDataRange(){
     $(function() {
 
         var start = moment().subtract(100, 'days');
         var end = moment();
 
-        function cb(start, end) {
+    function cb(start, end) {
             $('#reportrange span').html(start.format('MMM D, YYYY') + ' - ' + end.format('MMM D, YYYY'));
             nextRequest.startTime = start.toDate();
             nextRequest.endTime = end.toDate();
         }
 
-        writeCoordinates();
-
         $('#reportrange').daterangepicker({
-                                              startDate: start,
-                                              endDate: end,
-                                              ranges: {
-                                                  'Today': [moment(), moment()],
-                                                  'Last 2 days': [moment().subtract(1, 'days'), moment()],
-                                                  'Last 7 Days': [moment().subtract(6, 'days'), moment()],
-                                                  'Last 30 Days': [moment().subtract(29, 'days'), moment()],
-                                                  'Last Year': [moment().subtract(1, 'year'), moment()],
-                                                  "All" : [moment("1985/01/01",  "YYYY-MM-DD"), moment()]
-                                              },
-                                              linkedCalendars : false,
-                                              showDropdowns: true,
-                                              autoApply : true,
-                                              minDate: moment("1985/01/01", "YYYY-MM-DD"),
-                                              maxDate: moment(),
+          startDate: start,
+          endDate: end,
+          ranges: {
+              'Today': [moment(), moment()],
+              'Last 2 days': [moment().subtract(1, 'days'), moment()],
+              'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+              'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+              'Last Year': [moment().subtract(1, 'year'), moment()],
+              "All" : [moment("1985/01/01",  "YYYY-MM-DD"), moment()]
+          },
+          linkedCalendars : false,
+          showDropdowns: true,
+          autoApply : true,
+          minDate: moment("1985/01/01", "YYYY-MM-DD"),
+          maxDate: moment(),
 
-                                          }, cb);
+      }, cb);
 
         cb(start, end);
 
     });
-
-});
+}
 
 
 function setUpMagnitudeSlider(){
@@ -157,15 +262,22 @@ function setUpMagnitudeSlider(){
       range: true,
       value: [(stdRequest.minMag), (stdRequest.maxMag)]
     });
+}
+
+function setUpDepthSlider(){
+    $('#depth-slider').slider({
+      id: "slider2",
+      min: 0,
+      max: 650,
+      range: true,
+      value: [(stdRequest.minDepth / 1000),
+              (stdRequest.maxDepth / 1000)],
+      scale: 'logarithmic',
+  });
 
 }
 
-function updateMagnitudeRequest(min, max){
-    nextRequest.minMag = min;
-    nextRequest.maxMag = max;
-}
-
-function writeCoordinates() {
+function setUpPointsCoordinates() {
     $("#min-lat").val(stdRequest.minPoint.latitude );
     $("#min-lng").val(stdRequest.minPoint.longitude);
     $("#min-lat").before("<p>min point</p>");
@@ -176,61 +288,28 @@ function writeCoordinates() {
 }
 
 
+/* DEFINE INPUT ACTION */
 
+var timeLineMode = false;
+$("#time-view-selector").on("change", function (e) {
+    var timeView = $("#time-view-selector option:selected").text();
 
-function updateDepthRequest(min, max){
-    nextRequest.minDepth = min;
-    nextRequest.maxDepth = max;
-}
+    if(timeView === "on"){
+        setUpTimeLineView();
+        timeLineMode = true;
+    }else {
+        clearTimeLaps();
+        timeLineMode = false;
+    }
+});
 
+$('#depth-slider').on('slideStop', function (slideEvt) {
+    updateDepthRequest((slideEvt.value[0] * 1000), (slideEvt.value[1] * 1000))
+});
 
-
-
-function getSettingsMenuTable(){
-    return  "<div class = menu-body>"
-                +"<div class = settings-container >"
-                    +"<p class ='settings-title'>color by</p>"
-                        + "<div class='menu-select-box' id = 'color-selector'>"
-                            + "<select class = 'menu-selector selectpicker'  data-width='auto' >"
-                                +" <option>magnitude</option>"
-                                + "<option>date</option>"
-                                + "<option>depth</option>"
-                            + "</select>"
-                        + "</div>"
-                +"</div>"
-
-                +"<div class = settings-container >"
-                +"<p class = 'settings-title'>3d view</p>"
-                    + "<div class='menu-switch-box ' id = 'view-selector'>"
-                        + "<select class = 'menu-selector selectpicker' data-width='auto'>"
-                            +"<option>off</option>"
-                            + "<option>on</option>"
-                        + "</select>"
-                    + "</div>"
-                +"</div>"
-                +"<div class = settings-container >"
-                    +"<p class ='settings-title'>Resolution</p>"
-                    + "<div class='menu-select-box' id = 'resolution-selector'>"
-                    + "<select class = 'menu-selector selectpicker'  data-width='auto' >"
-                        +" <option value = '2' >very high</option>"
-                        + "<option value = '1.5' >high</option>"
-                        + "<option value = '1' >medium</option>"
-                        + "<option value = '0.7' >low</option>"
-                        + "<option value = '0.5' >very low</option>"
-                    + "</select>"
-                    + "</div>"
-                +"</div>"
-                +"<div class = settings-container >"
-                    +"<p class ='settings-title'>FPS</p>"
-                    + "<div class='menu-select-box' id = 'frames-selector'>"
-                    + "<select class = 'menu-selector selectpicker'  data-width='auto' >"
-                        +" <option value = '60' >60 fps</option>"
-                        + "<option value = '30' >30 fps</option>"
-                        + "<option value = '25' >25 fps</option>"
-                    + "</select>"
-                    + "</div>"
-                +"</div>"
-}
+$('#magnitude-slider').on('slideStop', function (slideEvt) {
+    updateMagnitudeRequest(slideEvt.value[0], slideEvt.value[1])
+});
 
 $( "#home" ).click(function() {
     var camera = viewer.camera;
@@ -301,14 +380,11 @@ $("#frames-selector").on("change", function(){
     changeFPS(numb);
 });
 
-
-
-
 $("#search-button").click(function() {
     $("#search-button").prepend("<i id = 'loading-icon' class='fa fa-spinner fa-spin'></i>");
     $("#search-button").prop("disabled",true);
 
-        // $this.button('reset');
+    // $this.button('reset');
     setTimeout(doMultiRequest(nextRequest, function () {
         $("#loading-icon").remove();
         $("#search-button").prop("disabled",false);
@@ -356,6 +432,18 @@ $("#default-points-button").click(function(){
 
 
 
+/*options functions */
+
+function updateMagnitudeRequest(min, max){
+    nextRequest.minMag = min;
+    nextRequest.maxMag = max;
+}
+
+function updateDepthRequest(min, max){
+    nextRequest.minDepth = min;
+    nextRequest.maxDepth = max;
+}
+
 function resetCoordinates(){
     nextRequest.minPoint.latitude = Number(35);
     nextRequest.minPoint.longitude = Number(5);
@@ -369,12 +457,13 @@ function resetCoordinates(){
 }
 
 
-//infoBox
+/* infoBox */
+
 function showInfoBox(earthquake){
     viewer.selectedEntity = new Cesium.Entity({
-                                  id: earthquake.id,
-                                  description: getInfoBoxDescription(earthquake)
-                              });
+      id: earthquake.id,
+      description: getInfoBoxDescription(earthquake)
+    });
 }
 
 function closeInfoBox(){
@@ -387,10 +476,6 @@ function getInfoBoxDescription(e){
                 + "<div class=cesium-infoBox-description>"
                     +"<table class=cesium-infoBox-defaultTable>"
                     + "<tbody>"
-                        // +"<tr>"
-                        //     + "<th>region</th>"
-                        //     + "<td>"+ e.regionName + "</td>"
-                        // +"</tr>"
                         +"<tr>"
                             + "<th>magnitude</th>"
                             + "<td>"+ e.magnitude.magnitude + " " + e.magnitude.type + "</td>"
