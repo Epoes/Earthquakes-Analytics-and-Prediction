@@ -242,28 +242,27 @@ var timeInterval;
 var timePercent;
 var possibleTimesInSeconds = [30, 60, 120, 300, 600, 1200];
 
-function showEarthquakes(currentTime){
+function showEarthquakes(currentTime) {
     timePercent = normalizeT(currentTime, 0, totalTime);
-    var realTimePassed = timePercent*(timeInterval) + minLongTime;
+    var realTimePassed = timePercent * (timeInterval) + minLongTime;
     setTimeSliderValue(realTimePassed, currentTime);
 
     var nextEarthquake = earthquakes[next];
     var nextPoint = nextEarthquake.primitivePoint;
 
-    while(next < earthquakes.length && timePercent >= normalizeT(nextEarthquake.origin.time, minLongTime, maxLongTime)){
+    while (next < earthquakes.length && timePercent >= normalizeT(nextEarthquake.origin.time, minLongTime, maxLongTime)) {
         nextPoint.translucencyByDistance = undefined;
         nextPoint.show = true;
         nextEarthquake.viewTime = currentTime;
         globalCounter++;
         next++;
-        if(next < earthquakes.length){
+        if (next < earthquakes.length) {
             nextEarthquake = earthquakes[next];
             nextPoint = nextEarthquake.primitivePoint;
         }
 
-<<<<<<< Updated upstream
     }
-=======
+}
 function resetPoint(earthquake, point, index) {
     earthquake.primitivePoint = point;
     var id = earthquake.id;
@@ -274,7 +273,6 @@ function resetPoint(earthquake, point, index) {
     point.pixelSize = getPixelSize(earthquake);
     point.translucencyByDistance = magnitudeNearFarScalar(earthquake, index, earthquakes.length);
     point.show = true;
->>>>>>> Stashed changes
 }
 
 function animateEarthquakes(currentTime){

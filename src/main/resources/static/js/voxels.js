@@ -63,7 +63,7 @@ var geometry = new Cesium.BoxGeometry.fromDimensions({
 });
 
 
-function drawBoxes(data){
+function drawItaly(data){
     var primitivesArray = [];
     for(var i = 0; i < data.length; ++i){
         var elevation = data[i];
@@ -152,6 +152,9 @@ function interpolateHeights(index, height){
 
 function interpolateColorByMagnitude(inx, e){
     var magnitude = e.magnitude.magnitude;
+    if(magnitude == null){
+        magnitude = e.magnitude;
+    }
     if(magnitude < 3){
         return interpolate(green[inx], yellow[inx], magnitude/3);
     } else if(magnitude <= 6){
@@ -179,7 +182,7 @@ var centerBoundings = [43.961401, 14.452927, 42.424652, 10.050827];
 var italyBoundings = [48.00, 35.00, 19.00, 5.00];
 
 var stdRequest = {
-    count : 1000,
+    count : 1,
     endTime : new Date(),
     startTime : new Date("1985.01.01"),
     minMag : 3,
@@ -204,8 +207,8 @@ function doRequest(request){
         url: "http://" + window.location.host + "/api/elevations/query",
         type: "GET",
         success: function (data, textStatus, jqXHR) {
-            elevations = data
-            drawBoxes(elevations);
+            elevations = data;
+            // drawItaly(elevations);
         }
     });
 
@@ -219,8 +222,49 @@ function doRequest(request){
         success: function (data, textStatus, jqXHR) {
             epicentres = data;
             drawEarthquake(epicentres);
+            getStationMagnitudes(epicentres);
         }
     })
+}
+
+function getStationMagnitudes(epicentres) {
+    var min_magnitude = 2.5;
+    var max_magnitude = 8;
+    for(var i = 0; i < epicentres.length; ++i) {
+        var earthquake = epicentres[i];
+        $.ajax({
+            url: "http://" + window.location.host + "/api/earthquakes/stationMagnitudes/query?earthquake_id=" + earthquake.id + "&min_magnitude=" + min_magnitude + "&max_magnitude=" + max_magnitude,
+            type: "GET",
+            success: function (data, textStatus, jqXHR) {
+                drawStationMagnitudes(data);
+            }
+        })
+    }
+}
+
+function drawStationMagnitudes(data) {
+    var primitivesArray = [];
+    for(var i = 0; i < data.length; ++i){
+        var earthquake = data[i];
+        var height = convertHeight(earthquake.station.elevation);
+        var stationMagnitude = new Cesium.GeometryInstance({
+            geometry: geometry,
+            modelMatrix: Cesium.Matrix4.multiplyByTranslation(
+                Cesium.Transforms.eastNorthUpToFixedFrame(Cesium.Cartesian3.fromDegrees(earthquake.station.longitude, earthquake.station.latitude)),
+                new Cesium.Cartesian3(0.0, 0.0, height + maxDepth), new Cesium.Matrix4()),
+            id: earthquake,
+            attributes: {
+                color: new Cesium.ColorGeometryInstanceAttribute(interpolateColorByMagnitude(0, earthquake), interpolateColorByMagnitude(1, earthquake), interpolateColorByMagnitude(2, earthquake))
+            }
+        });
+        primitivesArray.push(stationMagnitude);
+    }
+    var primitive = new Cesium.Primitive({
+        geometryInstances : primitivesArray,
+        appearance: new Cesium.PerInstanceColorAppearance()
+    });
+
+    scene.primitives.add(primitive);
 }
 
 function drawEarthquake(data){
