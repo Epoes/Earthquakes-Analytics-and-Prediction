@@ -11,4 +11,9 @@ public class Home {
     public String showHome() {
         return "index";
     }
+
+    @RequestMapping(value = "/3d", method = RequestMethod.GET)
+    public String showProva(){
+        return "3d";
+    }
 }

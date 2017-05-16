@@ -4,8 +4,12 @@ package com.usi.API.google_maps;
 import com.google.maps.model.AddressComponent;
 import com.google.maps.model.ElevationResult;
 
+import com.google.maps.model.LatLng;
+import com.usi.model.Coordinate;
 import com.usi.model.Elevation;
 import com.usi.model.Location;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -36,12 +40,14 @@ public class Parser {
         return addressComponents[index].types[0].toString().equals(level);
     }
 
-    public ArrayList<Elevation> parseElevation(ElevationResult[] results){
+    public ArrayList<Elevation> parseElevation(JSONObject jsonObject){
+        JSONArray results = jsonObject.getJSONArray("results");
         ArrayList<Elevation> elevations = new ArrayList<>();
-        for(int i = 0; i < results.length; ++i){
+        for(int i = 0; i < results.length(); ++i){
             Elevation elevation = new Elevation();
-            elevation.setElevation((int) results[i].elevation);
-            elevation.setLatLng(results[i].location);
+            elevation.setElevation((int) results.getJSONObject(i).getDouble("elevation"));
+            elevation.setLatitude(results.getJSONObject(i).getJSONObject("location").getDouble("lat"));
+            elevation.setLongitude(results.getJSONObject(i).getJSONObject("location").getDouble("lng"));
             elevations.add(elevation);
         }
         return elevations;

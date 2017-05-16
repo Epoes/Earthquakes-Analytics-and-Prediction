@@ -80,10 +80,11 @@
 //
 //    @Test
 //    public void testBecero() throws Exception{
-//        ElevationMatrix elevationMatrix = new ElevationMatrix();
+//        ElevationMatrix elevationMatrix = new ElevationMatrix(elevationRepository);
 ////        ArrayList<Elevation> elevations = elevationMatrix.createElevationMatrix();
-//        LatLng start = new LatLng(43.103148, 12.399769);
-//        LatLng end = new LatLng(42.370574, 13.927859);
+//        Coordinate start = new Coordinate(47.243913, 6.366221);
+//        Coordinate end = new Coordinate(47.243913, 18.742255);
+////        Elevation e = elevations.get(2048);
 //        double d = elevationMatrix.haversine(start, end);
 //        assertNotNull(d);
 //

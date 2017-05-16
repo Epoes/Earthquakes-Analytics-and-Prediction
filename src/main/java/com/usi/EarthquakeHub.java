@@ -4,24 +4,18 @@ package com.usi;
 import com.usi.API.google_maps.MapsServices;
 import com.usi.API.google_maps.MapsServicesImpl;
 import com.usi.API.twitter.Response;
-import com.usi.model.earthquake.Earthquake;
-import com.usi.model.earthquake.IngvQuery;
-import com.usi.repository.EarthquakeRepository;
-import com.usi.repository.MagnitudeRepository;
-import com.usi.repository.OriginRepository;
+import com.usi.model.earthquake.*;
+import com.usi.repository.*;
+import com.usi.services.earthquake.EarthquakeAdditionalInfoServiceImpl;
 import com.usi.services.earthquakeService;
 import com.usi.util.ConnectionStatus;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.TimeZone;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
 
 
 @Service
@@ -30,12 +24,17 @@ public class EarthquakeHub {
 
 
     private earthquakeService ingvService;
+    private EarthquakeAdditionalInfoServiceImpl additionalInfoService;
     private EarthquakeRepository earthquakeRepository;
-    private  MagnitudeRepository magnitudeRepository;
+    private MagnitudeRepository magnitudeRepository;
     private OriginRepository originRepository;
+    private StationMagnitudeRepository stationMagnitudeRepository;
+    private AmplitudeRepository amplitudeRepository;
+    private StationRepository stationRepository;
+    private ArrivalRepository arrivalRepository;
+    private PickRepository pickRepository;
     private SimpleDateFormat sdf;
-
-
+    private List<Integer> ids;
 
     boolean isRunning = true;
 
@@ -46,11 +45,17 @@ public class EarthquakeHub {
 
 
     @Autowired
-    public EarthquakeHub(EarthquakeRepository earthquakeRepository, MagnitudeRepository magnitudeRepository, OriginRepository originRepository, earthquakeService ingvService) {
+    public EarthquakeHub(EarthquakeRepository earthquakeRepository, MagnitudeRepository magnitudeRepository, OriginRepository originRepository, earthquakeService ingvService, EarthquakeAdditionalInfoServiceImpl additionalInfoService, StationMagnitudeRepository stationMagnitudeRepository, AmplitudeRepository amplitudeRepository, StationRepository stationRepository, ArrivalRepository arrivalRepository, PickRepository pickRepository) {
 		this.earthquakeRepository = earthquakeRepository;
 		this.magnitudeRepository = magnitudeRepository;
 		this.originRepository = originRepository;
         this.ingvService = ingvService;
+        this.additionalInfoService = additionalInfoService;
+        this.stationMagnitudeRepository = stationMagnitudeRepository;
+        this.amplitudeRepository = amplitudeRepository;
+        this.stationRepository = stationRepository;
+        this.arrivalRepository = arrivalRepository;
+        this.pickRepository = pickRepository;
         mapsServices = new MapsServicesImpl();
         sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z");
         updateTimer = new Timer();
@@ -70,18 +75,45 @@ public class EarthquakeHub {
 
         updateTimer.schedule(myTask, 189999, 189999);
 
-//        TimerTask myTask2 = new TimerTask() {
-//            @Override
-//            public void run() {
-//                saveOldEarthQuakes();
-//            }
-//        };
-//
-//        getOldTimer.schedule(myTask2, 0, 30000);
+        float magnitude = 2.5f;
+        ids = earthquakeRepository.getAllIds(magnitude).orElse(new ArrayList<>());
+
+        TimerTask myTask2 = new TimerTask() {
+            @Override
+            public void run() {
+                iterateIds();
+                if(ids.size() > 0) {
+                    try {
+                        saveAdditionalInfo(ids.get(ids.size() - 1));
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+            }
+        };
+
+        getOldTimer.schedule(myTask2, 0, 1000);
     }
 
+    private void iterateIds(){
+        for(int i = this.ids.size() - 1; i >= 0; --i){
+            if(this.checkId(this.ids.get(i), i)){
+               continue;
+            } else{
+                break;
+            }
+        }
+    }
 
-
+    private boolean checkId(int id, int index){
+        Optional<List<Arrival>> arrivals = this.arrivalRepository.getByEarthquakeId(id);
+        if(arrivals.get().size() != 0){
+            this.ids.remove(index);
+            return true;
+        }
+        return false;
+    }
 
     public void update(){
         IngvQuery query = new IngvQuery();
@@ -95,7 +127,6 @@ public class EarthquakeHub {
         query.setOrderBy("time");
         query.setCount(1000);
         query.setMinMagnitude(0);
-
 
         Response<Earthquake> response;
         try {
@@ -117,6 +148,50 @@ public class EarthquakeHub {
         }
         System.out.println("\n" +sdf.format(start.getTime()) + ": " + earthquakes.size() + " earthquake updated!");
 
+    }
+
+    public void saveAdditionalInfo(int id) throws ParseException {
+        this.ids.remove(this.ids.size() - 1);
+        IngvQuery query = new IngvQuery();
+        query.setId(id);
+        Response<StationMagnitude> response;
+        Response<Arrival> response2;
+        try{
+            this.additionalInfoService.generateXml(query);
+            response = this.additionalInfoService.getStationMagnitudes();
+            response2 = this.additionalInfoService.getArrivals();
+        } catch (Exception e){
+            e.printStackTrace();
+            return;
+        }
+
+        if(response.getStatus() != ConnectionStatus.OK){
+            return;
+        }
+
+        List<StationMagnitude> stationMagnitudeList = response.getContent();
+        Earthquake earthquake = earthquakeRepository.getById(id).orElse(null);
+        String time = "2006-01-01 00:00:00 UTC";
+        Date minimumTime = sdf.parse(time);
+
+        System.out.println("start saving for earthquake " + id);
+        if(earthquake.getOrigin().getTime().getTime() > minimumTime.getTime()) {
+            for (StationMagnitude stationMagnitude : stationMagnitudeList) {
+                this.amplitudeRepository.save(stationMagnitude.getAmplitude());
+                this.stationRepository.save(stationMagnitude.getStation());
+                stationMagnitude.setEarthquake(earthquake);
+                this.stationMagnitudeRepository.save(stationMagnitude);
+            }
+            System.out.println("\n" + stationMagnitudeList.size() + " stationMagnitude updated!");
+        }
+        List<Arrival> arrivalList = response2.getContent();
+        for (Arrival arrival : arrivalList) {
+            this.stationRepository.save(arrival.getPick().getStation());
+            this.pickRepository.save(arrival.getPick());
+            arrival.setEarthquake(earthquake);
+            this.arrivalRepository.save(arrival);
+        }
+        System.out.println("\n" + arrivalList.size() + " arrivals updated!");
     }
 
     public void saveOldEarthQuakes(){

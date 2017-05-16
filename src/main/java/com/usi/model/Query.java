@@ -5,6 +5,6 @@ import java.net.URL;
 
 public interface Query {
 
-    URL generateUrl();
+    URL generateBaseUrl();
 
 }

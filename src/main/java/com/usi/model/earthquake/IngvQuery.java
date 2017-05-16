@@ -36,6 +36,10 @@ public class IngvQuery implements Query {
     public String orderBy = "time";
     public String format = "xml";
 
+    private int id;
+
+
+
     public IngvQuery(float minMagnitude, float maxMagnitude, int maxDepth, int minDepth, Calendar startTime, Calendar endTime, int count, LatLng minPoint, LatLng maxPoint, String orderBy, String format) {
         this.minMagnitude = minMagnitude;
         this.maxMagnitude = maxMagnitude;
@@ -149,6 +153,13 @@ public class IngvQuery implements Query {
         }
         this.minPoint = minPoint;
     }
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 
     private boolean checkCoordinates(LatLng point) {
         if(point.lat < -90 || point.lat > 90 || point.lng < -180 || point.lng > 180){
@@ -184,7 +195,7 @@ public class IngvQuery implements Query {
         this.format = format;
     }
 
-    public URL generateUrl(){
+    public URL generateBaseUrl(){
 
         URL url = null;
 
@@ -203,6 +214,22 @@ public class IngvQuery implements Query {
             e.printStackTrace();
         }
 
+        return url;
+    }
+
+    public URL generateUrlById(){
+        URL url = null;
+
+        String q = "eventId=" + id + "&";
+        q += "includeallorigins=true&";
+        q += "includearrivals=true&";
+        q += "includeallstationsmagnitudes=true&";
+        try{
+            URI uri = new URI("http", "webservices.ingv.it", "/fdsnws/event/1/query", q, null);
+            url = uri.toURL();
+        } catch (Exception e){
+            e.printStackTrace();
+        }
         return url;
     }
 

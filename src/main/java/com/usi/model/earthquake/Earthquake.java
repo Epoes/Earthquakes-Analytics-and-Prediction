@@ -2,15 +2,11 @@ package com.usi.model.earthquake;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "earthquake")
@@ -31,6 +27,11 @@ public class Earthquake {
     @JsonIgnore
     String regionName;
 
+    @OneToMany(mappedBy = "earthquake", cascade = CascadeType.PERSIST)
+    private List<StationMagnitude> stationMagnitudes;
+
+    @OneToMany(mappedBy = "earthquake")
+    private List<Arrival> arrivals;
 
 //    private Location location;
 

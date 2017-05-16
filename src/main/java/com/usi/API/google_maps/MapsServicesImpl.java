@@ -11,6 +11,12 @@ import com.google.maps.model.ElevationResult;
 import com.google.maps.model.GeocodingResult;
 import com.google.maps.model.LatLng;
 
+import com.mashape.unirest.http.HttpResponse;
+import com.mashape.unirest.http.JsonNode;
+import com.mashape.unirest.http.Unirest;
+import com.mashape.unirest.http.exceptions.UnirestException;
+
+import com.usi.model.Coordinate;
 import com.usi.util.ConnectionStatus;
 import com.usi.API.twitter.Response;
 import com.usi.model.Elevation;
@@ -23,9 +29,12 @@ import java.util.List;
 public class MapsServicesImpl implements MapsServices{
     private Parser parser;
     private GeoApiContext context;
+    private UrlGenerator urlGenerator;
+    private String url;
 
 
     public MapsServicesImpl() {
+        this.urlGenerator = new UrlGenerator();
         this.parser = new Parser();
         this.context = new GeoApiContext().setApiKey(APIKeys.GoogleMapsKey);
     }
@@ -58,14 +67,13 @@ public class MapsServicesImpl implements MapsServices{
         }
     }
 
-    public Response getElevation(LatLng start, LatLng end, int samples){
-        try {
-            ElevationResult[] result = ElevationApi.getByPath(this.context, samples, start, end).await();
-            ArrayList<Elevation> elevations = this.parser.parseElevation(result);
-            return new Response(ConnectionStatus.OK, elevations, null);
-        } catch (Exception e){
-            return this.errorHandler(e);
-        }
+    public Response getElevation(Coordinate start, Coordinate end, int samples) throws UnirestException{
+        this.url = this.urlGenerator.generateElevation(start, end, samples);
+        HttpResponse<JsonNode> locationResponse = Unirest.get(this.url).asJson();
+        if(locationResponse.getStatus() == 200)
+            return new Response(ConnectionStatus.OK, this.parser.parseElevation(locationResponse.getBody().getObject()), null);
+        else
+            return new Response(ConnectionStatus.UNKNOWN, null, locationResponse.getStatusText());
     }
 
 

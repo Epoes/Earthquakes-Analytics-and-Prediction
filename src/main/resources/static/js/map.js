@@ -261,7 +261,20 @@ function showEarthquakes(currentTime){
             nextPoint = nextEarthquake.primitivePoint;
         }
 
+<<<<<<< Updated upstream
     }
+=======
+function resetPoint(earthquake, point, index) {
+    earthquake.primitivePoint = point;
+    var id = earthquake.id;
+
+    point.position = getCartesianPosition(earthquake);
+    point.id = id;
+    point.color = getCesiumColor(earthquake);
+    point.pixelSize = getPixelSize(earthquake);
+    point.translucencyByDistance = magnitudeNearFarScalar(earthquake, index, earthquakes.length);
+    point.show = true;
+>>>>>>> Stashed changes
 }
 
 function animateEarthquakes(currentTime){

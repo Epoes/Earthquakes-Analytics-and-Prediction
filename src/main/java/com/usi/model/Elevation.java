@@ -1,17 +1,50 @@
 package com.usi.model;
 
-import com.google.maps.model.LatLng;
+import javax.persistence.*;
+import java.math.BigInteger;
 
+@Entity
+@Table(name = "elevation")
 public class Elevation {
+
+    @Id
+    @GeneratedValue
+    @Column(name = "elevation_id", updatable = true, nullable = false)
+    private int id;
+
+    @Column(name = "elevation", nullable = false)
     private int elevation;
-    private LatLng latLng;
 
-    public Elevation(int elevation, LatLng latLng) {
+    @Column(name = "latitude", nullable = false)
+    private double latitude;
+
+    @Column(name = "longitude", nullable = false)
+    private double longitude;
+
+
+    public Elevation() {
+
+    }
+
+    public Elevation(int id){
+        this.id = id;
+    }
+
+    public Elevation(int id, int elevation, double latitude, double longitude) {
+        this.id = id;
         this.elevation = elevation;
+        this.latitude = latitude;
+        this.longitude = longitude;
     }
 
-    public Elevation(){
+    public int getId() {
+        return id;
     }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
 
     public int getElevation() {
         return elevation;
@@ -21,11 +54,19 @@ public class Elevation {
         this.elevation = elevation;
     }
 
-    public LatLng getLatLng() {
-        return latLng;
+    public double getLatitude() {
+        return latitude;
     }
 
-    public void setLatLng(LatLng latLng) {
-        this.latLng = latLng;
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
+    }
+
+    public double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
     }
 }

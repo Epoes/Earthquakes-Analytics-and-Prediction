@@ -44,7 +44,7 @@ public class EarthquakeServiceImpl implements earthquakeService {
 
 
     public Response<Earthquake> getEarthQuakes(IngvQuery query) throws IOException, SAXException, ParserConfigurationException {
-        URL url = query.generateUrl();
+        URL url = query.generateBaseUrl();
         HttpResponse httpResponse;
 
         httpResponse = SimpleHttpRequest.get(url);

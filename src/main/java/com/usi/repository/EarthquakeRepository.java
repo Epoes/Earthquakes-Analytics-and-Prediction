@@ -17,4 +17,8 @@ public interface EarthquakeRepository extends JpaRepository<Earthquake, Integer>
     @Query(value = "select * from earthquake e, origin o, magnitude m where e.magnitude_earthquake = m.magnitude_id and m.magnitude > ?2 and e.origin_earthquake = o.origin_id order by o.time DESC limit ?1 ", nativeQuery = true)
     Optional<List<Earthquake>> getLastEarthquakes(int count, float magnitude);
 
+    @Query(value = "select earthquake_id from earthquake e, magnitude m where e.magnitude_earthquake = m.magnitude_id and m.magnitude > ?1", nativeQuery = true)
+    Optional<List<Integer>> getAllIds(float magnitude);
+
+    Optional<Earthquake> getById(int id);
 }

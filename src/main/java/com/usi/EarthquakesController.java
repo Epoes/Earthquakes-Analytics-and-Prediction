@@ -1,8 +1,10 @@
 package com.usi;
 
 import com.usi.Dao.EarthquakeDao.EarthquakeDao;
+import com.usi.Dao.EarthquakeDao.StationMagnitudeDao;
 import com.usi.model.earthquake.Earthquake;
 import com.usi.model.earthquake.IngvQuery;
+import com.usi.model.earthquake.StationMagnitude;
 import com.usi.repository.EarthquakeRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,10 +28,12 @@ public class EarthquakesController {
     private EarthquakeRepository earthQuakeRepository;
     private EarthquakeDao earthquakeDao;
     private SimpleDateFormat sdf;
+    private StationMagnitudeDao stationMagnitudeDao;
     @Autowired
-    public EarthquakesController(EarthquakeRepository earthQuakeRepository, EarthquakeDao earthquakeDao){
+    public EarthquakesController(EarthquakeRepository earthQuakeRepository, EarthquakeDao earthquakeDao, StationMagnitudeDao stationMagnitudeDao){
         this.earthQuakeRepository = earthQuakeRepository;
         this.earthquakeDao = earthquakeDao;
+        this.stationMagnitudeDao = stationMagnitudeDao;
         sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     }
 
@@ -100,36 +104,20 @@ public class EarthquakesController {
     }
 
 
-    @RequestMapping(value = "/api/earthquakes/last-update/{count}/{magnitude}", method= RequestMethod.GET)
-    public ResponseEntity<?> getEarthquakes(@PathVariable(value = "count") int count, @PathVariable(value = "magnitude") float magnitude) {
+    @RequestMapping(value = "/api/earthquakes/stationMagnitudes/query", method= RequestMethod.GET)
+    public ResponseEntity<?> getStationMagnitudes(@RequestParam(value = "earthquake_id") Optional<Integer> earthquakeId,
+                                                  @RequestParam(value = "max_magnitude", required = false) Optional<Float> maxMagnitude,
+                                                  @RequestParam(value = "min_magnitude", required = false) Optional<Float> minMagnitude){
+        IngvQuery query = new IngvQuery();
 
+        earthquakeId.ifPresent(value -> query.setId(value));
+        maxMagnitude.ifPresent(value -> query.setMaxMagnitude(value));
+        minMagnitude.ifPresent(value -> query.setMinMagnitude(value));
 
-//        long startTime = System.currentTimeMillis();
-//
-//        List<Earthquake> earthQuakes1 = earthQuakeRepository.getLastEarthquakes(count, magnitude).orElse(new ArrayList<Earthquake>());
-//
-//        for(Earthquake e : (List<Earthquake>) earthQuakes1){
-//            e.getOrigin().setEarthquake(null);
-//            e.getMagnitude().setEarthquake(null);
-//        }
-//
-//        long endTime = System.currentTimeMillis();
-//        System.out.println("JPA tooks " + ((endTime - startTime))+ " milliseconds");
+        List<StationMagnitude> stationMagnitudeList = stationMagnitudeDao.selectStationMagnitudes(query);
 
-
-
-
-
-        long startTime = System.currentTimeMillis();
-//        List<Earthquake> earthquakes = earthquakeDao.selectEarthQuakes(magnitude, count);
-
-        long endTime = System.currentTimeMillis();
-
-//        System.out.println("My implementation tooks " + ((endTime - startTime))+ " milliseconds");
-
-
-        return new ResponseEntity<Object>(null, HttpStatus.OK);
-
+        return new ResponseEntity<Object>(stationMagnitudeList, HttpStatus.OK);
     }
+
 
 }
