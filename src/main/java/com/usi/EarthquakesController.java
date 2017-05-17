@@ -1,7 +1,9 @@
 package com.usi;
 
+import com.usi.Dao.EarthquakeDao.ArrivalDao;
 import com.usi.Dao.EarthquakeDao.EarthquakeDao;
 import com.usi.Dao.EarthquakeDao.StationMagnitudeDao;
+import com.usi.model.earthquake.Arrival;
 import com.usi.model.earthquake.Earthquake;
 import com.usi.model.earthquake.IngvQuery;
 import com.usi.model.earthquake.StationMagnitude;
@@ -29,11 +31,14 @@ public class EarthquakesController {
     private EarthquakeDao earthquakeDao;
     private SimpleDateFormat sdf;
     private StationMagnitudeDao stationMagnitudeDao;
+    private ArrivalDao arrivalDao;
+
     @Autowired
-    public EarthquakesController(EarthquakeRepository earthQuakeRepository, EarthquakeDao earthquakeDao, StationMagnitudeDao stationMagnitudeDao){
+    public EarthquakesController(EarthquakeRepository earthQuakeRepository, EarthquakeDao earthquakeDao, StationMagnitudeDao stationMagnitudeDao, ArrivalDao arrivalDao){
         this.earthQuakeRepository = earthQuakeRepository;
         this.earthquakeDao = earthquakeDao;
         this.stationMagnitudeDao = stationMagnitudeDao;
+        this.arrivalDao = arrivalDao;
         sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     }
 
@@ -117,6 +122,19 @@ public class EarthquakesController {
         List<StationMagnitude> stationMagnitudeList = stationMagnitudeDao.selectStationMagnitudes(query);
 
         return new ResponseEntity<Object>(stationMagnitudeList, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/api/earthquakes/arrivals/query", method = RequestMethod.GET)
+    public ResponseEntity<?> getArrivals(@RequestParam(value = "earthquake_id") Optional<Integer> earthquakeId,
+                                         @RequestParam(value = "phase", required = false) Optional<String> phase){
+        IngvQuery query = new IngvQuery();
+
+        earthquakeId.ifPresent(value -> query.setId(value));
+        phase.ifPresent(value -> query.setPhase(value));
+
+        List<Arrival> arrivalList = arrivalDao.selectArrivals(query);
+
+        return new ResponseEntity<Object>(arrivalList, HttpStatus.OK);
     }
 
 

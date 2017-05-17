@@ -30,7 +30,7 @@ public class StationMagnitudeDao {
     }
 
     public Query getQuery(IngvQuery request){
-        final String prefix = "select * from station_magnitude s, amplitude a, station st where s.amplitude_station_magnitude = a.amplitude_id and s.station_magnitude_station = st.station_id and ";
+        final String prefix = "select * from station_magnitude s, amplitude a, station st where s.amplitude_station_magnitude = a.amplitude_id and s.station_magnitude_station = st.id_station and ";
         String earthquakeId = "earthquake_id = ? ";
         String magnitude = "and magnitude >= ? and magnitude <= ?;";
 

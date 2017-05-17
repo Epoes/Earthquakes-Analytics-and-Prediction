@@ -38,6 +38,8 @@ public class IngvQuery implements Query {
 
     private int id;
 
+    private String phase;
+
 
 
     public IngvQuery(float minMagnitude, float maxMagnitude, int maxDepth, int minDepth, Calendar startTime, Calendar endTime, int count, LatLng minPoint, LatLng maxPoint, String orderBy, String format) {
@@ -193,6 +195,14 @@ public class IngvQuery implements Query {
 
     public void setFormat(String format) {
         this.format = format;
+    }
+
+    public String getPhase() {
+        return phase;
+    }
+
+    public void setPhase(String phase) {
+        this.phase = phase;
     }
 
     public URL generateBaseUrl(){

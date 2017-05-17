@@ -202,15 +202,15 @@ var stdRequest = {
 // stdRequest.startTime.setDate(stdRequest.startTime.getDate() - 100000000);
 
 function doRequest(request){
-    $.ajax({
-        // url: "http://" + window.location.host + "/api/elevations/query?minele=-4200",
-        url: "http://" + window.location.host + "/api/elevations/query",
-        type: "GET",
-        success: function (data, textStatus, jqXHR) {
-            elevations = data;
-            // drawItaly(elevations);
-        }
-    });
+    // $.ajax({
+    //     // url: "http://" + window.location.host + "/api/elevations/query?minele=-4200",
+    //     url: "http://" + window.location.host + "/api/elevations/query",
+    //     type: "GET",
+    //     success: function (data, textStatus, jqXHR) {
+    //         elevations = data;
+    //         drawItaly(elevations);
+    //     }
+    // });
 
     $.ajax({
         url: "http://" + window.location.host + "/api/earthquakes/query?count=" + request.count + "&start_time="+ formatDateForQuery(request.startTime)
@@ -236,6 +236,7 @@ function getStationMagnitudes(epicentres) {
             url: "http://" + window.location.host + "/api/earthquakes/stationMagnitudes/query?earthquake_id=" + earthquake.id + "&min_magnitude=" + min_magnitude + "&max_magnitude=" + max_magnitude,
             type: "GET",
             success: function (data, textStatus, jqXHR) {
+                console.log(data);
                 drawStationMagnitudes(data);
             }
         })
@@ -261,7 +262,7 @@ function drawStationMagnitudes(data) {
     }
     var primitive = new Cesium.Primitive({
         geometryInstances : primitivesArray,
-        appearance: new Cesium.PerInstanceColorAppearance()
+        appearance: new Cesium.PerInstanceColorAppearance({translucent: false})
     });
 
     scene.primitives.add(primitive);
@@ -291,7 +292,7 @@ function drawEarthquake(data){
     }
     var primitive = new Cesium.Primitive({
         geometryInstances : primitivesArray,
-        appearance : new Cesium.PerInstanceColorAppearance()
+        appearance : new Cesium.PerInstanceColorAppearance({translucent: false})
     });
     // console.log(primitivesArray);
     scene.primitives.add(primitive);

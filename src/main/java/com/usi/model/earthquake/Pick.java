@@ -19,7 +19,7 @@ public class Pick {
     private List<Arrival> arrivals;
 
     @ManyToOne(cascade = CascadeType.PERSIST)
-    @JoinColumn(name = "station_id")
+    @JoinColumn(name = "station_pick")
     Station station;
 
     public Pick() {
