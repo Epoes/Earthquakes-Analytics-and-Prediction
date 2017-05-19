@@ -24,7 +24,6 @@ width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden;
     background-color: rgba(48, 51, 54,1);
 }
 
-.btn:focus {outline:none;}
 
 .bar-item{
     color: white;
@@ -68,6 +67,7 @@ width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden;
     transition: all 300ms cubic-bezier(1.000, 0.000, 0.000, 1.000);
     -webkit-transition: all 300ms cubic-bezier(1.000, 0.000, 0.000, 1.000);
     -moz-transition: all 300ms cubic-bezier(1.000, 0.000, 0.000, 1.000);
+    z-index: 9;
 }
 
 .bar-menu-close{
@@ -235,13 +235,14 @@ width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden;
     bottom: -400px;
     height: 50px;
     background-color: rgba(48, 51, 54,0.5);
-    z-index: 9;
-    position: absolute;
-    left: 180px;
-    right: 90px;
+    z-index: 1;
     transition: all 300ms cubic-bezier(1.000, 0.000, 0.000, 1.000);
     -webkit-transition: all 300ms cubic-bezier(1.000, 0.000, 0.000, 1.000);
     -moz-transition: all 300ms cubic-bezier(1.000, 0.000, 0.000, 1.000);
+    position: fixed;
+    left: 50%;
+    transform: translate(-50%, 0%);
+    width: 50%;
 }
 
 #play-container, #stop-container{
@@ -251,6 +252,7 @@ width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden;
     margin: 0px;
     float: left;
 }
+
 
 #play-button, #pause-button, #stop-button {
     background-color: transparent;
@@ -278,8 +280,65 @@ width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden;
     position: relative;
     top: 15px;
     margin-right: 4px;
+
 }
 
+.color{
+    height: 100%;
+    width: 100%;
+    background: linear-gradient(to right, green, yellow, red);
+    position: relative;
+    border-radius: 25px;
+}
+
+.legend-container{
+    width: 50%;
+    bottom: 25px;
+    height: 54px;
+    position: fixed;
+    left: 50%;
+    transform: translate(-50%, 0%);
+    background-color: rgba(48, 51, 54, 0.5);
+    font-size: 12px;
+    border-radius: 25px;
+    transition: all 300ms cubic-bezier(1.000, 0.000, 0.000, 1.000);
+    -webkit-transition: all 300ms cubic-bezier(1.000, 0.000, 0.000, 1.000);
+    -moz-transition: all 300ms cubic-bezier(1.000, 0.000, 0.000, 1.000);
+}
+
+.color-container{
+    height: 30px;
+    width: 90%;
+    padding-right: 10px;
+    padding-left: 10px;
+    padding-top: 10px;
+    transform: translate(5%, 0%);
+}
+
+#time{
+    margin-left: 6px;
+}
+
+#speed-control{
+    float: left;
+    height: 50px;
+    width: 24px;
+    padding-left: 2px;
+    color: white;
+    padding-top: 14px;
+    padding-bottom: 5px;
+}
+
+#speed-plus:hover{
+    cursor: pointer;
+}
+
+.leggend-text{
+    color: white;
+    position: absolute;
+    display: inline-table;
+    top: 23px;
+}
 
 
 

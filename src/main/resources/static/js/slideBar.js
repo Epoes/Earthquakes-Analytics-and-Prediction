@@ -70,11 +70,26 @@ $(document.body).append("<div class= 'player' id = 'player' >"
                             + "<div id = 'info-container' >"
                                 + "<p id = 'max-time'>/0</p><p id = 'current-time'>0</p>"
                                 + "<p id = 'time'>0</p><p id = 'total-time'>/0</p>"
+                                + "<div id = 'speed-control'>"
+                                    + "<i id = 'speed-plus' class='fa fa-arrow-up' aria-hidden='true'></i>"
+                                    // + "<i id = 'speed-down' class='fa fa-arrow-down' aria-hidden='true'></i>"
+
+                                + "</div>"
                                 + "</div>"
 
                             + "<input class = 'option-slider' id='time-slider' type='text' />"
                         + "</div>"
 );
+
+$(document.body).append("<div class = 'legend-container' >"
+                            + "<div class = 'color-container'> "
+                                + "<div class = 'color' id = 'color1'> </div>"
+                            + "</div>"
+                        + "</div>");
+
+for(var i = 0; i < 7; i++){
+    $("#color1").append("<p class='leggend-text' ></p>");
+}
 
 
 function getSettingsMenuTable(){
@@ -161,9 +176,14 @@ $(document).ready(function () {
 
 });
 
-// var dateFormat = "MMMM Do YYYY, h:mm:ss a";
-var dateFormat = "MMM Do YYYY";
-var timeFormat = "mm:ss"
+
+var shortestDateFormat = "h:mm a, MMM Do YYYY";
+var shortDateFormat = "h a, MMM Do YYYY";
+var mediumDateFormat = "MMM Do YYYY";
+var longDateFormat = "MMM YYYY";
+
+var dateFormat = mediumDateFormat;
+var smallTimeFormat = "mm:ss";
 
 $("#pause-button").hide();
 $("#play-container").click(function(e){
@@ -174,30 +194,56 @@ $("#play-container").click(function(e){
     }
 });
 
+
+
 $("#stop-container").click(function(e){
     resetTimeLaps();
 });
 
+$("#speed-plus").click(function(e){
+    changeTotalTime()
+});
+
 var timeSlider;
-function setupTimeSlider(minDate, maxDate, totalTime){
+function setupPlayer(minDate, maxDate, totalTime, daysPerSeconds){
     timeSlider = $("#time-slider").slider({
                                               id : "slider3",
                                               min : minDate,
                                               max : maxDate,
                                               selection : "before",
-                                              value : minDate
+                                              value : minDate,
+                                              formatter : function(value){
+                                                  return moment(value).format(dateFormat);
+                                              }
                                           });
-    $("#current-time").text(moment(minDate).format(dateFormat));
-    $("#max-time").text(" / " +moment(maxDate).format(dateFormat));
-    $("#total-time").text(moment(totalTime).format(timeFormat));
-    $("#time").text(moment(0).format(timeFormat) + " / ")
+    setMaxMinDate(minDate, maxDate, daysPerSeconds);
+    setTotalTimeText(totalTime);
+    $("#time").text(moment(0).format(smallTimeFormat) + " / ")
 }
 
+function setMaxMinDate(minDate, maxDate, daysPerSeconds){
+    if(daysPerSeconds > 30){
+        dateFormat = longDateFormat;
+    } else if(daysPerSeconds > 0.45){
+        dateFormat = mediumDateFormat;
+    }else if (daysPerSeconds > 0.1){
+        dateFormat = shortDateFormat;
+    }else{
+        dateFormat = shortestDateFormat;
+    }
+    $("#current-time").text(moment(minDate).format(dateFormat));
+    $("#max-time").text(" / " +moment(maxDate).format(mediumDateFormat));
+}
+
+
+function setTotalTimeText(time){
+    $("#total-time").text(moment(time).format(smallTimeFormat));
+}
 
 function setTimeSliderValue(date, time){
     timeSlider.slider('setValue', date);
     $("#current-time").text(moment(date).format(dateFormat));
-    $("#time").text(moment(time).format(timeFormat) + " / ")
+    $("#time").text(moment(time).format(smallTimeFormat) + " / ")
 }
 $('#time-slider').on('slideStart', function (slideEvt) {
     pauseTimeLine();
@@ -208,7 +254,8 @@ $('#time-slider').on('slide', function (slideEvt) {
 });
 
 $('#time-slider').on('slideStop', function (slideEvt) {
-    changeTimeLineCurrentTime(slideEvt.value);
+    pauseTimeLine();
+    changeCurrentTime(slideEvt.value);
     playTimeLine();
 });
 
@@ -297,6 +344,7 @@ $("#time-view-selector").on("change", function (e) {
     if(timeView === "on"){
         setUpTimeLineView();
         timeLineMode = true;
+        closeBarMenu();
     }else {
         clearTimeLaps();
         timeLineMode = false;
@@ -326,16 +374,21 @@ $( ".open-nav" ).click(function(e) {
         clicked.css("background-color", "#282828");
         $(".bar-menu").css("left", "-400px");
         clicked.find(".bar-menu").css("left", "90px");
+
     }
 });
 
 //close menu-bar
 $(".bar-menu-close").click(function() {
-    $(".nav-bar").css("background-color", "");
-    $(".bar-menu").css("left", '');
-    $(".open-nav").css("background-color", "");
+    closeBarMenu();
 });
 
+function closeBarMenu(){
+    $(".nav-bar").css("background-color", "");
+    // $(".bar-menu").css("background-color", 'rgba(48, 51, 54,0.5)');
+    $(".bar-menu").css("left", '');
+    $(".open-nav").css("background-color", "");
+}
 //color selector
 $("#color-selector").on("change",function(e) {
     var colorOption = $("#color-selector option:selected").text();
@@ -343,30 +396,34 @@ $("#color-selector").on("change",function(e) {
 
     if(colorOption === "magnitude"){
         selectedColorInterpolation = interpolateColorByMagnitude;
+        setCaption = setCaptionByMagnitude;
 
     }else if (colorOption === "date"){
         selectedColorInterpolation = interpolateColorByTime;
+        setCaption = setCaptionByDate;
     }else{
         selectedColorInterpolation = interpolateColorByDepth;
+        setCaption = setCaptionByDepth;
     }
 
     updatePointsColor();
 });
 
 $("#view-selector").on("change",function(e) {
-    var colorOption = $("#view-selector option:selected").text();
-
-    if(colorOption === "on"){
-        getCartesianPosition = get3dPosition;
-        doubleClickHandler = doubleClickHandler3d;
-
-    }else {
-        getCartesianPosition = get2dPosition;
-        doubleClickHandler = doubleClickHandler2d;
-    }
-
+    setPointsView();
     updatePointsPosition();
 });
+
+function setPointsView(){
+    var viewMode = $("#view-selector option:selected").text();
+    if (viewMode === "on") {
+        changeOnClickHandler("3dMode");
+        changePositionMode("3dMode");
+    } else {
+        changeOnClickHandler("2dMode")
+        changePositionMode("2dMode");
+    }
+}
 
 $("#resolution-selector").on("change", function(){
     var numb = Number($("#resolution-selector option:selected").val());

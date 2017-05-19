@@ -2,10 +2,12 @@ const green = [0.0,1.0,0.0];
 const yellow = [1.0,1.0,0.0];
 const red = [1.0,0.0,0.0];
 const orange =[1.0, 0.647, 0];
-const purple = [0.0,0.0,1.0];
 
+var minimumMagnitude = 0;
 
 function drawEarthquakes(earthquakes) {
+
+    minimumMagnitude = earthquakes[0].magnitude.magnitude;
     var difference = earthquakes.length - points.length;
     var count;
     var isEnough;
@@ -55,6 +57,9 @@ function resetPoint(earthquake, point, index){
 
 function cancelPointsFrom(idx, pointsList) {
     for (idx; idx < pointsList.length; ++idx) {
+        //TODO: something
+
+        // points.remove(point);
         points.get(idx).show = false;
     }
 }
@@ -97,14 +102,15 @@ function interpolateColorByDepth(inx, e){
 
 }
 
+
 function interpolateColorByMagnitude(inx, e){
     var magnitude = e.magnitude.magnitude;
     if(magnitude <= 3){
-        return interpolate(green[inx], yellow[inx], magnitude/3);
+        return interpolate(green[inx], yellow[inx], normalizeT(magnitude, 0, 3));
     } else if(magnitude <= 6){
-        return interpolate(yellow[inx], red[inx], (magnitude-3)/3);
+        return interpolate(yellow[inx], red[inx], normalizeT(magnitude, 3, 6));
     }else {
-        return interpolate(red[inx], purple[inx], (magnitude-6)/4);
+        return red[inx];
     }
 
 }
@@ -143,15 +149,14 @@ function getBestPerformanceNearFarScalar(magnitude, index, count){
 
 var maxLongTime;
 var minLongTime;
-var interval;
 var step;
 
 function setUpDateRange(earthquakes){
     if(earthquakes.length > 0 ) {
         maxLongTime = earthquakes[0].origin.time;
         minLongTime = earthquakes[earthquakes.length - 1].origin.time;
-        interval = maxLongTime - minLongTime;
-        step = interval / 3;
+        timeInterval = maxLongTime - minLongTime;
+        step = timeInterval / 3;
     }
 }
 
@@ -182,6 +187,84 @@ function setUpDepth(earthquakes){
 
 }
 
+function setCaptionByMagnitude() {
+    var i = 0;
+    $('#color1').children().each(function () {
+        $(this).text(i + "");
+        if (i > 0) {
+            $(this).css("left", 16.66 *i + "%");
+            $(this).css("transform","translate(-50%, 0%)");
+        }
+        i++;
+    });
+}
+
+function setCaptionByDepth() {
+    var i = 0;
+    var step;
+    var precision = 0;
+
+    if(depthInterval == 0){
+        step = 1000;
+    }else {
+        step = depthInterval / 6;
+        if(step < 1000){
+            precision = 1;
+        }
+    }
+    $('#color1').children().each(function () {
+        var depth = (minDepth + (step * i))/1000;
+        $(this).text((round(depth, precision)) + " km");
+        $(this).css("left", 16.66 * i + "%");
+        $(this).css("transform","translate(-50%, 0%)");
+        i++;
+    });
+}
+
+const msPerDay = 86400000;
+function setCaptionByDate() {
+
+    var legnth = 4;
+    var step = timeInterval/legnth;
+    var dateFormat = mediumDateFormat;
+    if (timeInterval <= 2*msPerDay){
+        dateFormat = "h:mm a"
+    }else if(timeInterval <= legnth*msPerDay){
+        dateFormat = "h a, MMM Do"
+    }else if(timeInterval <= 366*msPerDay){
+        dateFormat = mediumDateFormat;
+    }else if(timeInterval <= 2920*msPerDay){ //8 years
+        dateFormat = "MMM YYYY"
+    }else{
+        dateFormat = "YYYY";
+    }
+    var children = $('#color1').children();
+    console.log(children);
+
+    $(children[0]).text(moment(minLongTime).format(mediumDateFormat));
+    $(children[4]).text(moment(maxLongTime).format(mediumDateFormat));
+
+
+    $(children[0]).css("left","0%");
+    $(children[0]).css("transform","translate(-35%, 0%)");
+    $(children[4]).css("left","100%");
+    $(children[4]).css("transform","translate(-65%, 0%)");
+
+
+    var i = 1;
+    children.slice(1,4).each(function () {
+        var date = minLongTime + (step * i);
+        $(this).text(moment(date).format(dateFormat));
+        $(this).css("left", 25 * i + "%");
+        i++;
+    });
+
+    children.slice(5,7).each(function () {
+        $(this).text("");
+    });
+
+}
+
 
 function get3dPosition(e){
     return Cesium.Cartesian3.fromDegrees(e.origin.longitude, e.origin.latitude, (maxDepth - e.origin.depth));
@@ -193,18 +276,14 @@ function get2dPosition(e){
 
 //settings
 var selectedColorInterpolation = interpolateColorByMagnitude;
+var setCaption = setCaptionByMagnitude;
 var getCartesianPosition = get2dPosition;
 var doubleClickHandler = doubleClickHandler2d;
-
-
 
 var pickedPoint = undefined;
 var pickedEarthquake = undefined;
 var selectedPoint = undefined;
-// var pickedIndex = 0;
 var handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
-
-
 var singleClickAction = singleClickUnderlineEarthquake;
 
 //Single click
@@ -215,8 +294,8 @@ handler.setInputAction(function (click) {
 
 function singleClickUnderlineEarthquake(click){
     resetCameraRotationCenter();
+    closeBarMenu();
     var pickedObject = viewer.scene.pick(click.position);
-
     //click on nothing
     if(pickedObject === undefined){
         resetLastPoint();
@@ -247,7 +326,6 @@ function resetLastPoint(){
         selectedPoint.show = false;
         pickedPoint = undefined;
         pickedEarthquake = undefined;
-        pickedIndex = 0;
     }
 }
 
@@ -265,6 +343,12 @@ function underLinePoint(){
 
 }
 
+function hideAllPoints(){
+    for(var i =0; i < earthquakes.length; i++){
+        earthquakes[i].primitivePoint.show = false;
+    }
+}
+
 function clonePoint(primitivePoint, clone){
     clone.position = primitivePoint.position.clone();
     clone.color =  primitivePoint.color.clone();
@@ -273,11 +357,9 @@ function clonePoint(primitivePoint, clone){
 }
 
 const zoomFactor = 1.3;
-
-var doubleClickAction = doubleClickHandler;
 //Double click
 handler.setInputAction(function(click) {
-    doubleClickAction(click);
+    doubleClickHandler(click);
 
 }, Cesium.ScreenSpaceEventType.LEFT_DOUBLE_CLICK);
 
@@ -324,8 +406,6 @@ function doubleClickHandler3d(click){
         }
         changeCameraRotationCenter(e, pointHeight, cameraHeight);
     }
-
-
 }
 
 function resetCameraRotationCenter(){
@@ -348,7 +428,7 @@ function updatePointsColor(){
         earthquakes[i].primitivePoint.color = getCesiumColor(earthquakes[i]);
     }
     underLinePoint(pickedPoint, pickedEarthquake);
-
+    setCaption();
 }
 
 function updatePointsPosition(){
@@ -379,6 +459,35 @@ function addSelectedPoint(){
       show : false,
       scaleByDistance : getScaleByDistance()
   });
+}
+
+function changePositionMode(mode){
+    switch (mode){
+        case "3dMode":
+            getCartesianPosition = get3dPosition;
+            break;
+        case "2dMode":
+            getCartesianPosition = get2dPosition;
+
+    }
+}
+
+function changeOnClickHandler(mode){
+    if(!play) {
+        switch (mode) {
+            case "3dMode":
+                doubleClickHandler = doubleClickHandler3d;
+                singleClickAction = singleClickUnderlineEarthquake;
+                break;
+            case "2dMode":
+                doubleClickHandler = doubleClickHandler2d;
+                singleClickAction = singleClickUnderlineEarthquake;
+                break;
+            case "playerMode":
+                doubleClickHandler = function () {};
+                singleClickAction = closeBarMenu;
+        }
+    }
 }
 
 

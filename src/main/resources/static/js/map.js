@@ -119,23 +119,26 @@ function doRequest(request, callback){
 
         type: "GET",
         success: function (data, textStatus, jqXHR) {
-            earthquakes = data;
-            setUpDepth(earthquakes);
-            setUpDateRange(earthquakes);
-            sortByMagnitude(earthquakes);
+            if(data.length != 0) {
 
-            //pick control
-            closeInfoBox();
-            removeSelectedPoint();
-            resetCameraRotationCenter();
+                earthquakes = data;
+                setUpDepth(earthquakes);
+                setUpDateRange(earthquakes);
+                sortByMagnitude(earthquakes);
 
+                //pick control
+                closeInfoBox();
+                removeSelectedPoint();
+                resetCameraRotationCenter();
+                setCaption();
+                drawEarthquakes(earthquakes);
 
-            drawEarthquakes(earthquakes);
-
-            if(timeLineMode){
-                resetTimeLaps();
-                setUpTimeLineView();
+                if (timeLineMode) {
+                    resetTimeLaps();
+                    setUpTimeLineView();
+                }
             }
+
 
             if(callback !== undefined){
                 callback();
@@ -144,249 +147,7 @@ function doRequest(request, callback){
     });
 }
 
-var minimumTime = 30000;
-var startTime;
-var totalTime;
 
-function changeTotalTime(time){
-    pauseTimeLine();
-    totalTime = time;
-    currentTime = timePercent * totalTime;
-    playTimeLine();
-}
-
-function getIndexFromTimes(minimumTime){
-    for (var i = 0; i < possibleTimesInSeconds.length; i++){
-        if(minimumTime < possibleTimesInSeconds[i]){
-            return i;
-        }
-    }
-}
-
-function setUpTimeLineView(){
-    $("#player").css("bottom", "25px");
-    timeInterval = maxLongTime - minLongTime;
-    resetLastPoint();
-    closeInfoBox();
-    hidePoints(0, earthquakes.length);
-    sortByDate(earthquakes);
-
-    var minimumTime = computeMinimumTime();
-    var minimumIndex = getIndexFromTimes(minimumTime);
-    totalTime = possibleTimesInSeconds[minimumIndex]*1000;
-
-
-
-    setupTimeSlider(minLongTime, maxLongTime, totalTime);
-    var msPassedPerSecond =  ((maxLongTime-minLongTime)/totalTime)*1000;
-    console.log("total Animation Time In Seconds : " + totalTime/1000);
-    console.log("real days time passed per second : " + msPassedPerSecond/(1000*60*60*24));
-    console.log("earthquakes per second : " + earthquakes.length/(totalTime/1000));
-    // playTimeLine();
-}
-
-
-function changeTimeLineCurrentTime(date){
-    var realTimePercent = normalizeT(date, minLongTime, maxLongTime);
-    currentTime = realTimePercent*totalTime;
-    hidePoints(last, next);
-    next = findIndexFromDate(date);
-    last = next;
-    globalCounter = 0;
-
-}
-
-function  findIndexFromDate(date){
-    for(var i = 0; i < earthquakes.length; i++){
-        if(earthquakes[i].origin.time > date){
-            return i;
-        }
-    }
-
-    return earthquakes.length;
-}
-
-//TODO: working on pick obj in pause
-
-function pauseTimeLine(){
-    if(play) {
-        $("#play-button").show();
-        $("#pause-button").hide();
-        // singleClickAction = singleClickUnderlineEarthquake;
-        // doubleClickAction = doubleClickHandler;
-        pauseTime = new Date().getTime();
-        clearInterval(timer);
-        play = false;
-    }
-}
-
-function playTimeLine(){
-    if(!play) {
-        $("#play-button").hide();
-        $("#pause-button").show();
-        singleClickAction = function(){};
-        doubleClickAction = function(){};
-        play = true;
-        startTime = new Date().getTime() - currentTime;
-        timer = setInterval(showTimeLine.bind(null, startTime, totalTime ), 16); //60fps
-    }
-}
-var play = false;
-var pauseTime = 0;
-var timer;
-var globalCounter = 0;
-var next = 0;
-var last = 0;
-var currentTime = 0;
-var timeInterval;
-var timePercent;
-var possibleTimesInSeconds = [30, 60, 120, 300, 600, 1200];
-
-function showEarthquakes(currentTime) {
-    timePercent = normalizeT(currentTime, 0, totalTime);
-    var realTimePassed = timePercent * (timeInterval) + minLongTime;
-    setTimeSliderValue(realTimePassed, currentTime);
-
-    var nextEarthquake = earthquakes[next];
-    var nextPoint = nextEarthquake.primitivePoint;
-
-    while (next < earthquakes.length && timePercent >= normalizeT(nextEarthquake.origin.time, minLongTime, maxLongTime)) {
-        nextPoint.translucencyByDistance = undefined;
-        nextPoint.show = true;
-        nextEarthquake.viewTime = currentTime;
-        globalCounter++;
-        next++;
-        if (next < earthquakes.length) {
-            nextEarthquake = earthquakes[next];
-            nextPoint = nextEarthquake.primitivePoint;
-        }
-
-    }
-}
-function resetPoint(earthquake, point, index) {
-    earthquake.primitivePoint = point;
-    var id = earthquake.id;
-
-    point.position = getCartesianPosition(earthquake);
-    point.id = id;
-    point.color = getCesiumColor(earthquake);
-    point.pixelSize = getPixelSize(earthquake);
-    point.translucencyByDistance = magnitudeNearFarScalar(earthquake, index, earthquakes.length);
-    point.show = true;
-}
-
-function animateEarthquakes(currentTime){
-
-    for(var i = last; i < next; i++){
-        var lastEarthquake = earthquakes[i];
-        var lastPoint = lastEarthquake.primitivePoint;
-        var earthquakeTime = 1000 * lastEarthquake.magnitude.magnitude;
-        var viewTime = currentTime - lastEarthquake.viewTime;
-        var showTime = earthquakeTime/4;
-
-        //TODO: use a linkList
-        if(viewTime > earthquakeTime){
-            cancelPoint(last + (i-last));
-            if(i == last) {
-                last++;
-                globalCounter--;
-            }
-        }else if(viewTime < showTime){
-            showPoint(lastEarthquake, lastPoint, viewTime, 0,  showTime);
-        }else if(viewTime > (earthquakeTime - showTime)){
-            hidePoint(lastEarthquake, lastPoint, viewTime, (earthquakeTime - showTime), earthquakeTime);
-        }
-
-    }
-}
-
-function hidePoint(e, point, currentTime, startTime, totalTime){
-    var timePercent = normalizeT(currentTime, startTime, totalTime);
-    point.pixelSize = getPixelSize(e) * (1-timePercent);
-}
-
-function showPoint(e, point, currentTime, startTime, totalTime){
-    var timePercent = normalizeT(currentTime, startTime, totalTime);
-    point.pixelSize = getPixelSize(e) * timePercent;
-};
-
-function showTimeLine(startTime, totalTime){
-    currentTime = new Date().getTime() - startTime;
-
-    if(currentTime > totalTime){
-        setTimeSliderValue(maxLongTime, totalTime);
-        if(globalCounter == 0) {
-            resetTimeLaps();
-        }
-    }else{
-        showEarthquakes(currentTime);
-    }
-
-    animateEarthquakes(currentTime);
-}
-
-
-
-var bound = 1000;
-
-function computeMinimumTime(){
-    var maxEarthquakePerSecond;
-    if(bound > earthquakes.length){
-        maxEarthquakePerSecond = earthquakes.length
-    }else{
-        maxEarthquakePerSecond = bound;
-    }
-    return (earthquakes.length/maxEarthquakePerSecond);
-
-
-}
-
-function clearTimeLaps(){
-    resetTimeLaps();
-    restorePointsAfterTimeLine();
-    $("#player").css("bottom", "-400px");
-}
-
-function resetTimeLaps(){
-    clearInterval(timer);
-    hidePoints(0, earthquakes.length);
-    setTimeSliderValue(minLongTime);
-    play = false;
-    pauseTime = 0;
-    globalCounter = 0;
-    currentTime = 0;
-    setTimeSliderValue(minLongTime, currentTime);
-    next = 0;
-    last = 0;
-    currentTime = 0;
-    $("#pause-button").hide();
-    $("#play-button").show();
-}
-
-function cancelPoint(index){
-    earthquakes[index].primitivePoint.show = false;
-}
-
-function restorePointsAfterTimeLine(){
-        sortByMagnitude(earthquakes);
-        singleClickAction = singleClickUnderlineEarthquake;
-        doubleClickAction = doubleClickHandler;
-        for (var i = 0; i < earthquakes.length; i++) {
-            earthquakes[i].primitivePoint.translucencyByDistance =
-                magnitudeNearFarScalar(earthquakes[i], i, earthquakes.length);
-            earthquakes[i].primitivePoint.pixelSize = getPixelSize(earthquakes[i])
-            earthquakes[i].primitivePoint.show = true;
-
-        }
-
-}
-
-
-function hidePoints(begin, end){
-    for(var i =begin; i < end; i++){
-        earthquakes[i].primitivePoint.show = false;
-    }
-}
 
 
 
