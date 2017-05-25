@@ -6,26 +6,27 @@ var timer;
 var globalCounter = 0;
 var next = 0;
 var currentTime = 0;
-var timeInterval;
-var timePercent;
+var timeInterval = 0;
+var timePercent = 0;
 var possibleTimesInSeconds = [30, 60, 120, 300, 600, 1200, 1800, 3599];
 var dict = {};
 var out = 0;
 var bound = 1000; //max number of earthquakes per second.
 
+
+
+
+
 function setUpTimeLineView(){
-    showPlayer();
     timeInterval = maxLongTime - minLongTime;
     resetLastPoint();
     closeInfoBox();
-    hideAllPoints();
     sortByDate(earthquakes);
     setTotalTime();
     var daysPerSeconds = getDaysPerSeconds();
+    console.log(totalTime);
     setupPlayer(minLongTime, maxLongTime, totalTime, daysPerSeconds);
-
-    //Auto play
-    playTimeLine();
+    setTimeSliderValue(minLongTime, 0);
 }
 
 function pauseTimeLine(){
@@ -39,6 +40,11 @@ function pauseTimeLine(){
 
 function playTimeLine(){
     if(!play) {
+        if(timeLineMode === false){
+            setUpTimeLineView();
+            hideAllPoints();
+            timeLineMode = true;
+        }
         changeOnClickHandler("playerMode");
         play = true;
         switchPlayerBottom();
@@ -55,7 +61,7 @@ function showTimeLine(startTime, totalTime){
     if(currentTime > totalTime){
         setTimeSliderValue(maxLongTime, totalTime);
         if(globalCounter == 0) {
-            resetTimeLaps();
+            clearTimeLaps();
             return;
         }
     }else{
@@ -201,10 +207,15 @@ function getDaysPerSeconds(){
     return msPassedPerSecond/(86400000);
 }
 
+
+
 function setTotalTime(){
     var minimumTime = computeMinimumTime();
     minimumTimeIndex = getIndexFromTimes(minimumTime);
-    totalTime = possibleTimesInSeconds[minimumTimeIndex] * 1000;
+    if(totalTime < possibleTimesInSeconds[minimumTimeIndex] * 1000){
+        totalTime = possibleTimesInSeconds[minimumTimeIndex] * 1000;
+    }
+
 }
 
 function computeMinimumTime(){
@@ -258,7 +269,7 @@ function clearTimeLaps(){
     resetTimeLaps();
     restorePointsAfterTimeLine();
     setPointsView();
-    hidePlayer();
+    timeLineMode = false;
 }
 
 function resetTimeLaps(){
@@ -275,6 +286,10 @@ function resetTimeLaps(){
     next = 0;
     currentTime = 0;
     switchPlayerBottom();
+    startTime = 0;
+    minimumTimeIndex = 0;
+    timeInterval = 0;
+    timePercent = 0;
 }
 
 function restorePointsAfterTimeLine(){

@@ -223,13 +223,12 @@ function setCaptionByDepth() {
 
 const msPerDay = 86400000;
 function setCaptionByDate() {
-
-    var legnth = 4;
-    var step = timeInterval/legnth;
+    const length = 4;
+    var step = timeInterval/length;
     var dateFormat = mediumDateFormat;
     if (timeInterval <= 2*msPerDay){
         dateFormat = "h:mm a"
-    }else if(timeInterval <= legnth*msPerDay){
+    }else if(timeInterval <= length*msPerDay){
         dateFormat = "h a, MMM Do"
     }else if(timeInterval <= 366*msPerDay){
         dateFormat = mediumDateFormat;
@@ -239,7 +238,6 @@ function setCaptionByDate() {
         dateFormat = "YYYY";
     }
     var children = $('#color1').children();
-    console.log(children);
 
     $(children[0]).text(moment(minLongTime).format(mediumDateFormat));
     $(children[4]).text(moment(maxLongTime).format(mediumDateFormat));
@@ -488,6 +486,76 @@ function changeOnClickHandler(mode){
                 singleClickAction = closeBarMenu;
         }
     }
+}
+
+function changeColorOption(colorOption){
+    if(colorOption === "magnitude"){
+        selectedColorInterpolation = interpolateColorByMagnitude;
+        setCaption = setCaptionByMagnitude;
+
+    }else if (colorOption === "date"){
+        selectedColorInterpolation = interpolateColorByTime;
+        setCaption = setCaptionByDate;
+    }else if  (colorOption === "depth"){
+        selectedColorInterpolation = interpolateColorByDepth;
+        setCaption = setCaptionByDepth;
+    }
+
+    updatePointsColor();
+}
+
+const colorMode = ["magnitude", "date", "depth"];
+var selectedColorIndex = 0;
+
+function nextColorMode(){
+    selectedColorIndex++;
+    if(selectedColorIndex == colorMode.length){
+        selectedColorIndex = 0;
+    }
+
+    changeColorOption(colorMode[selectedColorIndex]);
+    $("#color-selector select").val(selectedColorIndex).change();
+}
+
+function prevColorMode(){
+    selectedColorIndex--;
+    if(selectedColorIndex == -1){
+        selectedColorIndex = colorMode.length - 1;
+    }
+
+    changeColorOption(colorMode[selectedColorIndex]);
+    $("#color-selector select").val(selectedColorIndex).change();
+}
+
+var timeLineMode = false;
+function changeView(view){
+    switch (view){
+        case "timeline":
+            if(!timeLineMode) {
+                setUpTimeLineView();
+            }
+            showPlayer();
+            break;
+        case "legend":
+            hidePlayer();
+            break;
+    }
+    $("#arrow-footer-up").attr("class", iconClasses[footerIndex]);
+}
+
+const footerViews = ["legend", "timeline"];
+var footerIndex = 0;
+var iconClasses = ["fa fa-video-camera", "fa fa-info"];
+
+function nextFooterView(){
+    footerIndex++;
+    if(footerIndex == footerViews.length){
+        footerIndex = 0;
+    }
+    changeView(footerViews[footerIndex]);
+    $("#time-view-selector select").val(footerIndex).change();
+
+
 }
 
 

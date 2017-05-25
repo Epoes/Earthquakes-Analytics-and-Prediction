@@ -54,7 +54,12 @@ $(document.body).append("<div class='nav-bar'> "
                             + "<div class = 'bar-menu' id = 'info-menu'> "
                                 +"<i class='fa fa-times bar-menu-close' aria-hidden='true'></i>"
                                 + "<h3 class = bar-menu-title>Info</h3>"
-                                + "<div class = menu-body id = 'info-menu-body'></div>"
+                                + "<div class = menu-body id = 'info-menu-body'>"
+                                    + "<div class = settings-container id = 'cesium-credits'>"
+
+                                    + "</div>"
+                                + "</div>"
+
                         + "</div>"
                         + "</div>"
 );
@@ -83,32 +88,52 @@ $(document.body).append("<div class= 'player' id = 'player' >"
 
 $(document.body).append("<div class = 'legend-container' >"
                             + "<div class = 'color-container'> "
+                                + "<div class='arrow-container' id = left-arrow-container>"
+                                    + "<i class='fa fa-arrow-circle-left' id = 'arrow-color-left' aria-hidden='true'></i>"
+                                +"</div>"
                                 + "<div class = 'color' id = 'color1'> </div>"
+                                + "<div class='arrow-container' id = 'right-arrow-container'>"
+                                    + "<i class='fa fa-arrow-circle-right' id = 'arrow-color-right' aria-hidden='true'></i>"
+                                +"</div>"
+
                             + "</div>"
+
                         + "</div>");
 
 for(var i = 0; i < 7; i++){
     $("#color1").append("<p class='leggend-text' ></p>");
 }
 
+$(document.body).append("<div id = 'footer-switch'>"
+                        + "<div class='arrow-container' id = 'top-arrow-container'>"
+                            + "<i class='fa fa-video-camera' id = 'arrow-footer-up' aria-hidden='true'></i>"
+                        + "</div>"
+                        + "</div>");
+
 
 function getSettingsMenuTable(){
     return  "<div class = menu-body>"
             +"<div class = settings-container >"
-            +"<p class ='settings-title'>color by</p>"
+            + "<div class = 'settings-description'>"
+                +"<h1 class ='settings-title'>Color</h1>"
+                + "<p class = 'settings-text'>View earthquakes using different color interpolation</p>"
+            +"</div>"
             + "<div class='menu-select-box' id = 'color-selector'>"
-            + "<select class = 'menu-selector selectpicker'  data-width='auto' >"
-            +" <option>magnitude</option>"
-            + "<option>date</option>"
-            + "<option>depth</option>"
+            + "<select class = 'menu-selector selectpicker'  data-width='100px' >"
+                +" <option value = '0'>magnitude</option>"
+                + "<option value = '1'>date</option>"
+                + "<option value = '2'>depth</option>"
             + "</select>"
             + "</div>"
             +"</div>"
 
             +"<div class = settings-container >"
-            +"<p class = 'settings-title'>3d view</p>"
+            + "<div class = 'settings-description'>"
+                +"<h1 class ='settings-title'>3d mode</h1>"
+                + "<p class = 'settings-text'>View earthquakes depth. The higher is a point, the lower is it's depth </p>"
+            +"</div>"
             + "<div class='menu-switch-box ' id = 'view-selector'>"
-            + "<select class = 'menu-selector selectpicker' data-width='auto'>"
+            + "<select class = 'menu-selector selectpicker' data-width='100px'>"
             +"<option>off</option>"
             + "<option>on</option>"
             + "</select>"
@@ -116,19 +141,24 @@ function getSettingsMenuTable(){
             +"</div>"
 
             +"<div class = settings-container >"
-            +"<p class = 'settings-title'>time view</p>"
+            + "<div class = 'settings-description'>"
+            +"<h1 class ='settings-title'>View</h1>"
+            + "<p class = 'settings-text'>Switch between legend and player footer</p>"
+            +"</div>"
             + "<div class='menu-switch-box ' id = 'time-view-selector'>"
-            + "<select class = 'menu-selector selectpicker' data-width='auto'>"
-            +"<option>off</option>"
-            + "<option>on</option>"
+            + "<select class = 'menu-selector selectpicker' data-width='100px'>"
+            +"<option value = '0' >legend</option>"
+            + "<option value = '1' >timeline</option>"
             + "</select>"
             + "</div>"
             +"</div>"
-
             +"<div class = settings-container >"
-            +"<p class ='settings-title'>Resolution</p>"
+            + "<div class = 'settings-description'>"
+            +"<h1 class ='settings-title'>Resolution</h1>"
+            + "<p class = 'settings-text'>Change the screen resolution. lower to improves performance</p>"
+            +"</div>"
             + "<div class='menu-select-box' id = 'resolution-selector'>"
-            + "<select class = 'menu-selector selectpicker'  data-width='auto' >"
+            + "<select class = 'menu-selector selectpicker'  data-width='100px' >"
             +" <option value = '2' >very high</option>"
             + "<option value = '1.5' >high</option>"
             + "<option value = '1' >medium</option>"
@@ -138,9 +168,12 @@ function getSettingsMenuTable(){
             + "</div>"
             +"</div>"
             +"<div class = settings-container >"
-            +"<p class ='settings-title'>FPS</p>"
+            + "<div class = 'settings-description'>"
+            +"<h1 class ='settings-title'>FPS</h1>"
+            + "<p class = 'settings-text'>Change the frame per second. Lower to improve battery life</p>"
+            +"</div>"
             + "<div class='menu-select-box' id = 'frames-selector'>"
-            + "<select class = 'menu-selector selectpicker'  data-width='auto' >"
+            + "<select class = 'menu-selector selectpicker'  data-width='100px' >"
             +" <option value = '60' >60 fps</option>"
             + "<option value = '30' >30 fps</option>"
             + "<option value = '25' >25 fps</option>"
@@ -185,6 +218,22 @@ var longDateFormat = "MMM YYYY";
 var dateFormat = mediumDateFormat;
 var smallTimeFormat = "mm:ss";
 
+
+$("#right-arrow-container").click(function(){
+    nextColorMode();
+});
+
+$("#left-arrow-container").click(function(){
+    prevColorMode();
+});
+
+$("#top-arrow-container").click(function(){
+
+    nextFooterView();
+});
+
+
+
 $("#pause-button").hide();
 $("#play-container").click(function(e){
     if(!play){
@@ -197,7 +246,7 @@ $("#play-container").click(function(e){
 
 
 $("#stop-container").click(function(e){
-    resetTimeLaps();
+    clearTimeLaps();
 });
 
 $("#speed-plus").click(function(e){
@@ -336,19 +385,12 @@ function setUpPointsCoordinates() {
 
 
 /* DEFINE INPUT ACTION */
-
-var timeLineMode = false;
 $("#time-view-selector").on("change", function (e) {
-    var timeView = $("#time-view-selector option:selected").text();
+    var view = $("#time-view-selector option:selected").text();
+    var value =  $("#time-view-selector option:selected").val();
+    footerIndex = value;
+    changeView(view);
 
-    if(timeView === "on"){
-        setUpTimeLineView();
-        timeLineMode = true;
-        closeBarMenu();
-    }else {
-        clearTimeLaps();
-        timeLineMode = false;
-    }
 });
 
 $('#depth-slider').on('slideStop', function (slideEvt) {
@@ -392,21 +434,9 @@ function closeBarMenu(){
 //color selector
 $("#color-selector").on("change",function(e) {
     var colorOption = $("#color-selector option:selected").text();
-    var isChange = true;
-
-    if(colorOption === "magnitude"){
-        selectedColorInterpolation = interpolateColorByMagnitude;
-        setCaption = setCaptionByMagnitude;
-
-    }else if (colorOption === "date"){
-        selectedColorInterpolation = interpolateColorByTime;
-        setCaption = setCaptionByDate;
-    }else{
-        selectedColorInterpolation = interpolateColorByDepth;
-        setCaption = setCaptionByDepth;
-    }
-
-    updatePointsColor();
+    var optionNumber = $("#color-selector option:selected").val();
+    selectedColorIndex = optionNumber;
+    changeColorOption(colorOption);
 });
 
 $("#view-selector").on("change",function(e) {

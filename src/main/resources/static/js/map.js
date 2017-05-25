@@ -35,7 +35,7 @@ var viewer = new Cesium.Viewer('cesiumContainer', {
     timeline : false,
 
     //credits:
-    creditContainer : "info-menu-body",
+    creditContainer : "cesium-credits",
 
     terrainExaggeration : 1,
 
@@ -132,11 +132,10 @@ function doRequest(request, callback){
                 resetCameraRotationCenter();
                 setCaption();
                 drawEarthquakes(earthquakes);
-
-                if (timeLineMode) {
-                    resetTimeLaps();
-                    setUpTimeLineView();
+                if(timeLineMode) {
+                    clearTimeLaps();
                 }
+                setUpTimeLineView();
             }
 
 
