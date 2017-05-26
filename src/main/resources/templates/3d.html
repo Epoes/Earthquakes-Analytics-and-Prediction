@@ -25,16 +25,102 @@
     <link rel="icon" type="image/png" sizes="96x96" href="images/favicons/favicon-96x96.png"/>
     <link rel="icon" type="image/png" sizes="16x16" href="images/favicons/favicon-16x16.png"/>
     <link rel="manifest" href="images/favicons/manifest.json"/>
-    <link href="css/map.css" rel="stylesheet" type="text/css"/>
+    <link href="css/3d.css" rel="stylesheet" type="text/css"/>
     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css"/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous"/>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous"/>
     <title>Visual Earthquakes</title>
     <script src="Cesium/Build/Cesium/Cesium.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 </head>
 <body>
-<div id="cesiumContainer"></div>
+<!--nav sidebar -->
+<aside>
+    <nav class="navbar navbar-inverse sidebar navbar-fixed-top" role="navigation">
+        <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet"/>
+
+        <div class="nav-side-menu">
+            <div class="brand">Visual Earthquakes</div>
+            <i class="fa fa-bars fa-2x toggle-btn" data-toggle="collapse" data-target="#menu-content"></i>
+
+            <div class="menu-list">
+
+                <ul id="menu-content" class="menu-content collapse out">
+                    <li data-toggle="collapse" data-target="#products" class="collapsed ">
+                        <a href="#">
+                            Query <i class="fa fa-search fa-lg btn pull-right" style="margin-top:5px"></i>
+                        </a>
+                    </li>
+
+                    <ul class="sub-menu collapse" id="products">
+                        <li class="list-group-item"><a href="#" id="generate-italy">Generate Italy</a></li>
+                        <li><a href="#">General</a></li>
+
+                    </ul>
+
+
+                    <li data-toggle="collapse" data-target="#service" class="collapsed">
+                        <a href="#"> Services<i class="fa fa-globe fa-lg btn pull-right" style="margin-top:5px"></i> </a>
+                    </li>
+                    <ul class="sub-menu collapse" id="service">
+                        <li>New Service 1</li>
+                        <li>New Service 2</li>
+                        <li>New Service 3</li>
+                    </ul>
+
+
+                    <li data-toggle="collapse" data-target="#new" class="collapsed">
+                        <a href="#"> New <i class="fa fa-car fa-lg btn pull-right" style="margin-top:5px"></i></a>
+                    </li>
+                    <ul class="sub-menu collapse" id="new">
+                        <li>New New 1</li>
+                        <li>New New 2</li>
+                        <li>New New 3</li>
+                    </ul>
+
+
+                    <li data-toggle="collapse" data-target="#about-us" class="collapsed">
+                        <a href="#">
+                            About Us<i class="fa fa-users fa-lg btn pull-right" style="margin-top:5px"></i>
+                        </a>
+                    </li>
+                    <ul class="sub-menu collapse" id="about-us">
+                        <li class="list-group-item">
+                            <div id="about-us-li">
+                                Conceived by <a href="http://www.inf.usi.ch/faculty/lanza/" target="_blank" style="padding-left: 0px;"> Prof. Dr. Michele Lanza </a> and <a href="http://www.inf.usi.ch/postdoc/mocci/" style="padding-left: 0px;" target="_blank"> Dr. Andrea Mocci</a>
+                                <br/>
+                                Developed by Leonardo Iandiorio
+                                <br/>
+                                <a href="http://reveal.inf.usi.ch/" target="_blank">
+                                    <img id="reveal-logo" src="images/REVEALogo-white.png"/>
+                                </a>
+                                <a href="http://www.inf.usi.ch/" target="_blank">
+                                    <img id="usi-logo" src="images/logo_usi.png"/>
+                                </a>
+                            </div>
+                        </li>
+                    </ul>
+
+                    <li data-toggle="collapse" data-target="#credits" class="collapsed">
+                        <a href="#">
+                             Credits<i class="fa fa-info-circle fa-lg btn pull-right" style="margin-top:5px"></i>
+                        </a>
+                    </li>
+                    <ul class="sub-menu collapse" id="credits">
+                        <li class="list-group-item" id="credit-container"></li>
+                    </ul>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+</aside>
+        <div id="cesiumContainer"></div>
+
 </body>
 
 <script src="js/voxels.js"></script>
