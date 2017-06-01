@@ -395,3 +395,8 @@ body {
 #usi-logo{
     width: 30%;
 }
+
+.menu-icon{
+    margin-top: 5px;
+    margin-right: -5px;
+}

@@ -251,5 +251,19 @@ function htmlbodyHeightUpdate(){
 
 }
 
+function setLimitByMagnitude(magnitude){
+    switch(true){
+        case magnitude < 4:
+            return 0;
+        case magnitude < 5:
+            return 1;
+        case magnitude < 6:
+            return 2;
+        case magnitude >= 6:
+            return 3;
+        default:
+            return 0;
+    }
+}
 
 

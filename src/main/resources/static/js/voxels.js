@@ -46,13 +46,31 @@ var viewer2= new Cesium.Viewer('cesiumContainer', {
 
 var scene = viewer2.scene;
 
+
 scene.debugShowFramesPerSecond = true;
 
-var elevations;
-var epicentres;
-var stationMagnitudes;
-var stationMagnitudes2;
-var arrivals;
+var elevations = [];
+var northElevations = [];
+var centreElevations = [];
+var southElevations = [];
+var epicentres = [];
+var stationMagnitudes = [];
+var stationMagnitudes2 = [];
+var arrivals = [];
+var nextStation = 0;
+var nextDistance = 0;
+var maxDistance = 0;
+var oldDistance = 0;
+var currentTime = 0;
+var startTime = 0;
+var endTime = 30000;
+var elevationPoints = [];
+
+var italyPartition = 0;
+var italyDistance;
+var italyMax;
+var italyMin;
+var offset = 2;
 
 $(document).ready(function () {
     doRequest(stdRequest);
@@ -65,9 +83,32 @@ $(document).ready(function () {
         htmlbodyHeightUpdate()
     });
 });
+$("#generate-full-italy").click(function() {
+    doItalyRequest(elevations)
+});
 
-$("#generate-italy").click(function() {
-    doItalyRequest()
+$("#generate-north-italy").click(function() {
+    maxLon = 19;
+    minLon = 5;
+    maxLat = 48;
+    minLat = 44;
+    doItalyRequest(northElevations, maxLat, minLat, maxLon, minLon)
+});
+
+$("#generate-centre-italy").click(function() {
+    maxLon = 19;
+    minLon = 5;
+    maxLat = 44;
+    minLat = 41.7;
+    doItalyRequest(centreElevations, maxLat, minLat, maxLon, minLon)
+});
+
+$("#generate-south-italy").click(function() {
+    maxLon = 19;
+    minLon = 5;
+    maxLat = 41.7;
+    minLat = 35;
+    doItalyRequest(southElevations, maxLat, minLat, maxLon, minLon)
 });
 
 var unit = 911.3862583;
@@ -83,42 +124,44 @@ var geometryStation = new Cesium.BoxGeometry.fromDimensions({
     dimensions : new Cesium.Cartesian3(unit, unit, unit)
 });
 
-
 function drawItaly(data){
     var primitivesArray = [];
-    for(var i = 0; i < data.length; ++i){
+    italyMax = data[0].latitude;
+    italyMin = data[data.length - 1].latitude;
+    italyDistance = italyMax - italyMin;
+    for(var i = 0; i < data.length - 1; ++i){
         var elevation = data[i];
         var height = convertHeight(elevation.elevation);
 
-        primitivesArray.push(new Cesium.GeometryInstance({
-                            geometry : geometryElevation,
-                            modelMatrix : Cesium.Matrix4.multiplyByTranslation(
-                                Cesium.Transforms.eastNorthUpToFixedFrame(Cesium.Cartesian3.fromDegrees(elevation.longitude, elevation.latitude)),
-                                new Cesium.Cartesian3(0.0, 0.0, height + maxDepth), new Cesium.Matrix4()),
-                            id : elevation,
-                            attributes : {
-                                color : new Cesium.ColorGeometryInstanceAttribute(interpolateHeights(0, height), interpolateHeights(1, height), interpolateHeights(2, height),0.2)
-                            }
-                        })
-                    );
-        if(i % 1024 === 0){
+        var primitive = new Cesium.GeometryInstance({
+            geometry : geometryElevation,
+            modelMatrix : Cesium.Matrix4.multiplyByTranslation(
+                Cesium.Transforms.eastNorthUpToFixedFrame(Cesium.Cartesian3.fromDegrees(elevation.longitude, elevation.latitude)),
+                new Cesium.Cartesian3(0.0, 0.0, height + maxDepth), new Cesium.Matrix4()),
+            id : elevation,
+            attributes : {
+                color : new Cesium.ColorGeometryInstanceAttribute(interpolateHeights(0, height), interpolateHeights(1, height), interpolateHeights(2, height),0.2)
+            }
+        });
+        elevation.primitivePoint = primitive;
+        primitivesArray.push(primitive);
+        if(elevation.longitude - data[i+1].longitude > 0){
             scene.primitives.add(new Cesium.Primitive({
                 geometryInstances : primitivesArray,
-                appearance : new Cesium.PerInstanceColorAppearance({translucent : true})
+                appearance : new Cesium.PerInstanceColorAppearance({translucent : true}),
+                releaseGeometryInstances: false
             }));
             primitivesArray = [];
+            italyPartition++;
         }
     }
     scene.primitives.add(new Cesium.Primitive({
                 geometryInstances : primitivesArray,
-                appearance : new Cesium.PerInstanceColorAppearance({translucent : true})
+                appearance : new Cesium.PerInstanceColorAppearance({translucent : true}),
+                releaseGeometryInstances: false
             }));
+    italyPartition++;
     primitivesArray = [];
-    // primitivesArray = drawSide(data, primitivesArray, 1024, geometry);
-    scene.primitives.add(new Cesium.Primitive({
-        geometryInstances : primitivesArray,
-        appearance : new Cesium.PerInstanceColorAppearance({translucent : true})
-    }));
 }
 
 function drawSide(data, primitivesArray, length, geometry){
@@ -154,9 +197,10 @@ var brown = [0.2862745098, 0.1725490196, 0.05098039216];
 var white = [1.0,1.0,1.0];
 
 var green = [0.0,1.0,0.0];
+var light_green = [0.678431, 1, 0.184314];
 var yellow = [1.0,1.0,0.0];
 var red = [1.0,0.0,0.0];
-var purple = [0.0,0.0,1.0];
+var dark_red = [0.698039, 0.133333, 0.13333];
 
 function interpolateHeights(index, height){
     if(height < -10){
@@ -176,18 +220,14 @@ function interpolateColorByMagnitude(inx, e){
     if(magnitude == null){
         magnitude = e.magnitude;
     }
-    if(magnitude < 3){
-        return interpolate(green[inx], yellow[inx], magnitude/3);
-    } else if(magnitude <= 6){
-        return interpolate(yellow[inx], red[inx], (magnitude-3)/3);
+    if(magnitude <= 3.4){
+        return interpolate(light_green[inx], yellow[inx], normalizeT(magnitude, 3, 7.5));
+    } else if(magnitude <= 4.8){
+        return interpolate(yellow[inx], red[inx], normalizeT(magnitude, 3, 7.5));
     }else {
-        return interpolate(red[inx], purple[inx], (magnitude-6)/4);
+        return interpolate(red[inx], dark_red[inx], normalizeT(magnitude, 3, 7.5));
     }
 
-}
-
-function normalizeT(value, min, max){
-    return (value - min) / (max - min);
 }
 
 function interpolate(a, b, t){
@@ -196,40 +236,68 @@ function interpolate(a, b, t){
 
 
 function convertHeight(height){
-    return ((Math.floor(height*2/(unit))) + 1) * (unit);
+    return ((Math.floor(height*10/(unit))) + 1) * (unit);
 }
 
 var centerBoundings = [43.961401, 14.452927, 42.424652, 10.050827];
 var italyBoundings = [48.00, 35.00, 19.00, 5.00];
 
 var stdRequest = {
-    count : 100,
+    count : 300,
     endTime : new Date(),
     startTime : new Date("1985.01.01"),
-    minMag : 5,
+    minMag : 3,
     maxMag : 9,
     minDepth : 0,
     maxDepth : 20000,
     minPoint : {
-        longitude: centerBoundings[3],
-        latitude: centerBoundings[2]
+        longitude: italyBoundings[3],
+        latitude: italyBoundings[2]
     },
     maxPoint : {
-        longitude: centerBoundings[1],
-        latitude: centerBoundings[0]
+        longitude: italyBoundings[1],
+        latitude: italyBoundings[0]
     }
 };
 
 // stdRequest.startTime.setDate(stdRequest.startTime.getDate() - 100000000);
 
-function doItalyRequest(){
+function doItalyRequest(objects, maxLat, minLat, maxLon, minLon){
+    if(objects.length != 0 && elevations.length != 0){
+        return;
+    }
+    var url;
+    if(maxLat === undefined){
+        url = "http://" + window.location.host + "/api/elevations/query?"
+    } else{
+        url = "http://" + window.location.host + "/api/elevations/query?maxlat=" + maxLat + "&minlat=" + minLat + "&maxlon=" + maxLon + "&minlon=" + minLon
+    }
     $.ajax({
         // url: "http://" + window.location.host + "/api/elevations/query?minele=-4200",
-        url: "http://" + window.location.host + "/api/elevations/query",
+        url: url,
         type: "GET",
         success: function (data, textStatus, jqXHR) {
-            elevations = data;
-            drawItaly(elevations);
+            switch(maxLat){
+                case 48:
+                    northElevations = data;
+                    for(var i = 0; i < northElevations.length; ++i){elevations.push(northElevations[i]);}
+                    drawItaly(northElevations);
+                    break;
+                case 44:
+                    centreElevations = data;
+                    for(var i = 0; i < centreElevations.length; ++i){elevations.push(centreElevations[i]);}
+                    drawItaly(centreElevations);
+                    break;
+                case 41.7:
+                    southElevations = data;
+                    for(var i = 0; i < southElevations.length; ++i){elevations.push(southElevations[i]);}
+                    drawItaly(southElevations);
+                    break;
+                default:
+                    elevations = data;
+                    drawItaly(elevations);
+            }
+
         }
     });
 }
@@ -253,7 +321,7 @@ function doRequest(request){
 
 
 
-function getStationMagnitudes(epicentre) {
+function getStationMagnitudes(objects, epicentre) {
     var min_magnitude = 2.5;
     var max_magnitude = 8;
     $.ajax({
@@ -263,16 +331,142 @@ function getStationMagnitudes(epicentre) {
             // console.log(data);
             stationMagnitudes = data;
             stationMagnitudes2 = jQuery.extend([], stationMagnitudes.slice());
+            startTime = new Date().getTime();
+            currentTime = startTime;
+            nextDistance = 0;
+            setInterval(checkNeighbor, 16);
             // drawStationMagnitudes(data);
-            setInterval(appearStations, 50);
+            // setInterval(appearStations, 50);
+            // var distances = computeDistances(stationMagnitudes, epicentre);
+            // var propagationSphere = viewer2.entities.add({
+            //     position: Cesium.Cartesian3.fromDegrees(epicentre.origin.longitude, epicentre.origin.latitude, convertHeight(-epicentre.origin.depth) + maxDepth),
+            //     ellipsoid : {
+            //         radii : new Cesium.Cartesian3(1000, 1000, 1000),
+            //         material : Cesium.Color.RED.withAlpha(0.8),
+            //     }
+            // });
+            // nextDistance++;
+            // setInterval(changeSphereSize.bind(null, propagationSphere, distances), 64);
         }
     })
-
 }
 
 
-function getArrivals(epicentres) {
+function checkNeighbor() {
+    scene.primitives.get(1).show = false;
+    if(nextStation < stationMagnitudes.length/2) {
+        var attributes = getPrimitiveById(stationMagnitudes[nextStation], computeNearestRegion(stationMagnitudes[nextStation].station.latitude));
+        // attributes.color = Cesium.ColorGeometryInstanceAttribute.toValue(Cesium.Color.fromRandom({alpha: 1.0}));
+        nextStation++
+    } else {
+        scene.primitives.get(1).show = true;
+    }
+}
+
+function computeNearestRegion(latitude){
+    var x = normalizeT(latitude, italyMin, italyMax);
+    return italyPartition - Math.floor(x * (italyPartition - 1) - 1) + offset;
+}
+
+function computeNearestElevation(station, elevations){
+    var stationLatitude = station.station.latitude;
+    var stationLongitude = station.station.longitude;
+    var nearestElevation;
+    var minDistance = 100000;
+    for(var i = 0; i < elevations.length; ++i){
+        var elevationLatitude = elevations[i].id.latitude;
+        var elevationLongitude = elevations[i].id.longitude;
+        var distance = haversine(stationLatitude, stationLongitude, elevationLatitude, elevationLongitude);
+        if(distance < minDistance){
+            nearestElevation = elevations[i];
+            minDistance = distance;
+        }
+    }
+    return nearestElevation;
+}
+
+function getPrimitiveById(station, region) {
+    var selectedAttribute;
+    var ids = [];
+    var minId;
+    for (var i = region - 5; i < region + 5; ++i) {
+        if(scene.primitives.get(i)) {
+            ids.push(computeNearestElevation(station, scene.primitives.get(i).geometryInstances));
+        }
+    }
+    minId = computeNearestElevation(station, ids);
+    for (var i = region - 5; i < region + 5; ++i) {
+        if(scene.primitives.get(i)) {
+            var attribute = scene.primitives.get(i).getGeometryInstanceAttributes(minId.id);
+            if (attribute != undefined) {
+                selectedAttribute = attribute;
+            }
+        }
+    }
+    selectedAttribute.color = Cesium.ColorGeometryInstanceAttribute.toValue(new Cesium.Color(interpolateColorByMagnitude(0, station), interpolateColorByMagnitude(1, station), interpolateColorByMagnitude(2, station), 0.5));
+
+    var newAttr;
+    var stationNeigh = [filterArray(minId.id.id - 1), filterArray(minId.id.id - 1024 - 1), filterArray(minId.id.id - 1024), filterArray(minId.id.id - 1024 + 1), filterArray(minId.id.id + 1), filterArray(minId.id.id + 1024 + 1), filterArray(minId.id.id + 1024), filterArray(minId.id.id + 1024 - 1)]
+    for(var j = 0; j < stationNeigh.length; j++) {
+        if(stationNeigh[j]) {
+            region = computeNearestRegion(stationNeigh[j].latitude)
+            for (var i = region - 5; i < region + 5; ++i) {
+                var attribute = scene.primitives.get(i).getGeometryInstanceAttributes(stationNeigh[j]);
+                if (attribute != undefined) {
+                    newAttr = attribute;
+                }
+            }
+            newAttr.color = Cesium.ColorGeometryInstanceAttribute.toValue(new Cesium.Color(interpolateColorByMagnitude(0, station), interpolateColorByMagnitude(1, station), interpolateColorByMagnitude(2, station), 0.5));
+        }
+    }
+    return selectedAttribute;
+}
+
+/* To find the row, given Id --> formula = (id - 1)/numOfCols*/
+
+function filterArray(property){
+    return $.grep(elevations, function(e){ return e.id == property;})[0];
+}
+
+
+
+function changeSphereSize(propagationSphere, distances){
+    // if(nextDistance < distances.length) {
+    //     propagationSphere.ellipsoid.radii = new Cesium.Cartesian3(distances[nextDistance], distances[nextDistance], distances[nextDistance])
+    //     oldDistance = nextDistance;
+    //     nextDistance++;
+    // } else {
+    //     nextDistance++;
+    // }
+    var curr = currentTime;
+    currentTime = new Date().getTime() - startTime;
+    var radiusPercent = normalizeT(currentTime, 0, maxDistance);
+    if(radiusPercent > 1){
+    }
+    propagationSphere.ellipsoid.radii = new Cesium.Cartesian3(maxDistance * (radiusPercent), maxDistance * (radiusPercent), maxDistance * (radiusPercent));
+}
+
+function computeDistances(stationMagnitudes, epicentre){
+    var epicLat = epicentre.origin.latitude;
+    var epicLon = epicentre.origin.longitude;
+    var distances = [];
+    for(var i = 0; i < stationMagnitudes.length; ++i){
+        var stationLat = stationMagnitudes[i].station.latitude;
+        var stationLon = stationMagnitudes[i].station.longitude;
+        var distance = haversine(epicLat, epicLon, stationLat, stationLon);
+        distances.push(distance);
+        if(distance > maxDistance){
+            maxDistance = distance;
+        }
+    }
+    return distances;
+}
+
+function getArrivals(objects, epicentres) {
     var phase = "";
+    if(objects.length != 0){
+        return;
+    }
     for(var i = 0; i < epicentres.length; ++i){
         var earthquake = epicentres[i];
         $.ajax({
@@ -357,14 +551,23 @@ function drawEarthquake(data){
             }
         });
         primitivesArray.push(epicentre);
-        // neighborArray = drawEpicentreNeighborood(epicentre, height, neighborArray);
+        drawEpicentreNeighborood(epicentre, height, primitivesArray);
     }
-    var primitive = new Cesium.Primitive({
+    var primitiveEpicentre = new Cesium.Primitive({
         geometryInstances : primitivesArray,
-        appearance : new Cesium.PerInstanceColorAppearance({translucent: false})
+        appearance : new Cesium.PerInstanceColorAppearance({translucent: true}),
+        releaseGeometryInstances: false
     });
+
+    // primitiveNeighborood = new Cesium.Primitive({
+    //     geometryInstances : neighborArray,
+    //     appearance : new Cesium.PerInstanceColorAppearance(),
+    //     releaseGeometryInstances: false
+    // });
     // console.log(primitivesArray);
-    scene.primitives.add(primitive);
+    scene.primitives.add(primitiveEpicentre);
+    // scene.primitives.add(primitiveNeighborood);
+
     // primitive.readyPromise.then(function (primitive) {
     //     var attributes = primitive.getGeometryInstanceAttributes(earthquake);
     //     attributes.color = Cesium.ColorGeometryInstanceAttribute.toValue(Cesium.Color.fromRandom({alpha: 1.0}));
@@ -374,12 +577,14 @@ function drawEarthquake(data){
 
 
 function drawEpicentreNeighborood(epicentre, height, neighborArray) {
-    var limit = Math.floor(epicentre.id.magnitude.magnitude);
+    var limit = setLimitByMagnitude(Math.floor(epicentre.id.magnitude.magnitude));
     var starting_point_x = limit * unit;
     var starting_point_y = limit * unit;
     var starting_point_z = limit * unit;
+    if(limit == 0){
+        return [];
+    }
     for(var i = starting_point_x; i > -starting_point_x - unit; i-=unit){
-
         var neighbor = new Cesium.GeometryInstance({
             geometry: geometryElevation,
             modelMatrix: Cesium.Matrix4.multiplyByTranslation(
@@ -387,7 +592,7 @@ function drawEpicentreNeighborood(epicentre, height, neighborArray) {
                 new Cesium.Cartesian3(-i, 0, height + maxDepth), new Cesium.Matrix4()),
             id: epicentre.id,
             attributes: {
-                color: new Cesium.ColorGeometryInstanceAttribute(interpolateColorByMagnitude(0, epicentre.id), interpolateColorByMagnitude(1, epicentre.id), interpolateColorByMagnitude(2, epicentre.id), 0.3)
+                color: new Cesium.ColorGeometryInstanceAttribute(interpolateColorByMagnitude(0, epicentre.id), interpolateColorByMagnitude(1, epicentre.id), interpolateColorByMagnitude(2, epicentre.id), 0.5)
             }
         });
         neighborArray.push(neighbor);
@@ -399,7 +604,7 @@ function drawEpicentreNeighborood(epicentre, height, neighborArray) {
                     new Cesium.Cartesian3(-i, -j, height + maxDepth), new Cesium.Matrix4()),
                 id: epicentre.id,
                 attributes: {
-                    color: new Cesium.ColorGeometryInstanceAttribute(interpolateColorByMagnitude(0, epicentre.id), interpolateColorByMagnitude(1, epicentre.id), interpolateColorByMagnitude(2, epicentre.id), 0.3)
+                    color: new Cesium.ColorGeometryInstanceAttribute(interpolateColorByMagnitude(0, epicentre.id), interpolateColorByMagnitude(1, epicentre.id), interpolateColorByMagnitude(2, epicentre.id), 0.5)
                 }
             });
             neighborArray.push(neighbor);
@@ -411,20 +616,20 @@ function drawEpicentreNeighborood(epicentre, height, neighborArray) {
                         new Cesium.Cartesian3(-i,  -j, -z + height + maxDepth), new Cesium.Matrix4()),
                     id: epicentre.id,
                     attributes: {
-                        color: new Cesium.ColorGeometryInstanceAttribute(interpolateColorByMagnitude(0, epicentre.id), interpolateColorByMagnitude(1, epicentre.id), interpolateColorByMagnitude(2, epicentre.id), 0.3)
+                        color: new Cesium.ColorGeometryInstanceAttribute(interpolateColorByMagnitude(0, epicentre.id), interpolateColorByMagnitude(1, epicentre.id), interpolateColorByMagnitude(2, epicentre.id), 0.5)
                     }
                 });
                 neighborArray.push(neighbor);
             }
         }
     }
-    scene.primitives.add(new Cesium.Primitive({
-        geometryInstances : neighborArray,
-        appearance : new Cesium.PerInstanceColorAppearance()
-    }));
+    // scene.primitives.add(new Cesium.Primitive({
+    //     geometryInstances : neighborArray,
+    //     appearance : new Cesium.PerInstanceColorAppearance()
+    // }));
     // console.log(neighborArray);
 
-    neighborArray = [];
+    // neighborArray = [];
     return neighborArray;
 }
 
@@ -454,7 +659,9 @@ handler.setInputAction(function(click) {
 
 }, Cesium.ScreenSpaceEventType.LEFT_DOUBLE_CLICK);
 var earthquakeDate;
+const zoomFactor = 1.2;
 function singleClickHandler(click){
+    var cameraHeight = 2661459.364219676;
     var pickedObject = scene.pick(click.position);
     if(pickedObject !== undefined) {
         var id = pickedObject.id.id;
@@ -466,7 +673,15 @@ function singleClickHandler(click){
                     id:  epicentre.id + "      " + epicentre.magnitude.magnitude,
                     description: formatDateForList(earthquakeDate)
                 });
-                getStationMagnitudes(epicentre);
+                var pointHeight = pickedObject.id.origin.depth + maxDepth;
+                cameraHeight -= (cameraHeight/zoomFactor);
+                if(cameraHeight < pointHeight + 100){
+                    cameraHeight = pointHeight + 100;
+                }
+
+                moveCameraTo(epicentre.origin, cameraHeight);
+                getStationMagnitudes(stationMagnitudes, epicentre);
+                return;
             }
         }
         for (var i = 0; i < stationMagnitudes2.length; ++i) {
@@ -480,11 +695,17 @@ function singleClickHandler(click){
                 });
             }
         }
-
+        for(var i = 0; i < elevations.length; ++i){
+            var elevation = elevations[i];
+            if(elevation.id === id){
+                viewer2.selectedEntity = new Cesium.Entity({
+                    description: elevation.id
+                });
+            }
+        }
     }
 }
 
-const zoomFactor = 0.8;
 
 function doubleClickHandler(click){
     var cameraHeight = 2661459.364219676;
@@ -519,7 +740,7 @@ function moveCameraTo(e, height){
             height),
         orientation: {
             heading: 0.0,
-            pitch: Cesium.Math.toRadians(-10),
+            pitch: Cesium.Math.toRadians(-90),
             roll: viewer2.camera.roll
         }});
 }
@@ -552,4 +773,21 @@ function appearStations() {
 
         scene.primitives.add(primitive);
     }
+}
+
+
+function haversine(lat1, lon1, lat2, lon2){
+    var R = 6371 *(Math.pow(10,3)); // metres
+    var toRadians = (Math.PI/180);
+    var φ1 = lat1 * toRadians;
+    var φ2 = lat2 * toRadians;
+    var Δφ = (φ2-φ1) * toRadians;
+    var Δλ = (lon2-lon1) * toRadians;
+
+    var a = Math.sin(Δφ/2) * Math.sin(Δφ/2) +
+        Math.cos(φ1) * Math.cos(φ2) *
+        Math.sin(Δλ/2) * Math.sin(Δλ/2);
+    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+
+    return R * c;
 }
