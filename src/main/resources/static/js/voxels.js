@@ -282,7 +282,7 @@ var italyBoundings = [48.00, 35.00, 19.00, 5.00];
 var stdRequest = {
     count : 100000,
     endTime : new Date(),
-    startTime : new Date("1985.01.01"),
+    startTime : new Date("1985-01-01"),
     minMag : 3,
     maxMag : 9,
     minDepth : 0,
@@ -298,7 +298,7 @@ var stdRequest = {
 };
 
 // stdRequest.startTime.setDate(stdRequest.startTime.getDate() - 100000000);
-
+// stdRequest.startTime.setDate(stdRequest.startTime.getDate() - 100);
 function doItalyRequest(objects, maxLat, minLat, maxLon, minLon){
     if(objects.length != 0 && elevations.length != 0){
         return;
