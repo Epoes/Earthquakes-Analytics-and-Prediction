@@ -205,7 +205,7 @@ width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden;
 
 #default-points-button{
     display: inline;
-    width: 45px;
+    width: 30px;
     margin: 0px;
     height: 30px;
     text-align: center;
@@ -420,6 +420,56 @@ width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden;
 
 .cesium-widget-credits{
     position: relative;
+}
+
+.earthquake-info{
+    position: absolute;
+    right: -400px;
+    top: 100px;
+    color: white;
+    overflow: auto;
+    height: 65%;
+    transition: all 300ms cubic-bezier(1.000, 0.000, 0.000, 1.000);
+    -webkit-transition: all 300ms cubic-bezier(1.000, 0.000, 0.000, 1.000);
+    -moz-transition: all 300ms cubic-bezier(1.000, 0.000, 0.000, 1.000);
+    background-color: rgba(48, 51, 54, 0.5);
+    border-radius: 20px;
+
+}
+
+.earthquake-info-card{
+    padding: 10px;
+    border-style: solid;
+    border-width: 1px;
+    background-color: rgba(48, 51, 54, 0.5);
+    margin: 12px;
+}
+}
+
+.earthquake-info-card:hover{
+    background-color: rgba(48, 51, 54, 0.8);
+}
+
+.cesium-baseLayerPicker-dropDown{
+    z-index: 9;
+}
+
+.earthquake-info-header{
+    width: 100%;
+    height: 30px;
+}
+
+.earthquake-info-id{
+    float : left;
+}
+
+.earthquake-info-button{
+    float: right;
+    margin-left: 10px;
+}
+
+.earthquake-info-button:hover{
+    color : black;
 }
 
 

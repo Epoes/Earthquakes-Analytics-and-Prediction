@@ -1,13 +1,15 @@
 package com.usi.Dao.EarthquakeDao;
 
 import com.usi.model.earthquake.Earthquake;
-import com.usi.model.earthquake.IngvQuery;
+import com.usi.model.earthquake.Intensity;
+import com.usi.model.query.IngvQuery;
 import com.usi.model.earthquake.Magnitude;
 import com.usi.model.earthquake.Origin;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigInteger;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -31,7 +33,7 @@ public class EarthquakeDao {
     }
 
     public List<Earthquake> selectEarthQuakes(IngvQuery request){
-        long startTime = System.currentTimeMillis();
+//        long startTime = System.currentTimeMillis();
 
         Query q = getQuery(request);
         List<Object[]> earthQuakesObjects = (List<Object[]>)q.getResultList();
@@ -39,22 +41,27 @@ public class EarthquakeDao {
         if(earthQuakesObjects.size() > bigLimit){
             parseEqObjectMultiCore(earthQuakesObjects);
             long endTime = System.currentTimeMillis();
-            System.out.println("Multi CPU:  "+ earthQuakesObjects.size() + " took " + ((endTime - startTime))+ " milliseconds");
+//            System.out.println("Multi CPU:  "+ earthQuakesObjects.size() + " took " + ((endTime - startTime))+ " milliseconds");
             return parseEqObjectMultiCore(earthQuakesObjects);
         }
 
 
-        parseEqObjectSingle(earthQuakesObjects);
-        long endTime = System.currentTimeMillis();
-        System.out.println("Single CPU:  "+ earthQuakesObjects.size() + " took " + + ((endTime - startTime))+ " milliseconds");
+//        parseEqObjectSingle(earthQuakesObjects);
+//        long endTime = System.currentTimeMillis();
+//        System.out.println("Single CPU:  "+ earthQuakesObjects.size() + " took " + + ((endTime - startTime))+ " milliseconds");
 
         return parseEqObjectSingle(earthQuakesObjects);
 
     }
 
-    public List<Object[]>selectEarthQuakesRow(IngvQuery request) {
-        long startTime = System.currentTimeMillis();
+    public List<Earthquake> getEarthquakesWithIntensityNull(){
+        final String query = "select * from earthquake as e, origin as o , magnitude as m where e.magnitude_earthquake = m.magnitude_id and e.origin_earthquake = o.origin_id and m.magnitude >= 3 and o.time > '2008-01-01' and intensity_earthquake is null";
+        final Query q = em.createNativeQuery(query);
+        List<Object[]> earthQuakesObjects = (List<Object[]>)q.getResultList();
+        return parseEqObjectSingle(earthQuakesObjects);
+    }
 
+    public List<Object[]>selectEarthQuakesRow(IngvQuery request) {
         Query q = getQuery(request);
         List<Object[]> earthQuakesObjects = (List<Object[]>) q.getResultList();
         return earthQuakesObjects;
@@ -145,17 +152,24 @@ public class EarthquakeDao {
 
             Earthquake e = new Earthquake((int) objects[0]);
             e.setRegionName((String) objects[1]);
-
             Origin o = new Origin((int) objects[3]);
-            o.setDepth((int) objects[5]);
-            o.setLatitude((float) objects[6]);
-            o.setLongitude((float) objects[7]);
-            o.setTime((Date) objects[8]);
+
+            Intensity intensity = new Intensity();
+            if(objects[4] != null){
+                BigInteger id =  (BigInteger) objects[4];
+                intensity.setId(id.longValue());
+            }
+            e.setIntensity(intensity);
+
+            o.setDepth((int) objects[6]);
+            o.setLatitude((float) objects[7]);
+            o.setLongitude((float) objects[8]);
+            o.setTime((Date) objects[9]);
 
             Magnitude m = new Magnitude((int) objects[2]);
-            m.setMagnitude((float) objects[10]);
-            m.setType((String) objects[11]);
-            m.setUncertainty((float) objects[12]);
+            m.setMagnitude((float) objects[11]);
+            m.setType((String) objects[12]);
+            m.setUncertainty((float) objects[13]);
 
             e.setOrigin(o);
             e.setMagnitude(m);

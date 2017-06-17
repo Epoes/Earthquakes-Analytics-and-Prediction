@@ -13,7 +13,6 @@
     <title>Visual Earthquakes</title>
 
     <link rel="stylesheet" href="css/font-awesome.min.css"/>
-
     <link rel="apple-touch-icon" sizes="57x57" href="images/favicons/apple-icon-57x57.png"/>
     <link rel="apple-touch-icon" sizes="60x60" href="images/favicons/apple-icon-60x60.png"/>
     <link rel="apple-touch-icon" sizes="72x72" href="images/favicons/apple-icon-72x72.png"/>
@@ -29,9 +28,8 @@
     <link rel="icon" type="image/png" sizes="16x16" href="images/favicons/favicon-16x16.png"/>
     <link rel="manifest" href="images/favicons/manifest.json"/>
 
-
+    <!--cesium-->
     <script src="Cesium/Build/Cesium/Cesium.js"></script>
-
 
     <!--jquery-->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
@@ -55,6 +53,7 @@
     <script type="text/javascript" src="//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.js"></script>
     <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.css" />
 
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 
     <link href="css/map.css" rel="stylesheet" type="text/css"/>
 
@@ -64,12 +63,220 @@
 <body>
 <div id="cesiumContainer"></div>
 
+<div class='nav-bar'>
+    <div class='bar-item' id = 'home' > <i class='fa fa-home big-icon' aria-hidden='true'></i> </div>
+
+    <!--SEARCH-MENU-->
+    <div class='bar-item open-nav open-button' > <i class='fa fa-search big-icon open-button' aria-hidden='true'></i>
+        <div class = 'bar-menu' id = 'search-menu'>
+            <i class='fa fa-times bar-menu-close' aria-hidden='true'></i>
+            <h3 class = 'bar-menu-title'>Search</h3>
+            <div class = 'menu-body'>
+
+                <div class = 'search-container' >
+                    <p> Date Range </p>
+                    <div id='reportrange' class='pull-left' >
+                        <i class='glyphicon glyphicon-calendar fa fa-calendar'></i>&nbsp;<span></span> <b class='caret'></b> </div>
+                    </div>
+
+                <div class = 'search-container' >
+                    <p> Magnitude </p>
+                    <input class = 'option-slider' id='magnitude-slider' type='text'></input>
+                    </div>
+
+                <div class = 'search-container' >
+                    <p> Depth </p>
+                    <input id='depth-slider' class = 'option-slider' type='text' ></input>
+                </div>
+
+                <div class = 'search-container' style = 'height: 169px;'>
+                    <p style='margin-bottom: 20px;'> Coordinates
+                        <button type='button' class='btn btn-default' id = 'default-points-button'><i class='fa fa-refresh' aria-hidden='true'></i></button>
+                    </p>
+                    <div class = 'coordinates-container'>
+                        <input type='text' class='form-control coordinate-input'  id = 'min-lat' placeholder='lat' />
+                        <input type='text' class='form-control coordinate-input'  id='min-lng' placeholder='lng'/>
+                    </div>
+
+                    <div class = 'coordinates-container'>
+                        <input type='text' class='form-control coordinate-input'  id = 'max-lat' placeholder='lat' />
+                        <input type='text' class='form-control coordinate-input'  id='max-lng' placeholder='lng'/>
+                    </div>
+                </div>
+
+                <button type='button' class='btn btn-default' id = 'search-button'> search</button>
+            </div>
+        </div>
+    </div>
+
+    <!--SETTINGS-MENU-->
+    <div class='bar-item open-nav open-button'> <i class='fa fa-cog big-icon open-button' aria-hidden='true'></i>
+        <div class = 'bar-menu' id = 'settings-menu'>
+            <i class='fa fa-times bar-menu-close' aria-hidden='true'></i>
+            <h3 class = 'bar-menu-title'>Settings</h3>
+            <div class = 'menu-body'>
+
+                <div class = 'settings-container' >
+                    <div class = 'settings-description'>
+                        <h1 class ='settings-title'>Color</h1>
+                        <p class = 'settings-text'>View earthquakes using different color interpolation</p>
+                    </div>
+                    <div class='menu-select-box' id = 'color-selector'>
+                        <select class = 'menu-selector selectpicker'  data-width='100px' >
+                            <option value = '0'>magnitude</option>
+                            <option value = '1'>date</option>
+                            <option value = '2'>depth</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class = 'settings-container' >
+                    <div class = 'settings-description'>
+                        <h1 class ='settings-title'>3d mode</h1>
+                        <p class = 'settings-text'>View earthquakes depth. The higher is a point, the lower is it's depth </p>
+                    </div>
+                    <div class='menu-switch-box ' id = 'view-selector'>
+                        <select class = 'menu-selector selectpicker' data-width='100px'>
+                            <option>off</option>
+                            <option>on</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class = 'settings-container' >
+                    <div class = 'settings-description'>
+                        <h1 class ='settings-title'>View</h1>
+                        <p class = 'settings-text'>Switch between legend and player footer</p>
+                    </div>
+                    <div class='menu-switch-box ' id = 'time-view-selector'>
+                        <select class = 'menu-selector selectpicker' data-width='100px'>
+                            <option value = '0' >legend</option>
+                            <option value = '1' >timeline</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class = 'settings-container' >
+                    <div class = 'settings-description'>
+                        <h1 class ='settings-title'>Resolution</h1>
+                        <p class = 'settings-text'>Change the screen resolution. lower to improves performance</p>
+                    </div>
+                    <div class='menu-select-box' id = 'resolution-selector'>
+                        <select class = 'menu-selector selectpicker'  data-width='100px' >
+                            <option value = '2' >very high</option>
+                            <option value = '1.5' >high</option>
+                            <option value = '1' >medium</option>
+                            <option value = '0.7' >low</option>
+                            <option value = '0.5' >very low</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class = 'settings-container' >
+                    <div class = 'settings-description'>
+                        <h1 class ='settings-title'>FPS</h1>
+                        <p class = 'settings-text'>Change the frame per second. Lower to improve battery life</p>
+                    </div>
+                    <div class='menu-select-box' id = 'frames-selector'>
+                        <select class = 'menu-selector selectpicker'  data-width='100px' >
+                            <option value = '60' >60 fps</option>
+                            <option value = '30' >30 fps</option>
+                            <option value = '25' >25 fps</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--CHARTS-MENU-->
+    <div class='bar-item open-nav open-button' id = 'charts-button'> <i class='fa fa-bar-chart big-icon open-button' aria-hidden='true'></i>
+        <div class = 'bar-menu' id = 'chart-menu'>
+            <i class='fa fa-times bar-menu-close' aria-hidden='true'></i>
+            <h3 class = 'bar-menu-title'>Charts</h3>
+            <div class = 'menu-body' id = 'charts-menu-body'>
+
+            </div>
+        </div>
+    </div>
+
+    <!--CREDITS-MENU-->
+    <div class='bar-item open-nav open-button'> <i class='fa fa-info big-icon open-button' aria-hidden='true'></i>
+        <div class = 'bar-menu' id = 'info-menu'>
+            <i class='fa fa-times bar-menu-close' aria-hidden='true'></i>
+            <h3 class= 'bar-menu-title'> Info </h3>
+            <div class = 'menu-body' id = 'info-menu-body'>
+                <div class = 'settings-container' id = 'cesium-credits'>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!--PLAYER-->
+<div class= 'player' id = 'player' >
+    <div id = 'play-container' >
+        <button  class='btn btn-default' id='play-button'> <i class='fa fa-play' aria-hidden='true'></i></button>
+        <button  class='btn btn-default' id='pause-button'> <i class='fa fa-pause' aria-hidden='true' ></i></button>
+    </div>
+    <div id = 'stop-container' >
+        <button  class='btn btn-default' id='stop-button'> <i class='fa fa-stop' aria-hidden='true'></i></button>
+    </div>
+    <div id = 'info-container' >
+        <p id = 'max-time'>/0</p><p id = 'current-time'>0</p>
+        <p id = 'time'>0</p><p id = 'total-time'>/0</p>
+        <div id = 'speed-control'>
+            <i id = 'speed-plus' class='fa fa-arrow-up' aria-hidden='true'></i>
+
+        </div>
+    </div>
+
+    <input class = 'option-slider' id='time-slider' type='text' />
+</div>
+
+<!--LEGEND-->
+<div class = 'legend-container' >
+    <div class = 'color-container'>
+        <div class='arrow-container' id = 'left-arrow-container'>
+            <i class='fa fa-arrow-circle-left' id = 'arrow-color-left' aria-hidden='true'></i>
+        </div>
+        <div class = 'color' id = 'color1'> </div>
+        <div class='arrow-container' id = 'right-arrow-container'>
+            <i class='fa fa-arrow-circle-right' id = 'arrow-color-right' aria-hidden='true'></i>
+        </div>
+    </div>
+</div>
+
+
+<div id = 'footer-switch'>
+    <div class='arrow-container' id = 'top-arrow-container'>
+        <i class='fa fa-video-camera' id = 'arrow-footer-up' aria-hidden='true'></i>
+    </div>
+</div>
+
+<div class = 'earthquake-info'></div>
+
+
+
+
+
+
+
 
 </body>
+
 <script src="js/slideBar.js"></script>
-<script src="js/map.js"></script>
-<script src = "js/drawEarthquakes.js"></script>
+<script src="js/ui/menu.js"></script>
+<script src="js/ui/footer.js"></script>
+<script src="js/ui/timeLinePlayer.js"></script>
+<script src="js/ui/infoBox.js"></script>
+<script src="js/app.js"></script>
+<script src="js/earthquakeController.js"></script>
+<script src = "js/earthquakes.js"></script>
 <script src="js/util.js"></script>
 <script src="js/earthquakeAnimation.js"></script>
+
 
 </html>

@@ -371,7 +371,7 @@ function containsObject(obj, list) {
     return false;
 }
 
-handler = new Cesium.ScreenSpaceEventHandler(viewer2.scene.canvas);
+screenHandler = new Cesium.ScreenSpaceEventHandler(viewer2.scene.canvas);
 handler.setInputAction(function (click) {
 
 console.log(scene.pick(click.position));

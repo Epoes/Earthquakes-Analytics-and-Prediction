@@ -1,4 +1,4 @@
-package com.usi.model.earthquake;
+package com.usi.model.query;
 
 
 import com.google.maps.model.LatLng;
@@ -314,20 +314,20 @@ public class IngvQuery implements Query {
         return true;
     }
 
-    @Override
-    public String toString() {
-        return "IngvQuery{" +
-                ", startTime=" + sdf.format(startTime) +
-                ", endTime=" + sdf.format(endTime) +
-                ", minMagnitude=" + minMagnitude +
-                ", maxMagnitude=" + maxMagnitude +
-                ", minDepth=" + minDepth +
-                ", maxDepth=" + maxDepth +
-                ", count=" + count +
-                ", minPoint=" + minPoint +
-                ", maxPoint=" + maxPoint +
-                ", orderBy='" + orderBy + '\'' +
-                ", format='" + format + '\'' +
-                '}';
-    }
+//    @Override
+//    public String toString() {
+//        return "IngvQuery{" +
+//                ", startTime=" + sdf.format(startTime) +
+//                ", endTime=" + sdf.format(endTime) +
+//                ", minMagnitude=" + minMagnitude +
+//                ", maxMagnitude=" + maxMagnitude +
+//                ", minDepth=" + minDepth +
+//                ", maxDepth=" + maxDepth +
+//                ", count=" + count +
+//                ", minPoint=" + minPoint +
+//                ", maxPoint=" + maxPoint +
+//                ", orderBy='" + orderBy + '\'' +
+//                ", format='" + format + '\'' +
+//                '}';
+//    }
 }

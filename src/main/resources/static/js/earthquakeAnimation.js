@@ -6,7 +6,7 @@ var timer;
 var globalCounter = 0;
 var next = 0;
 var currentTime = 0;
-var timeInterval = 0;
+
 var timePercent = 0;
 var possibleTimesInSeconds = [30, 60, 120, 300, 600, 1200, 1800, 3599];
 var dict = {};
@@ -18,15 +18,14 @@ var bound = 1000; //max number of earthquakes per second.
 
 
 function setUpTimeLineView(){
-    timeInterval = maxLongTime - minLongTime;
+    generalEqInfo.timeInterval = generalEqInfo.maxLongTime - generalEqInfo.minLongTime;
     resetLastPoint();
     closeInfoBox();
     sortByDate(earthquakes);
     setTotalTime();
     var daysPerSeconds = getDaysPerSeconds();
-    console.log(totalTime);
-    setupPlayer(minLongTime, maxLongTime, totalTime, daysPerSeconds);
-    setTimeSliderValue(minLongTime, 0);
+    setupPlayer(generalEqInfo.minLongTime, generalEqInfo.maxLongTime, totalTime, daysPerSeconds);
+    setTimeSliderValue(generalEqInfo.minLongTime, 0);
 }
 
 function pauseTimeLine(){
@@ -40,10 +39,10 @@ function pauseTimeLine(){
 
 function playTimeLine(){
     if(!play) {
-        if(timeLineMode === false){
+        if(settings.timeLineMode === false){
             setUpTimeLineView();
             hideAllPoints();
-            timeLineMode = true;
+            settings.timeLineMode = true;
         }
         changeOnClickHandler("playerMode");
         play = true;
@@ -56,10 +55,18 @@ function playTimeLine(){
     }
 }
 
+function playPause(){
+    if(!play){
+        playTimeLine();
+    }else{
+        pauseTimeLine();
+    }
+}
+
 function showTimeLine(startTime, totalTime){
     currentTime = new Date().getTime() - startTime;
     if(currentTime > totalTime){
-        setTimeSliderValue(maxLongTime, totalTime);
+        setTimeSliderValue(generalEqInfo.maxLongTime, totalTime);
         if(globalCounter == 0) {
             clearTimeLaps();
             return;
@@ -78,14 +85,14 @@ function computeTimePercent(){
 }
 
 function updatePlayer(timePercent){
-    var realTimePassed = timePercent * (timeInterval) + minLongTime;
+    var realTimePassed = timePercent * (generalEqInfo.timeInterval) + generalEqInfo.minLongTime;
     setTimeSliderValue(realTimePassed, currentTime);
 }
 
 function showEarthquakes(currentTime, timePercent) {
     var nextEarthquake = earthquakes[next];
     var nextPoint = nextEarthquake.primitivePoint;
-    while(next < earthquakes.length && timePercent >= normalizeT(nextEarthquake.origin.time, minLongTime, maxLongTime)){
+    while(next < earthquakes.length && timePercent >= normalizeT(nextEarthquake.origin.time, generalEqInfo.minLongTime, generalEqInfo.maxLongTime)){
         if(isAllow(nextEarthquake)){
             nextPoint.translucencyByDistance = undefined;
             nextPoint.show = true;
@@ -108,11 +115,11 @@ function isAllow(e){
     if(globalCounter < bound){
         return true;
     }
-    else if(globalCounter > bound && e.magnitude.magnitude < minimumMagnitude + 1){
+    else if(globalCounter > bound && e.magnitude.magnitude < generalEqInfo.minimumMagnitude + 1){
         return false;
-    }else if(globalCounter > 1.5*bound && e.magnitude.magnitude < minimumMagnitude + 2){
+    }else if(globalCounter > 1.5*bound && e.magnitude.magnitude < generalEqInfo.minimumMagnitude + 2){
         return false;
-    }else if(globalCounter > 2*bound && e.magnitude.magnitude < minimumMagnitude + 3){
+    }else if(globalCounter > 2*bound && e.magnitude.magnitude < generalEqInfo.minimumMagnitude + 3){
         return false;
     }
     return true;
@@ -163,7 +170,7 @@ function changeTotalTime(){
     var newCurrentTime = timePercent * totalTime;
     updateEarthquakesViewTime(currentTime, newCurrentTime);
     currentTime = newCurrentTime;
-    setMaxMinDate(minLongTime, maxLongTime, daysPerSeconds);
+    setMaxMinDate(generalEqInfo.minLongTime, generalEqInfo.maxLongTime, daysPerSeconds);
     setTotalTimeText(totalTime);
 
     if(isPlaying) {
@@ -175,7 +182,7 @@ function changeTotalTime(){
 }
 
 function changeCurrentTime(date){
-    var realTimePercent = normalizeT(date, minLongTime, maxLongTime);
+    var realTimePercent = normalizeT(date, generalEqInfo.minLongTime, generalEqInfo.maxLongTime);
     currentTime = realTimePercent*totalTime;
     resetLastPoint();
     resetCameraRotationCenter();
@@ -203,7 +210,7 @@ function updateEarthquakesViewTime(currentTime, newCurrentTime){
 }
 
 function getDaysPerSeconds(){
-    var msPassedPerSecond =  (timeInterval/totalTime)*1000;
+    var msPassedPerSecond =  (generalEqInfo.timeInterval/totalTime)*1000;
     return msPassedPerSecond/(86400000);
 }
 
@@ -269,7 +276,7 @@ function clearTimeLaps(){
     resetTimeLaps();
     restorePointsAfterTimeLine();
     setPointsView();
-    timeLineMode = false;
+    settings.timeLineMode = false;
 }
 
 function resetTimeLaps(){
@@ -277,25 +284,25 @@ function resetTimeLaps(){
     resetLastPoint();
     resetCameraRotationCenter();
     hideAllPoints();
-    setTimeSliderValue(minLongTime);
+    setTimeSliderValue(generalEqInfo.minLongTime);
     dict = {};
     play = false;
     globalCounter = 0;
     currentTime = 0;
-    setTimeSliderValue(minLongTime, currentTime);
+    setTimeSliderValue(generalEqInfo.minLongTime, currentTime);
     next = 0;
     currentTime = 0;
     switchPlayerBottom();
     startTime = 0;
     minimumTimeIndex = 0;
-    timeInterval = 0;
+    // timeInterval = 0;
     timePercent = 0;
 }
 
 function restorePointsAfterTimeLine(){
     sortByMagnitude(earthquakes);
-    singleClickAction = singleClickUnderlineEarthquake;
-    doubleClickHandler = doubleClickHandler;
+    settings.singleClickHandler = singleClickUnderlineEarthquake;
+    // settings.doubleClickHandler = doubleClickHandler;
     for (var i = 0; i < earthquakes.length; i++) {
         earthquakes[i].primitivePoint.translucencyByDistance =
             magnitudeNearFarScalar(earthquakes[i], i, earthquakes.length);

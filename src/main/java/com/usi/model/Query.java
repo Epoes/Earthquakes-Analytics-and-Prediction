@@ -7,4 +7,6 @@ public interface Query {
 
     URL generateBaseUrl();
 
+
+
 }

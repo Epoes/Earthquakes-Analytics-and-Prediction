@@ -2,12 +2,14 @@ package com.usi.Dao.EarthquakeDao;
 
 
 import com.usi.model.earthquake.*;
+import com.usi.model.query.IngvQuery;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
-import javax.persistence.criteria.CriteriaBuilder;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;

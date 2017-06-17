@@ -1,8 +1,10 @@
 package com.usi.services;
 
-import com.usi.model.earthquake.IngvQuery;
 import com.usi.API.twitter.Response;
+import com.usi.model.Query;
 import com.usi.model.earthquake.Earthquake;
+import com.usi.model.earthquake.Intensity;
+import com.usi.util.parser.Parser;
 
 import org.xml.sax.SAXException;
 
@@ -12,5 +14,8 @@ import javax.xml.parsers.ParserConfigurationException;
 
 public interface earthquakeService {
 
-    Response<Earthquake> getEarthQuakes(IngvQuery query)  throws IOException, SAXException, ParserConfigurationException;
-}
+    Response<Earthquake> requestEarthquakes(Parser<Earthquake> parser, Query query)  throws IOException, SAXException, ParserConfigurationException;
+
+    Intensity requestIntensity(Parser<Intensity> parser, Query query, Earthquake earthquake) throws IOException, SAXException, ParserConfigurationException;
+
+    }

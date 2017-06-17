@@ -2,11 +2,18 @@ package com.usi.model.earthquake;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.hibernate.annotations.LazyCollection;
-import org.hibernate.annotations.LazyCollectionOption;
 
-import javax.persistence.*;
 import java.util.List;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
 
 @Entity
 @Table(name = "earthquake")
@@ -28,16 +35,50 @@ public class Earthquake {
     String regionName;
 
     @OneToMany(mappedBy = "earthquake", cascade = CascadeType.PERSIST)
+    @JsonIgnore
     private List<StationMagnitude> stationMagnitudes;
 
     @OneToMany(mappedBy = "earthquake")
+    @JsonIgnore
     private List<Arrival> arrivals;
 
-//    private Location location;
+    @OneToOne(fetch= FetchType.EAGER, cascade = CascadeType.PERSIST)
+    @JoinColumn(name="intensity_earthquake")
+    private Intensity intensity;
 
 
+    public List<StationMagnitude> getStationMagnitudes() {
+        return stationMagnitudes;
+    }
 
+    public void setStationMagnitudes(List<StationMagnitude> stationMagnitudes) {
+        this.stationMagnitudes = stationMagnitudes;
+    }
 
+    public Intensity getIntensity() {
+        return intensity;
+    }
+
+    public void setIntensity(Intensity intensity) {
+        this.intensity = intensity;
+    }
+
+    public List<Arrival> getArrivals() {
+        return arrivals;
+
+    }
+
+    public void setArrivals(List<Arrival> arrivals) {
+        this.arrivals = arrivals;
+    }
+//
+//    public Intensity getIntensity() {
+//        return intensity;
+//    }
+//
+//    public void setIntensity(Intensity intensity) {
+//        this.intensity = intensity;
+//    }
 
     public Earthquake(int id){
         this.id = id;
@@ -77,13 +118,6 @@ public class Earthquake {
         this.regionName = regionName;
     }
 
-//    public Location getLocation() {
-//        return location;
-//    }
-//
-//    public void setLocation(Location location) {
-//        this.location = location;
-//    }
 
     @Override
     public String toString() {
@@ -92,7 +126,6 @@ public class Earthquake {
                 ", origin=" + origin +
                 ", magnitude=" + magnitude +
                 ", regionName='" + regionName + '\'' +
-//                ", location=" + location +
                 '}';
     }
 }

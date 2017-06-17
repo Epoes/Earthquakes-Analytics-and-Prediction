@@ -1,6 +1,8 @@
 package com.usi.Dao.EarthquakeDao;
 
 import com.usi.model.earthquake.*;
+import com.usi.model.query.IngvQuery;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

@@ -236,3 +236,170 @@ function round(value, precision) {
 }
 
 
+
+function haversine(startLat, startLng, endLat, endLng){
+    const earthRadius = 6371e3;
+
+    var lat1 = degrees_to_radians(startLat);
+    var lat2 = degrees_to_radians(endLat);
+    var deltaLat = degrees_to_radians(endLat - startLat);
+    var deltaLng = degrees_to_radians(endLng - startLng);
+
+    var a = Math.pow(Math.sin(deltaLat/2), 2) + Math.cos(lat1) * Math.cos(lat2) * Math.pow(Math.sin(deltaLng/2), 2);
+    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return earthRadius * c;
+}
+
+function degrees_to_radians(degrees)
+{
+    var pi = Math.PI;
+    return degrees * (pi/180);
+}
+
+function averageColor(color1, color2){
+    var red = (color1[0]+color2[0])/2;
+    var green = (color1[1]+color2[1])/2;
+    var blue = (color1[2]+color2[2])/2;
+    var alpha = (color1[3]+color2[3])/2;
+
+    return [red, green, blue, alpha];
+}
+
+function getTheoreticalIntensity(magnitude){
+    if (magnitude < 2.4){
+        return "I";
+    }else if(magnitude < 2.8){
+        return "II";
+    }else if(magnitude < 3.2){
+        return "III";
+    }else if(magnitude < 2.7){
+        return "IV";
+    }else if(magnitude < 4.2){
+        return "V";
+    }else if(magnitude < 4.7){
+        return "VI";
+    }else if(magnitude < 5.2){
+        return "VII";
+    }else if(magnitude < 5.6){
+        return "VIII";
+    }
+
+    return "IX";
+
+}
+
+function convertIntegerToIntensity(value){
+    switch (value){
+        case (1):
+            return "I";
+        case (2):
+            return "II";
+        case (3):
+            return "III";
+        case (4):
+            return "IV";
+        case (5):
+            return "V";
+        case (6):
+            return "VI";
+        case (7):
+            return "VII";
+        case (8):
+            return "VIII";
+        case (9):
+            return "IX";
+        case(10):
+            return "X"
+        case(11):
+            return "XI"
+    }
+
+    return "XII";
+
+}
+
+
+// eList = [{
+//     id : 1,
+//     magnitude : {
+//         magnitude : 1,
+//         },
+//     origin : {
+//         depth : 40000,
+//         latitude : 40,
+//         longitude : 15,
+//         time : 1367520188000,
+//         }
+//     },
+//     {
+//         id : 2,
+//         magnitude : {
+//             magnitude : 2,
+//         },
+//         origin : {
+//             depth : 35000,
+//             latitude : 40,
+//             longitude : 15.1,
+//             time : 1367520188000,
+//         }
+//     },
+//     {
+//         id : 3,
+//         magnitude : {
+//             magnitude : 3
+//         },
+//         origin : {
+//             depth : 30000,
+//             latitude : 40,
+//             longitude : 15.2,
+//             time : 1367520188000,
+//         }
+//     },
+//     {
+//         id : 4,
+//         magnitude : {
+//             magnitude : 4,
+//         },
+//         origin : {
+//             depth : 25000,
+//             latitude : 40,
+//             longitude : 15.3,
+//             time : 1367520188000,
+//         }
+//     },
+//     {
+//         id : 5,
+//         magnitude : {
+//             magnitude : 5,
+//         },
+//         origin : {
+//             depth : 20000,
+//             latitude : 40,
+//             longitude : 15.4,
+//             time : 1367520188000,
+//         }
+//     },
+//     {
+//         id : 6,
+//         magnitude : {
+//             magnitude : 6,
+//         },
+//         origin : {
+//             depth : 15000,
+//             latitude : 40,
+//             longitude : 15.5,
+//             time : 1367520188000,
+//         }
+//     },
+//     {
+//         id : 7,
+//         magnitude : {
+//             magnitude : 7,
+//         },
+//         origin : {
+//             depth : 10000,
+//             latitude : 40,
+//             longitude : 15.6,
+//             time : 1367520188000,
+//         }
+//     }]
