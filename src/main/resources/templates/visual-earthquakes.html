@@ -25,7 +25,7 @@
     <link rel="icon" type="image/png" sizes="96x96" href="images/favicons/favicon-96x96.png"/>
     <link rel="icon" type="image/png" sizes="16x16" href="images/favicons/favicon-16x16.png"/>
     <link rel="manifest" href="images/favicons/manifest.json"/>
-    <link href="css/3d.css" rel="stylesheet" type="text/css"/>
+    <link href="css/visual-earthquakes.css" rel="stylesheet" type="text/css"/>
     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css"/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"/>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous"/>
@@ -36,6 +36,13 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    <!--options slider-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/9.8.0/bootstrap-slider.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/9.8.0/css/bootstrap-slider.css" />
+    <script type="text/javascript" src="//cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+    <script type="text/javascript" src="//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.js"></script>
+    <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.css" />
+
 </head>
 <body>
 <!--nav sidebar -->
@@ -57,8 +64,18 @@
                     </li>
 
                     <ul class="sub-menu collapse" id="products">
-                        <li class="list-group-item"><a href="#" >Some query</a></li>
-                        <li><a href="#">General</a></li>
+                        <li class="list-group-item">
+                            <a href="#" >Magnitude</a>
+                            <input id="magnitude-filter" type="text" class="span2" value="" data-slider-min="3" data-slider-max="10" data-slider-step="0.5" data-slider-value="[3,10]"/>
+                        </li>
+                        <li>
+                            <a href="#">Date</a>
+                            <div id="reportrange" class="pull-left">
+                                <i class="glyphicon glyphicon-calendar fa fa-calendar"></i>&nbsp;
+                                <span></span> <b class="caret"></b>
+                            </div>
+                            <button type="button" id="query-btn" class="btn btn-default">Search!</button>
+                        </li>
 
                     </ul>
 
@@ -109,10 +126,29 @@
 
 </aside>
         <div id="cesiumContainer"></div>
+<div id="topcorner">
+    <div id="container">
+        <div id="header">Magnitude: <p id="magn"></p><p id="type-magn"></p>
+        </div>
+        <div class="descr-container">Date: <p class="descr-value" id="date"></p>
+        </div>
+        <div class="descr-container">Depth: <p class="descr-value"   id ="depth"></p> km
+        </div>
+        <div class="btn-group animation-buttons" role="group aria-label=...">
+            <button type="button" class="btn btn-default" id="animate-stations">Animate Stations</button>
+            <button type="button" class="btn btn-default" id="propagate-epicentre">Simulate Propagation</button>
+        </div>
+    </div>
+</div>
+
 
 </body>
 
-<script src="js/voxels.js"></script>
+<script src="js/earthquake-voxels.js"></script>
+<script src="js/scene.js"></script>
+<script src="js/visual-menu.js"></script>
+<script src="js/visual-requests.js"></script>
+<script src="js/drawModel.js"></script>
 <script src="js/util.js"></script>
 
 </html>

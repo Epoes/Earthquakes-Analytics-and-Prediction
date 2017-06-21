@@ -227,7 +227,7 @@ function formatDateForList(date){
     var seconds =date.getSeconds() + "";
     seconds = addZeroToString(seconds);
 
-    return day + " " + monthToString + " " + year + " at " + hours + "h" +minutes + "m" + seconds + "s";
+    return day + " " + monthToString + " " + year + " at " + hours + ":" +minutes + ":" + seconds;
 }
 
 function round(value, precision) {
@@ -265,5 +265,22 @@ function setLimitByMagnitude(magnitude){
             return 0;
     }
 }
+
+function haversine(lat1, lon1, lat2, lon2){
+    var R = 6371 *(Math.pow(10,3)); // metres
+    var toRadians = (Math.PI/180);
+    var φ1 = lat1 * toRadians;
+    var φ2 = lat2 * toRadians;
+    var Δφ = (φ2-φ1) * toRadians;
+    var Δλ = (lon2-lon1) * toRadians;
+
+    var a = Math.sin(Δφ/2) * Math.sin(Δφ/2) +
+        Math.cos(φ1) * Math.cos(φ2) *
+        Math.sin(Δλ/2) * Math.sin(Δλ/2);
+    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+
+    return R * c;
+}
+
 
 
