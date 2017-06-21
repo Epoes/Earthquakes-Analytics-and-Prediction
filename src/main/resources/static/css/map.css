@@ -443,8 +443,10 @@ width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden;
     border-width: 1px;
     background-color: rgba(48, 51, 54, 0.5);
     margin: 12px;
+    border-radius: 20px;
+    width: 272px;
 }
-}
+
 
 .earthquake-info-card:hover{
     background-color: rgba(48, 51, 54, 0.8);
@@ -470,6 +472,10 @@ width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden;
 
 .earthquake-info-button:hover{
     color : black;
+}
+
+.earthquake-info-card tbody th {
+    padding: 5px;
 }
 
 

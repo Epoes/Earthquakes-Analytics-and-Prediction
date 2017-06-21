@@ -44,6 +44,10 @@ function playTimeLine(){
             hideAllPoints();
             settings.timeLineMode = true;
         }
+        if(settings.intensityMode) {
+            cancelIntensity();
+            hideAllPoints();
+        }
         changeOnClickHandler("playerMode");
         play = true;
         switchPlayerBottom();

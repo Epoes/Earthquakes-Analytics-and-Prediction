@@ -39,9 +39,9 @@ function closeInfoCard(element){
 
     var earthquakeId = cardElement.attr("id");
 
-    if(!settings.intensityMode && click.pickedEarthquake !== undefined && earthquakeId == click.pickedEarthquake.id){
+    if(!settings.intensityMode && selectedObjects.pickedEarthquake !== undefined && earthquakeId == selectedObjects.pickedEarthquake.id){
         resetLastPoint();
-    }else if(settings.intensityMode && earthquakeId == click.pickedEarthquake.id){
+    }else if(settings.intensityMode && earthquakeId == selectedObjects.pickedEarthquake.id){
         cancelIntensity();
         resetLastPoint();
     }
@@ -49,12 +49,17 @@ function closeInfoCard(element){
 }
 
 function selectEarthquakeFromListElement(element){
+    const high = 10000;
     let e = findEarthquakeById($(element).parent().parent().attr("id"));
-    if(settings.intensityMode && e.id != click.pickedEarthquake.id){
+    if(settings.intensityMode && e.id != selectedObjects.pickedEarthquake.id){
         return;
     }
     changeSelectedPoint(e.primitivePoint);
-    flyTo(e.origin.latitude, e.origin.longitude, 10000);
+    if(!settings.depthMode) {
+        flyTo(e.origin.latitude, e.origin.longitude, high);
+    }else{
+        flyTo(e.origin.latitude, e.origin.longitude, (generalEqInfo.maxDepth - e.origin.depth) + high);
+    }
 
 
 }
@@ -62,14 +67,20 @@ function selectEarthquakeFromListElement(element){
 function getInfoBoxDescription(e){
     var header = "<div class = 'earthquake-info-button' id = 'close-card' onclick = 'closeInfoCard(this)'><i class='fa fa-times' aria-hidden='true'></i></div>"
                  + "<div class = 'earthquake-info-button position' onclick = 'selectEarthquakeFromListElement(this)' ><i class='fa fa-compass' aria-hidden='true'></i></div>";
-
     if(e.intensity.id != 0){
         header+= "<div class = 'earthquake-info-button' onclick = 'showIntensity(this)'><i class='fa fa-circle' aria-hidden='true'></i></div>"
     }
 
+    let regionName = e.regionName;
+    if(regionName.length > 23){
+        regionName = regionName.substring(0,23);
+        regionName += "..."
+    }
+
+
     return "<div class = 'earthquake-info-card' id=" + e.id +">"
            + "<div class = 'earthquake-info-header' >"
-           + "<div class = 'earthquake-info-id'>" + e.id + "</div>"
+           + "<div class = 'earthquake-info-id'>" + regionName + "</div>"
            + header
            + "</div>"
            + "<div >"
@@ -81,7 +92,7 @@ function getInfoBoxDescription(e){
            +"</tr>"
            +"<tr>"
            + "<th>date</th>"
-           + "<td>"+ formatDateForList(new Date(e.origin.time))  + "</td>"
+           + "<td>"+ moment(e.origin.time).format(shortestDateFormat)  + "</td>"
            +"</tr>"
            + "<tr>"
            + "<th>depth</th>"
@@ -106,22 +117,50 @@ function getInfoBoxDescription(e){
 
 
 $("#charts-button").click(function(){
-    drawChart();
+    drawMagnitudeChart();
+    // drawDateChart();
+
 });
 
-
-
-
-function drawChart() {
-    var dataArray = [['magnitude', 'size']];
-    var minRoundMgn = round(generalEqInfo.minimumMagnitude, 0);
-    var maxRoundMgn = round(generalEqInfo.maxMagnitude, 0);
-    for(var i = minRoundMgn; i < maxRoundMgn + 1; i++){
+function drawDateChart() {
+    var dataArray = [['date', 'size']];
+    var minRoundMgn = Math.floor(generalEqInfo.minimumMagnitude);
+    var maxRoundMgn = Math.floor(generalEqInfo.maxMagnitude);
+    for(var i = minRoundMgn; i < maxRoundMgn+1; i++){
         dataArray.push([i, 0]);
     }
 
     for(var i = 0; i < earthquakes.length; i++){
-        var roundMagnitude = round(earthquakes[i].magnitude.magnitude, 0);
+        var roundMagnitude = Math.floor(earthquakes[i].magnitude.magnitude);
+        dataArray[roundMagnitude-(minRoundMgn-1)][1] += 1;
+    }
+
+    var data = google.visualization.arrayToDataTable(dataArray);
+
+    var options = {
+        title: 'Earthquake Magnitude Distribution',
+        hAxis: {title: 'magnitude',  titleTextStyle: {color: '#333'}},
+        vAxis: {minValue: 0}
+    };
+
+    var chart = new google.visualization.AreaChart(document.getElementById('chart_div_magnitude'));
+    chart.draw(data, options);
+
+}
+
+
+
+
+function drawMagnitudeChart() {
+    var dataArray = [['magnitude', 'size']];
+    var minRoundMgn = Math.floor(generalEqInfo.minimumMagnitude);
+    var maxRoundMgn = Math.floor(generalEqInfo.maxMagnitude);
+    for(var i = minRoundMgn; i < maxRoundMgn+1; i++){
+        dataArray.push([i, 0]);
+    }
+
+    for(var i = 0; i < earthquakes.length; i++){
+        var roundMagnitude = Math.floor(earthquakes[i].magnitude.magnitude);
         dataArray[roundMagnitude-(minRoundMgn-1)][1] += 1;
 
     }
@@ -129,14 +168,12 @@ function drawChart() {
     var data = google.visualization.arrayToDataTable(dataArray);
 
     var options = {
-        title: 'Company Performance',
-        hAxis: {title: 'Year',  titleTextStyle: {color: '#333'}},
+        title: 'Earthquake Magnitude Distribution',
+        hAxis: {title: 'magnitude',  titleTextStyle: {color: '#333'}},
         vAxis: {minValue: 0}
     };
 
-    var chart = new google.visualization.AreaChart(document.getElementById('chart_div'));
+    var chart = new google.visualization.AreaChart(document.getElementById('chart_div_magnitude'));
     chart.draw(data, options);
 
-}/**
- * Created by mcalzana on 17/06/2017.
- */
+}

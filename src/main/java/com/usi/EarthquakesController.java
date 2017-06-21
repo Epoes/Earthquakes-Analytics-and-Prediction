@@ -135,7 +135,6 @@ public class EarthquakesController {
         }
 
         getMotionGroundGrid(intensity);
-//        ModelAndView modelAndView = intensity.getCompleteModelToSend();
         ModelAndView modelAndView = getCompleteModelToSend(intensity);
 
         long endTime = System.currentTimeMillis();
@@ -174,12 +173,8 @@ public class EarthquakesController {
                 float latitude = Float.parseFloat(values[0]);
                 float longitude = Float.parseFloat(values[1]);
                 float MMI = Float.parseFloat(values[2]);
-                float PGA = Float.parseFloat(values[3]);
-                float PGV = Float.parseFloat(values[4]);
 
                 MotionGround m = new MotionGround(intensity,MMI);
-                m.setPga(PGA);
-                m.setPgv(PGV);
                 m.setLongitude(longitude);
                 m.setLatitude(latitude);
                 intensity.addMotionGround(m);

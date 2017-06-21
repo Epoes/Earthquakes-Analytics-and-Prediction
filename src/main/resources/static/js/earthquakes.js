@@ -33,13 +33,15 @@ let settings = {
     doubleClickHandler : doubleClickHandler2d,
     timeLineMode : false,
     intensityMode : false,
+    depthMode : false,
     footerIndex : 0
 };
 
-let click = {
+let selectedObjects = {
     pickedPoint : undefined,
     pickedEarthquake : undefined,
-    selectedPoint : undefined
+    selectedPoint : undefined,
+    selectedIntensity : undefined
 };
 
 
@@ -58,6 +60,12 @@ let generalEqInfo = {
 
 function afterEarthquakesRequest(data, textStatus, jqXHR) {
     if (data.length != 0) {
+        if (settings.timeLineMode) {
+            clearTimeLaps();
+        }else if(settings.intensityMode){
+            cancelIntensity();
+        }
+
         earthquakes = data;
         setUpDepth(earthquakes);
         setUpDateRange(earthquakes);
@@ -69,9 +77,6 @@ function afterEarthquakesRequest(data, textStatus, jqXHR) {
         resetCameraRotationCenter();
         settings.setCaption();
         deleteAllInfoBoxCards();
-        if (settings.timeLineMode) {
-            clearTimeLaps();
-        }
         drawEarthquakes(earthquakes);
         setUpTimeLineView();
     }
@@ -104,7 +109,7 @@ function drawEarthquakes(earthquakes) {
     }else{
         addPointFrom(i, earthquakes);
     }
-    click.selectedPoint = addSelectedPoint();
+    selectedObjects.selectedPoint = addSelectedPoint();
 
 }
 
@@ -276,76 +281,86 @@ function singleClickUnderlineEarthquake(click){
     resetCameraRotationCenter();
     closeBarMenu();
     var pickedObject = viewer.scene.pick(click.position);
-    //click on nothing
+    //selectedObjects on nothing
     if(pickedObject === undefined){
         if(!settings.intensityMode) {
             resetLastPoint();
         }
         closeInfoBox();
     }else if(pickedObject.id === undefined){
-        //pick entity
-        showInfoBox(click.pickedEarthquake);
+        //pick entity-intensity
+        showInfoBox(selectedObjects.intensity.earthquake);
     }else {
         changeSelectedPoint(pickedObject.primitive);
     }
 
 }
 function changeSelectedPoint(earthquakePoint) {
-    //click on the same object
-    if (click.pickedPoint !== undefined) {
-        if (earthquakePoint.id === click.pickedEarthquake) {
-            showInfoBox(click.pickedEarthquake);
+    //selectedObjects on the same object
+    if (selectedObjects.pickedPoint !== undefined) {
+        if (earthquakePoint.id === selectedObjects.pickedEarthquake) {
+            showInfoBox(selectedObjects.pickedEarthquake);
             return;
         }
     }
-    //click on other object
+    //selectedObjects on other object
     resetLastPoint();
     switchUnderlinePoint(earthquakePoint);
     underLinePoint();
-    showInfoBox(click.pickedEarthquake);
+    showInfoBox(selectedObjects.pickedEarthquake);
 
 }
 
 function switchUnderlinePoint(earthquakePoint){
-    click.pickedEarthquake = earthquakePoint.id;
-    click.pickedPoint = earthquakePoint;
+    selectedObjects.pickedEarthquake = earthquakePoint.id;
+    selectedObjects.pickedPoint = earthquakePoint;
 
 }
 function resetLastPoint(){
-    if(click.pickedPoint !== undefined) {
-        click.pickedPoint.show = true;
-        click.selectedPoint.show = false;
-        click.pickedPoint = undefined;
-        click.pickedEarthquake = undefined;
+    if(selectedObjects.pickedPoint !== undefined) {
+        if(!settings.intensityMode && !settings.timeLineMode) {
+            selectedObjects.pickedPoint.show = true;
+        }
+        selectedObjects.selectedPoint.show = false;
+        // selectedObjects.pickedPoint = undefined;
+        // selectedObjects.pickedEarthquake = undefined;
     }
 }
 
 function hideUnderlinePint(){
-    if(click.selectedPoint !== undefined) {
-        click.selectedPoint.show = false;
+    if(selectedObjects.selectedPoint !== undefined) {
+        selectedObjects.selectedPoint.show = false;
     }
 }
 
 
 function underLinePoint(){
-    if(click.pickedPoint !== undefined){
-        clonePoint(click.pickedPoint, click.selectedPoint);
-        click.pickedPoint.show = false;
-        click.selectedPoint.show = true;
-        click.selectedPoint.translucencyByDistance = undefined;
-        click.selectedPoint.outlineColor = Cesium.Color.fromCssColorString(computeColorComplement(click.selectedPoint.color.red, click.selectedPoint.color.green, click.selectedPoint.color.blue));
-        click.selectedPoint.color.alpha = 0.999;
-        click.selectedPoint.outlineWidth = 3;
+    if(selectedObjects.pickedPoint !== undefined){
+        clonePoint(selectedObjects.pickedPoint, selectedObjects.selectedPoint);
+        selectedObjects.pickedPoint.show = false;
+        selectedObjects.selectedPoint.show = true;
+        selectedObjects.selectedPoint.translucencyByDistance = undefined;
+        selectedObjects.selectedPoint.outlineColor = Cesium.Color.fromCssColorString(computeColorComplement(selectedObjects.selectedPoint.color.red, selectedObjects.selectedPoint.color.green, selectedObjects.selectedPoint.color.blue));
+        selectedObjects.selectedPoint.color.alpha = 0.999;
+        selectedObjects.selectedPoint.outlineWidth = 3;
     }
 
 }
 
 function showAllPoints(){
-    for(var i =0; i < earthquakes.length; i++){
-        earthquakes[i].primitivePoint.show = true;
+    if(!settings.timeLineMode) {
+        for (var i = 0; i < earthquakes.length; i++) {
+            earthquakes[i].primitivePoint.show = true;
+        }
+    }else{
+        for(var key in dict) {
+            var e = dict[key];
+            e.primitivePoint.show = true;
+        }
     }
 }
 
+//TODO end point of an error. time line + search cause the effect
 function hideAllPoints(){
     for(var i =0; i < earthquakes.length; i++){
         earthquakes[i].primitivePoint.show = false;
@@ -360,7 +375,7 @@ function clonePoint(primitivePoint, clone){
 }
 
 
-//Double click
+//Double selectedObjects
 screenHandler.setInputAction(function(click) {
     settings.doubleClickHandler(click);
 
@@ -430,7 +445,7 @@ function updatePointsColor(){
     for( var i = 0; i < earthquakes.length; i++){
         earthquakes[i].primitivePoint.color = getCesiumColor(earthquakes[i]);
     }
-    underLinePoint(click.pickedPoint, click.pickedEarthquake);
+    underLinePoint(selectedObjects.pickedPoint, selectedObjects.pickedEarthquake);
     settings.setCaption();
 }
 
@@ -444,15 +459,15 @@ function updatePointsPosition(){
                                   pitch: -Cesium.Math.PI_OVER_TWO,
                                   roll: 0.0
                               }});
-    underLinePoint(click.pickedPoint, click.pickedEarthquake);
+    underLinePoint(selectedObjects.pickedPoint, selectedObjects.pickedEarthquake);
     resetCameraRotationCenter();
 
 }
 
 function removeSelectedPoint(){
-    if(click.selectedPoint !== undefined){
+    if(selectedObjects.selectedPoint !== undefined){
         resetLastPoint();
-        points.remove(click.selectedPoint);
+        points.remove(selectedObjects.selectedPoint);
     }
 }
 
@@ -601,10 +616,21 @@ function findEarthquakeById(id){
     }
 }
 
+function findEarthquakeByIntensityId(id){
+    for(var i in earthquakes){
+        var e = earthquakes[i];
+        if(e.intensity.id == id){
+            return e;
+        }
+    }
+}
+
 function cancelIntensity(){
+    $(".earthquake-info-button").css("color", "");
     removeAllIntensity();
     showAllPoints();
     underLinePoint();
+    console.log("aho");
     settings.intensityMode = false;
     settings.setCaption()
 }
@@ -616,10 +642,11 @@ function changePositionMode(mode){
     switch (mode){
         case "3dMode":
             settings.getCartesianPosition = get3dPosition;
+            settings.depthMode = true;
             break;
         case "2dMode":
             settings.getCartesianPosition = get2dPosition;
-
+            settings.depthMode = false;
     }
 }
 
@@ -642,10 +669,8 @@ function changeOnClickHandler(mode){
 }
 
 function showIntensity(element){
-    var e = findEarthquakeById($(element).parent().parent().attr("id"));
-
-    if(settings.intensityMode && click.pickedEarthquake.id == e.id) {
-        $(element).css("color", "white");
+    let e = findEarthquakeById($(element).parent().parent().attr("id"));
+    if(settings.intensityMode && selectedObjects.pickedEarthquake.id == e.id) {
         cancelIntensity();
     }else{
         $(".earthquake-info-button").css("color", "");
@@ -665,42 +690,49 @@ function showIntensity(element){
 
 
 function changeColorOption(colorOption){
-    if(colorOption === "magnitude"){
-        settings.selectedColorInterpolation = interpolateColorByMagnitude;
-        settings.setCaption = setCaptionByMagnitude;
 
-    }else if (colorOption === "date"){
-        settings.selectedColorInterpolation = interpolateColorByTime;
-        settings.setCaption = setCaptionByDate;
-    }else if  (colorOption === "depth"){
-        settings.selectedColorInterpolation = interpolateColorByDepth;
-        settings.setCaption = setCaptionByDepth;
-    }
+        if (colorOption === "magnitude") {
+            settings.selectedColorInterpolation = interpolateColorByMagnitude;
+            settings.setCaption = setCaptionByMagnitude;
 
-    updatePointsColor();
+        } else if (colorOption === "date") {
+            settings.selectedColorInterpolation = interpolateColorByTime;
+            settings.setCaption = setCaptionByDate;
+        } else if (colorOption === "depth") {
+            settings.selectedColorInterpolation = interpolateColorByDepth;
+            settings.setCaption = setCaptionByDepth;
+        }
+        if(!settings.intensityMode) {
+            updatePointsColor();
+        }
+
 }
 
 const colorMode = ["magnitude", "date", "depth"];
 var selectedColorIndex = 0;
 
 function nextColorMode(){
-    selectedColorIndex++;
-    if(selectedColorIndex == colorMode.length){
-        selectedColorIndex = 0;
-    }
+    if(!settings.intensityMode) {
+        selectedColorIndex++;
+        if (selectedColorIndex == colorMode.length) {
+            selectedColorIndex = 0;
+        }
 
-    changeColorOption(colorMode[selectedColorIndex]);
-    $("#color-selector select").val(selectedColorIndex).change();
+        changeColorOption(colorMode[selectedColorIndex]);
+        $("#color-selector select").val(selectedColorIndex).change();
+    }
 }
 
 function prevColorMode(){
-    selectedColorIndex--;
-    if(selectedColorIndex == -1){
-        selectedColorIndex = colorMode.length - 1;
-    }
+    if(!settings.intensityMode) {
+        selectedColorIndex--;
+        if (selectedColorIndex == -1) {
+            selectedColorIndex = colorMode.length - 1;
+        }
 
-    changeColorOption(colorMode[selectedColorIndex]);
-    $("#color-selector select").val(selectedColorIndex).change();
+        changeColorOption(colorMode[selectedColorIndex]);
+        $("#color-selector select").val(selectedColorIndex).change();
+    }
 }
 
 function changeView(view){
@@ -710,9 +742,11 @@ function changeView(view){
             if(!settings.timeLineMode) {
                 setUpTimeLineView();
             }
+            settings.footerIndex = 1;
             showPlayer();
             break;
         case "legend":
+            settings.footerIndex = 0;
             hidePlayer();
             break;
     }

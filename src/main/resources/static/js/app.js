@@ -4,7 +4,9 @@ Cesium.Camera.DEFAULT_VIEW_RECTANGLE = italyView;
 Cesium.Camera.DEFAULT_VIEW_FACTOR = 0;
 
 //TODO
-$("#charts-menu-body").append("<div id='chart_div'></div>");
+$("#charts-menu-body").append("<div id='chart_div_magnitude'></div>");
+$("#charts-menu-date").append("<div id='chart_div_date'></div>");
+
 // Load the Visualization API and the corechart package.
 google.charts.load('current', {'packages':['corechart']});
 
@@ -68,6 +70,7 @@ primitiveCollection.blendOption = 1;
 var points = scene.primitives.add(primitiveCollection);
 
 function flyTo(latitude, longitude, high) {
+    console.log(high)
     const camera = scene.camera;
     camera.flyTo({
                      destination : Cesium.Cartesian3.fromDegrees(longitude, latitude, high),

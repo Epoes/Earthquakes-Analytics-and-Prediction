@@ -45,9 +45,10 @@ function findIntensityById(id, callback){
 function afterIntensityRequest(intensity, textStatus, jqXHR){
     hideAllPoints();
     changeView("legend");
-    var e = findEarthquakeById(intensity.id);
+    let e = findEarthquakeByIntensityId(intensity.id);
     e.intensity = intensity;
     intensity.earthquake = e;
+    selectedObjects.intensity = intensity;
     drawIntensity(intensity);
     flyTo(e.origin.latitude, e.origin.longitude, 300000)
 }
@@ -56,7 +57,6 @@ function afterIntensityRequest(intensity, textStatus, jqXHR){
 function doAjaxRequest(url, type, successCallBack){
     $.ajax({
                url: url,
-
                type: type,
                success: successCallBack,
                error: function(){console.log("error")},

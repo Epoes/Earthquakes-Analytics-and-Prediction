@@ -267,8 +267,9 @@ public class EarthquakeHub {
     private boolean writeMotionGroundGridOnFile(Intensity intensity){
         StringBuilder stringBuilder = new StringBuilder(1210000);
         for(List<Float> motionGround : intensity.getMotionGroundGrid()){
-            for(float value : motionGround){
-                stringBuilder.append(value);
+
+            for(int i = 0; i < 3; i++){
+                stringBuilder.append(motionGround.get(i));
                 stringBuilder.append(" ");
             }
             stringBuilder.append("\n");

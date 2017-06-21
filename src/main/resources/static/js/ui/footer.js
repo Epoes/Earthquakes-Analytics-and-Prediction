@@ -125,8 +125,8 @@ function setCaptionByDate() {
         $(this).css("left", 25 * i + "%");
         i++;
     });
-
-    children.slice(5,7).each(function () {
+    console.log("considerami")
+    children.slice(5, children.length).each(function () {
         $(this).text("");
     });
 

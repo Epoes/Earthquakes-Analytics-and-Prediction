@@ -31,7 +31,6 @@ public class Earthquake {
     Magnitude magnitude;
 
     @Column(name = "regionName", nullable = false, length = 255)
-    @JsonIgnore
     String regionName;
 
     @OneToMany(mappedBy = "earthquake", cascade = CascadeType.PERSIST)

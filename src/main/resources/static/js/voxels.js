@@ -378,7 +378,7 @@ console.log(scene.pick(click.position));
 }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
 
 handler.setInputAction(function(click) {
-    // doubleClickHandler(click);
+    // doubleClickHandler(selectedObjects);
 
 }, Cesium.ScreenSpaceEventType.LEFT_DOUBLE_CLICK);
 
