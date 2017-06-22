@@ -151,7 +151,7 @@ public class EarthquakeHub {
 //            }
 //        };
 
-        getOldTimer.schedule(myTask2, 0, 1000);
+//        getOldTimer.schedule(myTask2, 0, 1000);
     }
 
 
