@@ -227,13 +227,61 @@ function formatDateForList(date){
     var seconds =date.getSeconds() + "";
     seconds = addZeroToString(seconds);
 
-    return day + " " + monthToString + " " + year + " at " + hours + "h" +minutes + "m" + seconds + "s";
+    return day + " " + monthToString + " " + year + " at " + hours + ":" +minutes + ":" + seconds;
 }
 
 function round(value, precision) {
     var multiplier = Math.pow(10, precision || 0);
     return Math.round(value * multiplier) / multiplier;
 }
+
+function htmlbodyHeightUpdate(){
+    var height3 = $( window ).height()
+    var height1 = $('.nav').height()+50
+    height2 = $('.main').height()
+    if(height2 > height3){
+        $('html').height(Math.max(height1,height3,height2)+10);
+        $('body').height(Math.max(height1,height3,height2)+10);
+    }
+    else
+    {
+        $('html').height(Math.max(height1,height3,height2));
+        $('body').height(Math.max(height1,height3,height2));
+    }
+
+}
+
+function setLimitByMagnitude(magnitude){
+    switch(true){
+        case magnitude < 4:
+            return 0;
+        case magnitude < 5:
+            return 1;
+        case magnitude < 6:
+            return 2;
+        case magnitude >= 6:
+            return 3;
+        default:
+            return 0;
+    }
+}
+
+function haversine(lat1, lon1, lat2, lon2){
+    var R = 6371 *(Math.pow(10,3)); // metres
+    var toRadians = (Math.PI/180);
+    var φ1 = lat1 * toRadians;
+    var φ2 = lat2 * toRadians;
+    var Δφ = (φ2-φ1) * toRadians;
+    var Δλ = (lon2-lon1) * toRadians;
+
+    var a = Math.sin(Δφ/2) * Math.sin(Δφ/2) +
+        Math.cos(φ1) * Math.cos(φ2) *
+        Math.sin(Δλ/2) * Math.sin(Δλ/2);
+    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+
+    return R * c;
+}
+
 
 
 

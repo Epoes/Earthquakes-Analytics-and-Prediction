@@ -12,8 +12,8 @@ public class Home {
         return "index";
     }
 
-    @RequestMapping(value = "/3d", method = RequestMethod.GET)
-    public String showProva(){
-        return "3d";
+    @RequestMapping(value = "/visual-earthquakes", method = RequestMethod.GET)
+    public String showVisualEarthquakes(){
+        return "visual-earthquakes";
     }
 }

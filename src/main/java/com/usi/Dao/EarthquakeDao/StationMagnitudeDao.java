@@ -32,11 +32,12 @@ public class StationMagnitudeDao {
     }
 
     public Query getQuery(IngvQuery request){
-        final String prefix = "select * from station_magnitude s, amplitude a, station st where s.amplitude_station_magnitude = a.amplitude_id and s.station_magnitude_station = st.id_station and ";
+        final String prefix = "select * from station_magnitude s, amplitude a, station st where s.amplitude_station_magnitude = a.amplitude_id and s.station_magnitude_station = st.station_id and ";
         String earthquakeId = "earthquake_id = ? ";
-        String magnitude = "and magnitude >= ? and magnitude <= ?;";
+        String magnitude = "and magnitude >= ? and magnitude <= ? ";
+        final String suffix = " and st.station_name != 'NULL' order by a.time;";
 
-        final Query q = em.createNativeQuery(prefix + earthquakeId + magnitude);
+        final Query q = em.createNativeQuery(prefix + earthquakeId + magnitude + suffix);
 
         q.setParameter(1, request.getId());
         q.setParameter(2, request.getMinMagnitude());

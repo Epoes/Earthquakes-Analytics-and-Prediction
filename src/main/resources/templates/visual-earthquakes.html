@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <!-- Use correct character set. -->
+    <meta charset="utf-8"/>
+    <!-- Tell IE to use the latest, best version. -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <!-- Make the application on mobile take up the full browser screen and disable user scaling. -->
+    <meta name="msapplication-TileColor" content="#ffffff"/>
+    <meta name="msapplication-TileImage" content="images/favicons/ms-icon-144x144.png"/>
+    <meta name="theme-color" content="#ffffff"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no"/>
+    <link rel="apple-touch-icon" sizes="57x57" href="images/favicons/apple-icon-57x57.png"/>
+    <link rel="apple-touch-icon" sizes="60x60" href="images/favicons/apple-icon-60x60.png"/>
+    <link rel="apple-touch-icon" sizes="72x72" href="images/favicons/apple-icon-72x72.png"/>
+    <link rel="apple-touch-icon" sizes="76x76" href="images/favicons/apple-icon-76x76.png"/>
+    <link rel="apple-touch-icon" sizes="114x114" href="images/favicons/apple-icon-114x114.png"/>
+    <link rel="apple-touch-icon" sizes="120x120" href="images/favicons/apple-icon-120x120.png"/>
+    <link rel="apple-touch-icon" sizes="144x144" href="images/favicons/apple-icon-144x144.png"/>
+    <link rel="apple-touch-icon" sizes="152x152" href="images/favicons/apple-icon-152x152.png"/>
+    <link rel="apple-touch-icon" sizes="180x180" href="images/favicons/apple-icon-180x180.png"/>
+    <link rel="icon" type="image/png" sizes="192x192"  href="images/favicons/android-icon-192x192.png"/>
+    <link rel="icon" type="image/png" sizes="32x32" href="images/favicons/favicon-32x32.png"/>
+    <link rel="icon" type="image/png" sizes="96x96" href="images/favicons/favicon-96x96.png"/>
+    <link rel="icon" type="image/png" sizes="16x16" href="images/favicons/favicon-16x16.png"/>
+    <link rel="manifest" href="images/favicons/manifest.json"/>
+    <link href="css/visual-earthquakes.css" rel="stylesheet" type="text/css"/>
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous"/>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous"/>
+    <title>Visual Earthquakes</title>
+    <script src="Cesium/Build/Cesium/Cesium.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    <!--options slider-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/9.8.0/bootstrap-slider.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/9.8.0/css/bootstrap-slider.css" />
+    <script type="text/javascript" src="//cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+    <script type="text/javascript" src="//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.js"></script>
+    <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.css" />
+
+</head>
+<body>
+<!--nav sidebar -->
+<aside>
+    <nav class="navbar navbar-inverse sidebar navbar-fixed-top" role="navigation">
+        <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet"/>
+
+        <div class="nav-side-menu">
+            <div class="brand">Visual Earthquakes</div>
+            <i class="fa fa-bars fa-2x toggle-btn" data-toggle="collapse" data-target="#menu-content"></i>
+
+            <div class="menu-list">
+
+                <ul id="menu-content" class="menu-content collapse out">
+                    <li data-toggle="collapse" data-target="#products" class="collapsed ">
+                        <a href="#">
+                            Query </a><i class="fa fa-search fa-lg btn pull-right menu-icon"></i>
+
+                    </li>
+
+                    <ul class="sub-menu collapse" id="products">
+                        <li class="list-group-item">
+                            <a href="#" >Magnitude</a>
+                            <input id="magnitude-filter" type="text" class="span2" value="" data-slider-min="3" data-slider-max="10" data-slider-step="0.5" data-slider-value="[3,10]"/>
+                        </li>
+                        <li>
+                            <a href="#">Date</a>
+                            <div id="reportrange" class="pull-left">
+                                <i class="glyphicon glyphicon-calendar fa fa-calendar"></i>&nbsp;
+                                <span></span> <b class="caret"></b>
+                            </div>
+                            <button type="button" id="query-btn" class="btn btn-default">Search!</button>
+                        </li>
+
+                    </ul>
+
+
+                    <li  class="collapsed">
+                        <a href="#" id="generate-full-italy"> Generate Italy</a><i class="fa fa-globe fa-lg btn pull-right menu-icon" data-toggle="collapse" data-target="#generate-italy"></i>
+                    </li>
+                    <ul class="sub-menu collapse" id="generate-italy">
+                        <li id="generate-north-italy" ><a href="#">Northern Italy</a></li>
+                        <li id="generate-centre-italy"><a href="#">Central Italy</a></li>
+                        <li id="generate-south-italy"><a href="#">Southern Italy</a></li>
+                        <li id="show-stations"><a href="#">Show Stations</a></li>
+                    </ul>
+
+
+                    <li data-toggle="collapse" data-target="#about-us" class="collapsed">
+                        <a href="#">
+                            About Us</a><i class="fa fa-users fa-lg btn pull-right menu-icon"></i>
+                    </li>
+                    <ul class="sub-menu collapse" id="about-us">
+                        <li class="list-group-item">
+                            <div id="about-us-li">
+                                Conceived by <a href="http://www.inf.usi.ch/faculty/lanza/" target="_blank" style="padding-left: 0px;"> Prof. Dr. Michele Lanza </a> and <a href="http://www.inf.usi.ch/postdoc/mocci/" style="padding-left: 0px;" target="_blank"> Dr. Andrea Mocci</a>
+                                <br/>
+                                Developed by Leonardo Iandiorio
+                                <br/>
+                                <a href="http://reveal.inf.usi.ch/" target="_blank">
+                                    <img id="reveal-logo" src="images/REVEALogo-white.png"/>
+                                </a>
+                                <a href="http://www.inf.usi.ch/" target="_blank">
+                                    <img id="usi-logo" src="images/logo_usi.png"/>
+                                </a>
+                            </div>
+                        </li>
+                    </ul>
+
+                    <li data-toggle="collapse" data-target="#credits" class="collapsed">
+                        <a href="#">
+                             Credits</a><i class="fa fa-info-circle fa-lg btn pull-right menu-icon"></i>
+                    </li>
+                    <ul class="sub-menu collapse" id="credits">
+                        <li class="list-group-item" id="credit-container"></li>
+                    </ul>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+</aside>
+        <div id="cesiumContainer"></div>
+<div id="topcorner">
+    <div id="container">
+        <div id="header">Magnitude: <p id="magn"></p><p id="type-magn"></p>
+        </div>
+        <div class="descr-container">Date: <p class="descr-value" id="date"></p>
+        </div>
+        <div class="descr-container">Depth: <p class="descr-value"   id ="depth"></p> km
+        </div>
+        <div class="btn-group animation-buttons" role="group aria-label=...">
+            <button type="button" class="btn btn-default" id="animate-stations">Animate Stations</button>
+            <button type="button" class="btn btn-default" id="propagate-epicentre">Simulate Propagation</button>
+        </div>
+    </div>
+</div>
+
+
+</body>
+
+<script src="js/earthquake-voxels.js"></script>
+<script src="js/scene.js"></script>
+<script src="js/visual-menu.js"></script>
+<script src="js/visual-requests.js"></script>
+<script src="js/drawModel.js"></script>
+<script src="js/util.js"></script>
+
+</html>
