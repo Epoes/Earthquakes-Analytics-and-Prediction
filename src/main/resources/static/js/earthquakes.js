@@ -630,7 +630,6 @@ function cancelIntensity(){
     removeAllIntensity();
     showAllPoints();
     underLinePoint();
-    console.log("aho");
     settings.intensityMode = false;
     settings.setCaption()
 }

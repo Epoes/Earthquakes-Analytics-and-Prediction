@@ -1,6 +1,4 @@
-package com.usi.API.twitter;
-
-import com.usi.util.ConnectionStatus;
+package com.usi.util;
 
 import java.util.List;
 

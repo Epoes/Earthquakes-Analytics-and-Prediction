@@ -1,13 +1,11 @@
 package com.usi.API.google_maps;
 
-import com.google.maps.ElevationApi;
 import com.google.maps.GeoApiContext;
 import com.google.maps.GeocodingApi;
 import com.google.maps.errors.InvalidRequestException;
 import com.google.maps.errors.OverQueryLimitException;
 import com.google.maps.errors.RequestDeniedException;
 import com.google.maps.errors.ZeroResultsException;
-import com.google.maps.model.ElevationResult;
 import com.google.maps.model.GeocodingResult;
 import com.google.maps.model.LatLng;
 
@@ -18,8 +16,7 @@ import com.mashape.unirest.http.exceptions.UnirestException;
 
 import com.usi.model.Coordinate;
 import com.usi.util.ConnectionStatus;
-import com.usi.API.twitter.Response;
-import com.usi.model.Elevation;
+import com.usi.util.Response;
 import com.usi.model.Location;
 import com.usi.util.APIKeys;
 

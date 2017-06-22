@@ -13,12 +13,13 @@ google.charts.load('current', {'packages':['corechart']});
 
 //Initialize the viewer widget with several custom options.
 var viewer = new Cesium.Viewer('cesiumContainer', {
+    baseLayerPicker : true,
     animation: false,
     fullscreenButton : true,
     vrButton : false,
     homeButton : false,
-    infoBox : true,
-    sceneModePicker : true,
+    infoBox : false,
+    sceneModePicker : false,
 
     //help info
     navigationHelpButton : false,
@@ -38,11 +39,13 @@ var viewer = new Cesium.Viewer('cesiumContainer', {
     //credits:
     creditContainer : "cesium-credits",
 
-    terrainExaggeration : 1,
+    terrainExaggeration : 0,
 
     shadows : false,
     projectionPicker : false
 });
+
+console.log(viewer.terrainProviderViewModels);
 
 
 function changeResolution(numb){
@@ -57,7 +60,7 @@ function changeFPS(numb){
 //remove fixed entity.
 viewer.cesiumWidget.screenSpaceEventHandler.removeInputAction(Cesium.ScreenSpaceEventType.LEFT_DOUBLE_CLICK);
 const scene = viewer.scene;
-scene.debugShowFramesPerSecond = true;
+// scene.debugShowFramesPerSecond = true;
 scene.fxaa = true;
 
 //possible optimisation. maximumScreenSpaceError > best performance
@@ -69,17 +72,18 @@ const primitiveCollection = new Cesium.PointPrimitiveCollection();
 primitiveCollection.blendOption = 1;
 var points = scene.primitives.add(primitiveCollection);
 
-function flyTo(latitude, longitude, high) {
-    console.log(high)
-    const camera = scene.camera;
-    camera.flyTo({
-                     destination : Cesium.Cartesian3.fromDegrees(longitude, latitude, high),
-                     duration: 2,
-                 });
-}
 
 $(document).ready(function () {
     getLatestEarthquake(1500);
     setUpFooter();
     setUpMenu();
 });
+
+
+function flyTo(latitude, longitude, high) {
+    const camera = scene.camera;
+    camera.flyTo({
+                     destination : Cesium.Cartesian3.fromDegrees(longitude, latitude, high),
+                     duration: 2,
+                 });
+}

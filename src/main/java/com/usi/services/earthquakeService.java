@@ -1,6 +1,6 @@
 package com.usi.services;
 
-import com.usi.API.twitter.Response;
+import com.usi.util.Response;
 import com.usi.model.Query;
 import com.usi.model.earthquake.Earthquake;
 import com.usi.model.earthquake.Intensity;

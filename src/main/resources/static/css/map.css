@@ -425,10 +425,10 @@ width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden;
 .earthquake-info{
     position: absolute;
     right: -400px;
-    top: 100px;
+    top: 50px;
     color: white;
     overflow: auto;
-    height: 65%;
+    height: 70%;
     transition: all 300ms cubic-bezier(1.000, 0.000, 0.000, 1.000);
     -webkit-transition: all 300ms cubic-bezier(1.000, 0.000, 0.000, 1.000);
     -moz-transition: all 300ms cubic-bezier(1.000, 0.000, 0.000, 1.000);

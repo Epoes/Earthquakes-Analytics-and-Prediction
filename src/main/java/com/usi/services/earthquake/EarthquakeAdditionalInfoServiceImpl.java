@@ -1,6 +1,6 @@
 package com.usi.services.earthquake;
 
-import com.usi.API.twitter.Response;
+import com.usi.util.Response;
 import com.usi.model.earthquake.*;
 import com.usi.model.query.IngvQuery;
 import com.usi.repository.StationRepository;

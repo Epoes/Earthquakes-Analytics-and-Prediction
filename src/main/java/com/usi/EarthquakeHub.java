@@ -3,7 +3,7 @@ package com.usi;
 
 import com.usi.API.google_maps.MapsServices;
 import com.usi.API.google_maps.MapsServicesImpl;
-import com.usi.API.twitter.Response;
+import com.usi.util.Response;
 import com.usi.Dao.EarthquakeDao.EarthquakeDao;
 import com.usi.model.Coordinate;
 import com.usi.model.Query;
@@ -265,6 +265,10 @@ public class EarthquakeHub {
 
 
     private boolean writeMotionGroundGridOnFile(Intensity intensity){
+
+        String path = "/home/share/intensity_grid_map/";
+//        String path = "src/main/resources/intensity_grid_map/";
+
         StringBuilder stringBuilder = new StringBuilder(1210000);
         for(List<Float> motionGround : intensity.getMotionGroundGrid()){
 
@@ -277,7 +281,7 @@ public class EarthquakeHub {
 
 
         try{
-            PrintWriter writer = new PrintWriter("src/main/resources/intensity_grid_map/" + intensity.getId() + ".txt", "UTF-8");
+            PrintWriter writer = new PrintWriter(path + intensity.getId() + ".txt", "UTF-8");
             writer.print(stringBuilder.toString());
             writer.close();
             return true;
