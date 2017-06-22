@@ -2,7 +2,7 @@ var stdRequest = {
     count : 9950000,
     endTime : new Date(),
     startTime : new Date(),
-    minMag : 3,
+    minMag : 2,
     maxMag : 9,
     minDepth : 0,
     maxDepth : 25000,

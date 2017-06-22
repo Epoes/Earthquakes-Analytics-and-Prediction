@@ -45,8 +45,6 @@ var viewer = new Cesium.Viewer('cesiumContainer', {
     projectionPicker : false
 });
 
-console.log(viewer.terrainProviderViewModels);
-
 
 function changeResolution(numb){
     viewer.resolutionScale = numb;
@@ -74,7 +72,7 @@ var points = scene.primitives.add(primitiveCollection);
 
 
 $(document).ready(function () {
-    getLatestEarthquake(1500);
+    getLatestEarthquake(100);
     setUpFooter();
     setUpMenu();
 });
