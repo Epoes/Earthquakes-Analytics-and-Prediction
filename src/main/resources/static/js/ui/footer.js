@@ -21,6 +21,7 @@ $("#top-arrow-container").click(function(){
 function setCaptionByIntensity(){
     var i = 0;
     $('#color1').children().each(function () {
+        $(this).css("width","");
         $(this).text(convertIntegerToIntensity(i+1));
         $(this).css("left", 11.11 * i + "%");
         $(this).css("transform", "translate(-50%, 0%)");
@@ -42,9 +43,11 @@ function setCaptionByMagnitude() {
     var i = 0;
     $('#color1').css("background", "")
     $('#color1').children().each(function () {
+        $(this).css("width","");
         if(i < 7) {
             if (i == 6) {
                 $(this).text("> " + i);
+                $(this).css("width","34");
             } else {
                 $(this).text(i);
             }
@@ -76,11 +79,18 @@ function setCaptionByDepth() {
     }
     $('#color1').children().each(function () {
         if(i < 7){
+            $(this).css("width","");
             var depth = (generalEqInfo.minDepth + (step * i))/1000;
             $(this).text((round(depth, precision)) + " km");
             $(this).css("left", 16.66 * i + "%");
             $(this).css("transform","translate(-50%, 0%)");
+            if(i == 6){
+                $(this).css("width","34");
+            }
+
             i++;
+
+
         }else{
             $(this).text("");
         }
@@ -116,6 +126,7 @@ function setCaptionByDate() {
     $(children[0]).css("transform","translate(-35%, 0%)");
     $(children[4]).css("left","100%");
     $(children[4]).css("transform","translate(-65%, 0%)");
+    $(children[4]).css("width","78px");
 
 
     var i = 1;
@@ -125,7 +136,6 @@ function setCaptionByDate() {
         $(this).css("left", 25 * i + "%");
         i++;
     });
-    console.log("considerami")
     children.slice(5, children.length).each(function () {
         $(this).text("");
     });

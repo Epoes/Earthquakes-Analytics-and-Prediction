@@ -10,7 +10,7 @@
     <meta name="msapplication-TileImage" content="images/favicons/ms-icon-144x144.png"/>
     <meta name="theme-color" content="#ffffff"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no"/>
-    <title>Visual Earthquakes</title>
+    <title>Earthquake Analytics</title>
 
     <link rel="stylesheet" href="css/font-awesome.min.css"/>
     <link rel="apple-touch-icon" sizes="57x57" href="images/favicons/apple-icon-57x57.png"/>
@@ -194,8 +194,8 @@
         <div class = 'bar-menu' id = 'chart-menu'>
             <i class='fa fa-times bar-menu-close' aria-hidden='true'></i>
             <h3 class = 'bar-menu-title'>Charts</h3>
-            <div class = 'menu-body' id = 'charts-menu-body'></div>
-            <div class = 'menu-body' id = 'charts-menu-date'></div>
+            <div class = 'menu-body charts' id = 'charts-menu-body' ></div>
+            <div class = 'menu-body charts' id = 'charts-menu-date'></div>
         </div>
     </div>
 
@@ -205,9 +205,16 @@
             <i class='fa fa-times bar-menu-close' aria-hidden='true'></i>
             <h3 class= 'bar-menu-title'> Info </h3>
             <div class = 'menu-body' id = 'info-menu-body'>
-                <div class = 'settings-container' id = 'cesium-credits'>
-
+                <div class = 'settings-container' id = 'reveal-credits'>
+                    <a href="http://reveal.inf.usi.ch/" target="_blank">
+                        <img src='images/REVEALogo-black.png' id = 'revealLogo'/>
+                    </a>
+                    <p> Conceived by prof. Dr. Michele Lanza &amp; Dr. Andrea Mocci </p>
+                    <p> Developed by Marco Calzana </p>
                 </div>
+                <div class = 'settings-container' id = 'cesium-credits'>
+                </div>
+
             </div>
 
         </div>

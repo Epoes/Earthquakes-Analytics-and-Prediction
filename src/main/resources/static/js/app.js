@@ -39,7 +39,7 @@ var viewer = new Cesium.Viewer('cesiumContainer', {
     //credits:
     creditContainer : "cesium-credits",
 
-    terrainExaggeration : 0,
+    terrainExaggeration : 1,
 
     shadows : false,
     projectionPicker : false

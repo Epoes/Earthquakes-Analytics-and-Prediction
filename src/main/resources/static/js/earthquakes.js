@@ -74,6 +74,8 @@ function afterEarthquakesRequest(data, textStatus, jqXHR) {
         //pick control
         closeInfoBox();
         removeSelectedPoint();
+        selectedObjects.pickedPoint = undefined;
+        selectedObjects.pickedEarthquake = undefined;
         resetCameraRotationCenter();
         settings.setCaption();
         deleteAllInfoBoxCards();
@@ -322,8 +324,6 @@ function resetLastPoint(){
             selectedObjects.pickedPoint.show = true;
         }
         selectedObjects.selectedPoint.show = false;
-        // selectedObjects.pickedPoint = undefined;
-        // selectedObjects.pickedEarthquake = undefined;
     }
 }
 

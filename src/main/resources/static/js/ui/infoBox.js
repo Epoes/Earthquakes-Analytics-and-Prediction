@@ -122,31 +122,51 @@ $("#charts-button").click(function(){
 
 });
 
-function drawDateChart() {
-    var dataArray = [['date', 'size']];
-    var minRoundMgn = Math.floor(generalEqInfo.minimumMagnitude);
-    var maxRoundMgn = Math.floor(generalEqInfo.maxMagnitude);
-    for(var i = minRoundMgn; i < maxRoundMgn+1; i++){
-        dataArray.push([i, 0]);
-    }
-
-    for(var i = 0; i < earthquakes.length; i++){
-        var roundMagnitude = Math.floor(earthquakes[i].magnitude.magnitude);
-        dataArray[roundMagnitude-(minRoundMgn-1)][1] += 1;
-    }
-
-    var data = google.visualization.arrayToDataTable(dataArray);
-
-    var options = {
-        title: 'Earthquake Magnitude Distribution',
-        hAxis: {title: 'magnitude',  titleTextStyle: {color: '#333'}},
-        vAxis: {minValue: 0}
-    };
-
-    var chart = new google.visualization.AreaChart(document.getElementById('chart_div_magnitude'));
-    chart.draw(data, options);
-
-}
+// function drawDateChart() {
+//     var data = new google.visualization.DataTable();
+//     data.addColumn('timeofday', 'Time of Day');
+//     data.addColumn('number', 'Motivation Level');
+//
+//     for(var i = 0; i < earthquakes.length; i++){
+//        let date = earthquakes[i].origin.time;
+//
+//
+//     }
+//
+//     data.addRows([
+//                      [{v: [8, 0, 0], f: '8 am'}, 1],
+//                      [{v: [9, 0, 0], f: '9 am'}, 2],
+//                      [{v: [10, 0, 0], f:'10 am'}, 3],
+//                      [{v: [11, 0, 0], f: '11 am'}, 4],
+//                      [{v: [12, 0, 0], f: '12 pm'}, 5],
+//                      [{v: [13, 0, 0], f: '1 pm'}, 6],
+//                      [{v: [14, 0, 0], f: '2 pm'}, 7],
+//                      [{v: [15, 0, 0], f: '3 pm'}, 8],
+//                      [{v: [16, 0, 0], f: '4 pm'}, 9],
+//                      [{v: [17, 0, 0], f: '5 pm'}, 10],
+//                  ]);
+//
+//     var options = {
+//         title: 'Motivation Level Throughout the Day',
+//         hAxis: {
+//             title: 'Date',
+//             // format: 'h:mm a',
+//             // viewWindow: {
+//             //     min: [7, 30, 0],
+//             //     max: [17, 30, 0]
+//             // }
+//         },
+//         vAxis: {
+//             title: 'Number'
+//         }
+//     };
+//
+//     var chart = new google.visualization.AreaChart(
+//         document.getElementById('chart_div_date'));
+//
+//     chart.draw(data, options);
+//
+// }
 
 
 
