@@ -481,6 +481,7 @@ function addSelectedPoint(){
 
 /* DRAW Intensity */
 function drawIntensity(intensity){
+    console.log(intensity);
     removeAllIntensity();
     var groundGrid = getGridList(intensity)
     var maxDistance = getMaxDistance(groundGrid, intensity.earthquake);
