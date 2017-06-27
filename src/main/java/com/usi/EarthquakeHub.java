@@ -266,8 +266,8 @@ public class EarthquakeHub {
 
     private boolean writeMotionGroundGridOnFile(Intensity intensity){
 
-//        String path = "/home/share/intensity_grid_map/";
-        String path = "src/main/resources/intensity_grid_map/";
+        String path = "/home/share/intensity_grid_map/";
+//        String path = "src/main/resources/intensity_grid_map/";
 
         StringBuilder stringBuilder = new StringBuilder(1210000);
         for(List<Float> motionGround : intensity.getMotionGroundGrid()){

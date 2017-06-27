@@ -158,8 +158,8 @@ public class EarthquakesController {
     }
 
     private void getMotionGroundGrid(Intensity intensity){
-//        String path = "/home/share/intensity_grid_map/";
-        String path = "src/main/resources/intensity_grid_map/";
+        String path = "/home/share/intensity_grid_map/";
+//        String path = "src/main/resources/intensity_grid_map/";
 
         try {
 
