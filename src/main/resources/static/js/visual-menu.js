@@ -65,9 +65,10 @@ $(function() {
             'Last 7 Days': [moment().subtract(6, 'days'), moment()],
             'Last 30 Days': [moment().subtract(29, 'days'), moment()],
             'This Month': [moment().startOf('month'), moment().endOf('month')],
-            'All': [moment("2006/01/01",  "YYYY-MM-DD"), moment()]
+            'All with stations': [moment("2006/01/01",  "YYYY-MM-DD"), moment()],
+            'All': [moment("1985/01/01",  "YYYY-MM-DD"), moment()]
         },
-        minDate: moment("2006/01/01", "YYYY-MM-DD"),
+        minDate: moment("1985/01/01", "YYYY-MM-DD"),
         maxDate: moment()
     }, cb);
 
@@ -83,7 +84,6 @@ $("#cesiumContainer").click(function(){
 });
 
 $("#query-btn").click(function () {
-    console.log(stdRequest);
     doRequest(stdRequest);
 });
 function updateMagnitudeRequest(min, max){

@@ -1,5 +1,6 @@
 var centerBoundings = [43.961401, 14.452927, 42.424652, 10.050827];
 var italyBoundings = [48.00, 35.00, 19.00, 5.00];
+var italy = false;
 
 var stdRequest = {
     count : 100000,
@@ -21,6 +22,7 @@ var stdRequest = {
 
 
 function doItalyRequest(objects, maxLat, minLat, maxLon, minLon){
+    scene.primitives.remove(scene.primitives.get(1));
     if(objects.length != 0 && elevations.length != 0){
         return;
     }
@@ -35,6 +37,7 @@ function doItalyRequest(objects, maxLat, minLat, maxLon, minLon){
         url: url,
         type: "GET",
         success: function (data, textStatus, jqXHR) {
+            italy = true;
             switch(maxLat){
                 case 48:
                     northElevations = data;
@@ -61,6 +64,12 @@ function doItalyRequest(objects, maxLat, minLat, maxLon, minLon){
 }
 
 function doRequest(request){
+    if(!italy){
+        scene.primitives.remove(scene.primitives.get(1));
+    } else {
+        scene.primitives.remove(scene.primitives.get(scene.primitives.length - 1));
+    }
+
     $.ajax({
         url: "http://" + window.location.host + "/api/earthquakes/query?count=" + request.count + "&start_time="+ formatDateForQuery(request.startTime)
         + "&end_time=" + formatDateForQuery(request.endTime) + "&max_magnitude=" + request.maxMag
@@ -77,7 +86,7 @@ function doRequest(request){
     })
 }
 
-function getStationMagnitudes(objects, epicentre) {
+function getStationMagnitudes(epicentre) {
     var min_magnitude = 2.5;
     var max_magnitude = 8;
     $.ajax({
@@ -85,10 +94,9 @@ function getStationMagnitudes(objects, epicentre) {
         type: "GET",
         success: function (data, textStatus, jqXHR) {
             stationMagnitudes = data;
-            startTime = new Date().getTime();
-            currentTime = startTime;
+
         }
-    })
+    });
 }
 
 function getArrivals(objects, epicentres) {

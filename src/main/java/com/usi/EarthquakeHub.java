@@ -133,25 +133,25 @@ public class EarthquakeHub {
 
 
         float magnitude = 2.5f;
-        ids = earthquakeRepository.getAllIds(magnitude).orElse(new ArrayList<>());
 
 
-//        TimerTask myTask2 = new TimerTask() {
-//            @Override
-//            public void run() {
-//                iterateIds();
-//                if(ids.size() > 0) {
-//                    try {
-//                        saveAdditionalInfo(ids.get(ids.size() - 1));
-//                    } catch (ParseException e) {
-//                        e.printStackTrace();
-//                    }
-//
-//                }
-//            }
-//        };
+        TimerTask myTask2 = new TimerTask() {
+            @Override
+            public void run() {
+                ids = earthquakeRepository.getAllIds(magnitude).orElse(new ArrayList<>());
+                iterateIds();
+                if(ids.size() > 0) {
+                    try {
+                        saveAdditionalInfo(ids.get(ids.size() - 1));
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
 
-//        getOldTimer.schedule(myTask2, 0, 1000);
+                }
+            }
+        };
+
+        getOldTimer.schedule(myTask2, 0, 9000000);
     }
 
 

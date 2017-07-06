@@ -126,7 +126,7 @@
 
 </aside>
         <div id="cesiumContainer"></div>
-<div id="topcorner">
+<div id="info-earthquake">
     <div id="container">
         <div id="header">Magnitude: <p id="magn"></p><p id="type-magn"></p>
         </div>
@@ -134,9 +134,24 @@
         </div>
         <div class="descr-container">Depth: <p class="descr-value"   id ="depth"></p> km
         </div>
+        <div class="descr-container">Zone: <p class="descr-value"   id ="zone"></p>
+        </div>
         <div class="btn-group animation-buttons" role="group aria-label=...">
             <button type="button" class="btn btn-default" id="animate-stations">Animate Stations</button>
             <button type="button" class="btn btn-default" id="propagate-epicentre">Simulate Propagation</button>
+        </div>
+    </div>
+</div>
+
+<div id="info-station">
+    <div id="container-station">
+        <div id="header-station"><p id="station"> Station: </p><p id="station-name"></p>
+        </div>
+        <div class="descr-container">Magnitude: <p class="descr-value" id="station-magnitude"></p><p id="type-station-magn"></p>
+        </div>
+        <div class="descr-container">Arrival Time: <p class="descr-value" id="arrival-time"></p>
+        </div>
+        <div class="descr-container">Elevation: <p class="descr-value" id="elevation"></p> m
         </div>
     </div>
 </div>

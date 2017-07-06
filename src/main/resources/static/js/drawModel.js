@@ -67,7 +67,7 @@ function getPrimitiveForStation(station, region) {
     var ids = [];
     var minId;
     for (var i = region - 5; i < region + 5; ++i) {
-        if(scene.primitives.get(i)) {
+        if(scene.primitives.get(i).geometryInstances) {
             ids.push(computeNearestElevation(station.station, scene.primitives.get(i).geometryInstances));
         }
     }
@@ -76,27 +76,24 @@ function getPrimitiveForStation(station, region) {
         if(scene.primitives.get(i)) {
             var attribute = scene.primitives.get(i).getGeometryInstanceAttributes(minId.id);
             if (attribute != undefined) {
-                selectedAttribute = attribute;
+                attributes.push(attribute);
+                oldColors.push(attribute.color);
+                attribute.color = Cesium.ColorGeometryInstanceAttribute.toValue(new Cesium.Color(interpolateColorByMagnitude(0, station), interpolateColorByMagnitude(1, station), interpolateColorByMagnitude(2, station), 0.5));
             }
         }
     }
-    attributes.push(selectedAttribute);
-    oldColors.push(selectedAttribute.color);
-    selectedAttribute.color = Cesium.ColorGeometryInstanceAttribute.toValue(new Cesium.Color(interpolateColorByMagnitude(0, station), interpolateColorByMagnitude(1, station), interpolateColorByMagnitude(2, station), 0.5));
-    var newAttr;
     var stationNeigh = [filterArray(minId.id.id - 1), filterArray(minId.id.id - 1024 - 1), filterArray(minId.id.id - 1024), filterArray(minId.id.id - 1024 + 1), filterArray(minId.id.id + 1), filterArray(minId.id.id + 1024 + 1), filterArray(minId.id.id + 1024), filterArray(minId.id.id + 1024 - 1)]
     for(var j = 0; j < stationNeigh.length; j++) {
         if(stationNeigh[j]) {
             region = computeNearestRegion(stationNeigh[j].latitude)
             for (var i = region - 5; i < region + 5; ++i) {
-                var attribute = scene.primitives.get(i).getGeometryInstanceAttributes(stationNeigh[j]);
-                if (attribute != undefined) {
-                    newAttr = attribute;
+                var newAttr = scene.primitives.get(i).getGeometryInstanceAttributes(stationNeigh[j]);
+                if (newAttr != undefined) {
+                    neighAttr.push(newAttr);
+                    oldNeighCol.push(newAttr.color);
+                    newAttr.color = Cesium.ColorGeometryInstanceAttribute.toValue(new Cesium.Color(interpolateColorByMagnitude(0, station), interpolateColorByMagnitude(1, station), interpolateColorByMagnitude(2, station), 0.5));
                 }
             }
-            attributes.push(newAttr);
-            oldColors.push(newAttr.color);
-            newAttr.color = Cesium.ColorGeometryInstanceAttribute.toValue(new Cesium.Color(interpolateColorByMagnitude(0, station), interpolateColorByMagnitude(1, station), interpolateColorByMagnitude(2, station), 0.5));
 
         }
     }

@@ -8,11 +8,13 @@ var stationMagnitudes2 = [];
 var arrivals = [];
 var stations = [];
 var nextStation = 0;
-var nextDistance = 0;
+let nextDistance = 0;
 var currentTime = 0;
 var startTime = 0;
 var attributes = [];
 var oldColors = [];
+var neighAttr = [];
+var oldNeighCol = [];
 var pins;
 var sortedNeighbors;
 var neighInterval;
@@ -94,14 +96,31 @@ function convertEarthquakeHeight(height){
 function checkNeighbor() {
     scene.primitives.get(scene.primitives.length - 1).show = false;
     if(nextStation < stationMagnitudes.length) {
-        getPrimitiveForStation(stationMagnitudes[nextStation], computeNearestRegion(stationMagnitudes[nextStation].station.latitude));
-        nextStation++
-    } else {
-        scene.primitives.get(scene.primitives.length - 1).show = true;
-        clearInterval(neighInterval);
-    }
+    // if(nextStation < 1) {
+            fillInfoBox(stationMagnitudes[nextStation]);
+            getPrimitiveForStation(stationMagnitudes[nextStation], computeNearestRegion(stationMagnitudes[nextStation].station.latitude));
+            nextStation++
+        } else {
+            scene.primitives.get(scene.primitives.length - 1).show = true;
+            $("#info-earthquake").css('visibility', 'visible');
+            $("#info-station").css('visibility', "hidden");
+            $("#animate-stations").css('visibility', 'visible');
+            $("#propagate-epicentre").css('visibility', 'visible');
+            clearInterval(neighInterval);
+        }
 }
 
+function fillInfoBox(stationMagnitude){
+    $("#info-earthquake").css('visibility', 'hidden');
+    $("#info-station").css('visibility', "visible");
+    $("#animate-stations").css('visibility', 'hidden');
+    $("#propagate-epicentre").css('visibility', 'hidden');
+    $("#station-name").text(stationMagnitude.station.name);
+    $("#station-magnitude").text(stationMagnitude.magnitude);
+    $("#type-station-magn").text(stationMagnitude.type);
+    $("#arrival-time").text(formatDateForList(new Date(stationMagnitude.amplitude.time)));
+    $("#elevation").text(stationMagnitude.station.elevation);
+}
 function getPrimitiveForEpicentre(station, region){
     var selectedAttribute;
     var ids = [];

@@ -97,23 +97,33 @@ function singleClickHandler(click){
                     cameraHeight = pointHeight + 100;
                 }
 
-                moveCameraTo(epicentre.origin, cameraHeight);
+                $.when(getStationMagnitudes(epicentre)).done(function () {
+                    $("#info-earthquake").css('visibility', 'visible');
+                    $("#magn").text(epicentre.magnitude.magnitude);
+                    $("#type-magn").text(epicentre.magnitude.type);
+                    $("#date").text(formatDateForList(earthquakeDate));
+                    $("#depth").text(epicentre.origin.depth /1000);
+                    $("#zone").text(epicentre.regionName);
+                    console.log(stationMagnitudes);
+                    if(stationMagnitudes.length == 0){
+                        $("#animate-stations").css('visibility', 'hidden');
+                        $("#propagate-epicentre").css('visibility', 'hidden');
+                    } else {
+                        $("#animate-stations").css('visibility', 'visible');
+                        $("#propagate-epicentre").css('visibility', 'visible');
+                        $("#animate-stations").click(function () {
+                            moveCameraTo(epicentre.origin, cameraHeight);
+                            nextStation = 0;
+                            var ep = getPrimitiveForEpicentre(epicentre.origin, computeNearestRegion(epicentre.origin.latitude));
+                            ep.color = Cesium.ColorGeometryInstanceAttribute.toValue(Cesium.Color.BLACK);
+                            neighInterval = setInterval(checkNeighbor, 32);
+                        });
 
-                getStationMagnitudes(stationMagnitudes, epicentre);
-                $("#topcorner").css('visibility', 'visible');
-                $("#magn").text(epicentre.magnitude.magnitude);
-                $("#type-magn").text(epicentre.magnitude.type);
-                $("#date").text(formatDateForList(earthquakeDate));
-                $("#depth").text(epicentre.origin.depth /1000);
-                $("#animate-stations").click(function () {
-                    nextStation = 0;
-                    var ep  = getPrimitiveForEpicentre(epicentre.origin, computeNearestRegion(epicentre.origin.latitude));
-                    ep.color = Cesium.ColorGeometryInstanceAttribute.toValue(Cesium.Color.BLACK);
-                    neighInterval = setInterval(checkNeighbor, 32);
-                });
-
-                $("#propagate-epicentre").click(function () {
-                    radiateFromEpicentre(epicentre);
+                        $("#propagate-epicentre").click(function () {
+                            moveCameraTo(epicentre.origin, cameraHeight);
+                            radiateFromEpicentre(epicentre);
+                        });
+                    }
                 });
                 return;
             }
@@ -127,17 +137,17 @@ function singleClickHandler(click){
                     id:  stationMagnitude.station.name + "      " + stationMagnitude.magnitude,
                     description: formatDateForList(date)
                 });
-
             }
         }
+
         for(var i = 0; i < elevations.length; ++i){
             var elevation = elevations[i];
             if(elevation.id === id){
-                viewer2.selectedEntity = new Cesium.Entity({
-                    description: elevation.id
-                });
                 for(var k = 0; k < attributes.length; ++k){
                     attributes[k].color = oldColors[k];
+                }
+                for(var z = 0; z < neighAttr.length; ++z){
+                    neighAttr[z].color = oldNeighCol[z]
                 }
             }
         }
