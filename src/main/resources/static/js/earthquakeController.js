@@ -38,7 +38,7 @@ function searchEarthquakes(request, loadingCallBack){
 }
 
 function findIntensityById(id, callback){
-    var url = "http://" + window.location.host + "/api/earthquakes/intensity/" + id;
+    var url = "/api/earthquakes/intensity/" + id;
     doAjaxRequest(url, "GET", callback)
 }
 
@@ -65,7 +65,7 @@ function doAjaxRequest(url, type, successCallBack){
 }
 
 function getUrlFromRequest(request){
-    return "http://" + window.location.host + "/api/earthquakes/query?count=" + request.count + "&start_time="+ formatDateForQuery(request.startTime)
+    return "/api/earthquakes/query?count=" + request.count + "&start_time="+ formatDateForQuery(request.startTime)
            + "&end_time=" + formatDateForQuery(request.endTime) + "&max_magnitude=" + request.maxMag
            + "&min_magnitude=" + request.minMag + "&min_depth=" + request.minDepth + "&max_depth=" + request.maxDepth
            + "&min_lat=" + request.minPoint.latitude + "&min_lng=" + request.minPoint.longitude

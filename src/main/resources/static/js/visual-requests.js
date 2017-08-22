@@ -28,9 +28,9 @@ function doItalyRequest(objects, maxLat, minLat, maxLon, minLon){
     }
     var url;
     if(maxLat === undefined){
-        url = "http://" + window.location.host + "/api/elevations/query?&minele=-4"
+        url = "/api/elevations/query?&minele=-4"
     } else{
-        url = "http://" + window.location.host + "/api/elevations/query?maxlat=" + maxLat + "&minlat=" + minLat + "&maxlon=" + maxLon + "&minlon=" + minLon + "&minele=-4"
+        url = "/api/elevations/query?maxlat=" + maxLat + "&minlat=" + minLat + "&maxlon=" + maxLon + "&minlon=" + minLon + "&minele=-4"
     }
     $.ajax({
         // url: "http://" + window.location.host + "/api/elevations/query?minele=-4200",
@@ -71,7 +71,7 @@ function doRequest(request){
     }
 
     $.ajax({
-        url: "http://" + window.location.host + "/api/earthquakes/query?count=" + request.count + "&start_time="+ formatDateForQuery(request.startTime)
+        url: "/api/earthquakes/query?count=" + request.count + "&start_time="+ formatDateForQuery(request.startTime)
         + "&end_time=" + formatDateForQuery(request.endTime) + "&max_magnitude=" + request.maxMag
         + "&min_magnitude=" + request.minMag + "&min_depth=" + request.minDepth + "&max_depth=" + request.maxDepth
         + "&min_lat=" + request.minPoint.latitude + "&min_lng=" + request.minPoint.longitude
@@ -90,7 +90,7 @@ function getStationMagnitudes(epicentre) {
     var min_magnitude = 2.5;
     var max_magnitude = 8;
     $.ajax({
-        url: "http://" + window.location.host + "/api/earthquakes/stationMagnitudes/query?earthquake_id=" + epicentre.id + "&min_magnitude=" + min_magnitude + "&max_magnitude=" + max_magnitude,
+        url: "/api/earthquakes/stationMagnitudes/query?earthquake_id=" + epicentre.id + "&min_magnitude=" + min_magnitude + "&max_magnitude=" + max_magnitude,
         type: "GET",
         success: function (data, textStatus, jqXHR) {
             stationMagnitudes = data;
@@ -107,7 +107,7 @@ function getArrivals(objects, epicentres) {
     for(var i = 0; i < epicentres.length; ++i){
         var earthquake = epicentres[i];
         $.ajax({
-            url: "http://" + window.location.host + "/api/earthquakes/arrivals/query?earthquake_id=1895389&phase=" + phase,
+            url: "/api/earthquakes/arrivals/query?earthquake_id=1895389&phase=" + phase,
             type: "GET",
             success: function (data, textStatus, jqXHR) {
                 // console.log(data);
@@ -120,7 +120,7 @@ function getArrivals(objects, epicentres) {
 
 function requestStations(){
     $.ajax({
-        url: "http://" + window.location.host + "/api/stations/query",
+        url: "/api/stations/query",
         type: "GET",
         success: function (data, textStatus, jqXHR) {
             stations = data;
